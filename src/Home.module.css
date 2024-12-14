@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
 
+
 :root {
   --primary-color: #6a5acd; /* Slate Purple */
   --secondary-color: #36454f; /* Charcoal Gray */
@@ -36,7 +37,6 @@ html, body {
   overflow: hidden;
 }
 
-/* Optional: Add a starry background effect */
 .heroSection::before {
   content: '';
   position: absolute;

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Book, Brain, Target } from 'lucide-react';
 import styles from './Home.module.css';
 
 const Home = () => {
+  const navigate = useNavigate();
   const [activeFeature, setActiveFeature] = useState(null);
 
   const features = [
@@ -29,13 +31,18 @@ const Home = () => {
         <div className={styles.heroContent}>
           <h1 className={styles.heroTitle}>Welcome to Kalimu</h1>
           <p className={styles.heroSubtitle}>Revolutionize Your Learning Journey</p>
-          <button className={styles.ctaButton}>Start Learning</button>
+          <button 
+            className={styles.ctaButton}
+            onClick={() => navigate('/learning')} 
+          >
+            Start Learning
+          </button>
         </div>
       </header>
 
       <section className={styles.featuresSection}>
         <div className={styles.featuresGrid}>
-          {features.map((feature, index) => (
+          {features.map((feature, index) => ( // took a long time basically shows if active or not
             <div 
               key={index} 
               className={`${styles.featureCard} ${activeFeature === index ? styles.featureActive : ''}`}
