@@ -29,7 +29,7 @@ const CollegeSelection = () => {
     return (
         <div className={styles.collegeContainer}>
             <header className={styles.collegeHeader}>
-                <h1>College Selection</h1>
+                <h1 className='collegeTitle'>College Selection</h1>
                 <div className={styles.navigationButtons}>
                     <Link to="/learning" className={styles.backButton}>Back to Courses</Link>
                 </div>

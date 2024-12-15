@@ -20,7 +20,7 @@
     radial-gradient(#ffffff 1px, transparent 1px);
   background-size: 50px 50px;
   background-position: 0 0, 25px 25px;
-  opacity: 0.05;
+  opacity: 0.1;
   z-index: 1;
   pointer-events: none;
 }
@@ -34,6 +34,20 @@
   padding-bottom: 1.5rem;
   position: relative;
   z-index: 2;
+}
+
+.collegeHeader h1 {
+  font-size: 2.5rem
+}
+
+.resourcesSection h2 {
+  font-size: 2rem;
+  margin-bottom: 2.5rem;
+  margin-left: 1rem;
+  color: var(--text-color);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-shadow: 0 0 12px rgba(138, 43, 226, 0.4);
 }
 
 .navigationButtons {

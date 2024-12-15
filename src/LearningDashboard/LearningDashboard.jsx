@@ -22,7 +22,7 @@ const LearningDashboard = () => {
       </header>
 
       <section className={styles.coursesSection}>
-        <h2>Your Course</h2>
+        <h2>Your Courses</h2>
         <div className={styles.courseGrid}>
           <Link to={course.link} className={`${styles.courseCard}`}>
             {course.icon}
