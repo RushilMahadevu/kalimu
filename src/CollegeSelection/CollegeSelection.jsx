@@ -7,10 +7,10 @@ const CollegeSelection = () => {
     const resources = [
         { 
             id: 1, 
-            title: 'College Finder', 
+            title: 'College Matcher', 
             description: 'Find the best colleges for your goals.', 
             icon: '🎓',
-            path: '/college-selection/finder'
+            path: '/college-selection/matcher'
         },
         { 
             id: 2, 
@@ -32,7 +32,6 @@ const CollegeSelection = () => {
                 <h1>College Selection</h1>
                 <div className={styles.navigationButtons}>
                     <Link to="/learning" className={styles.backButton}>Back to Courses</Link>
-                    <Link to="/" className={styles.backButton}>Back to Home</Link>
                 </div>
             </header>
             <section className={styles.resourcesSection}>
