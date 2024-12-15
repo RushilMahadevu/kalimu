@@ -4,70 +4,102 @@
   color: var(--text-color);
   min-height: 100vh;
   padding: 2rem;
+  position: relative;
+}
+
+/* Subtle starry background */
+.dashboardContainer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(#ffffff 1px, transparent 1px),
+    radial-gradient(#ffffff 1px, transparent 1px);
+  background-size: 50px 50px;
+  background-position: 0 0, 25px 25px;
+  opacity: 0.05;
+  z-index: 1;
+  pointer-events: none;
 }
 
 .dashboardHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
   border-bottom: 1px solid rgba(106, 90, 205, 0.3);
-  padding-bottom: 1rem;
+  padding-bottom: 1.5rem;
+  position: relative;
+  z-index: 2;
 }
 
 .dashboardHeader h1 {
   font-size: 2.5rem;
   color: var(--text-color);
-  text-shadow: 0 0 10px rgba(138, 43, 226, 0.3);
+  text-shadow: 0 0 12px rgba(138, 43, 226, 0.4);
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
 .homeLink {
   display: inline-block;
   background-color: var(--accent-color);
   color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
   text-decoration: none;
   font-weight: 600;
   font-size: 1rem;
-  transition: background-color 0.3s ease, transform 0.3s ease;
-  margin-top: 1rem;
-  text-decoration: none;
+  transition: all 0.4s ease;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2), 0 0 25px rgba(138, 43, 226, 0.3);
+  letter-spacing: 0.5px;
 }
 
 .homeLink:hover {
-  background-color: var(--primary-color);
-  transform: translateY(-3px);
-  text-decoration: none;
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.3), 0 0 35px rgba(138, 43, 226, 0.4);
 }
 
 .coursesSection h2 {
-  font-size: 1.8rem;
-  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
   color: var(--text-color);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-shadow: 0 0 12px rgba(138, 43, 226, 0.4);
 }
 
 .courseGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1.5rem;
+  gap: 2.5rem;
+  margin-top: 2rem;
+  position: relative;
+  z-index: 2;
 }
 
 .courseCard {
   background-color: rgba(106, 90, 205, 0.2);
-  border-radius: 12px;
-  padding: 1.5rem;
+  border-radius: 16px;
+  padding: 2rem;
   border: 1px solid rgba(106, 90, 205, 0.3);
-  transition: all 0.3s ease;
-  cursor: pointer;
+  transition: all 0.4s ease;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.2);
 }
 
 .courseCard:hover {
-  transform: translateY(-10px);
-  background-color: rgba(106, 90, 205, 0.4);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+  transform: translateY(-15px);
+  background-color: rgba(106, 90, 205, 0.3);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
 }
 
 .courseActive {
@@ -77,10 +109,10 @@
 }
 
 .courseIcon {
-  width: 48px;
-  height: 48px;
+  width: 64px;
+  height: 64px;
   color: var(--text-color);
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .courseActive .courseIcon {
@@ -88,31 +120,18 @@
 }
 
 .courseCard h3 {
-  margin: 0 0 0.5rem 0;
-  font-size: 1.2rem;
-  color: var(--text-color); /* Ensure it uses the default text color */
-  text-decoration: none; /* Remove underline */
-  transition: color 0.3s ease; /* Optional: Add a smooth hover effect */
-}
-
-.courseCard h3:hover {
-  color: var(
-    --accent-color
-  ); /* Optional: Change color on hover for interactivity */
-}
-.courseLink {
-  color: inherit; /* Inherits color from parent styles */
-  text-decoration: none; /* Removes underline */
-}
-
-.courseLink:hover {
-  color: var(--accent-color); /* Optional: Add hover effect for better UX */
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+  color: var(--text-color);
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
 .courseCard p {
   color: rgba(230, 230, 250, 0.7);
-  margin-bottom: 1rem;
-  flex-grow: 1;
+  font-size: 1.1rem;
+  line-height: 1.7;
+  margin-top: 0.5rem;
 }
 
 @media (max-width: 768px) {
@@ -123,5 +142,9 @@
 
   .courseGrid {
     grid-template-columns: 1fr;
+  }
+
+  .coursesSection h2 {
+    font-size: 1.8rem;
   }
 }

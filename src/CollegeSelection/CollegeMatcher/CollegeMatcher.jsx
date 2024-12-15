@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from "react-router-dom";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import "./CollegeMatcher.css";
 
@@ -44,7 +44,7 @@ const CollegeMatcher = () => {
         - Preferred Location: ${preferences.location}
         - Budget: $${preferences.budget}
         - Campus Size: ${preferences.campusSize}
-        - Special Needs/Considerations: ${preferences.specialNeeds}
+        - Special Wants/Considerations: ${preferences.specialNeeds}
 
         For each college, provide:
         1. College Name
@@ -92,7 +92,6 @@ const CollegeMatcher = () => {
   return (
     <div className="college-matcher-container">
       <div className="header">
-        <h1 className="page-title">AI College Matcher</h1>
         <Link to="/college-selection" className="back-button">
           Back
         </Link>
@@ -161,9 +160,7 @@ const CollegeMatcher = () => {
         </div>
 
         <div className="input-group">
-          <label htmlFor="specialNeeds">
-            Special Considerations (Optional)
-          </label>
+          <label htmlFor="specialNeeds">Specific Wants/Needs</label>
           <input
             id="specialNeeds"
             type="text"
