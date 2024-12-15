@@ -3,6 +3,7 @@ import Home from './Home';
 import LearningDashboard from './LearningDashboard/LearningDashboard';
 import CollegeSelection from './CollegeSelection/CollegeSelection';
 import CollegeMatcher from './CollegeSelection/CollegeMatcher/CollegeMatcher';
+import AdmissionTips from './CollegeSelection/AdmissionTips/AdmissionTips';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -72,6 +73,11 @@ function AnimatedRoutes() {
         <Route path="/college-selection/matcher" element={
           <PageWrapper>
             <CollegeMatcher />
+          </PageWrapper>
+        } />
+        <Route path="/college-selection/admission-tips" element={
+          <PageWrapper>
+            <AdmissionTips />
           </PageWrapper>
         } />
       </Routes>

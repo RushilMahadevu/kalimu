@@ -14,15 +14,10 @@ const CollegeSelection = () => {
         },
         { 
             id: 2, 
-            title: 'Financial Aid Guide', 
-            description: 'Learn about scholarships and grants.', 
-            icon: '💰' 
-        },
-        { 
-            id: 3, 
             title: 'Admission Tips', 
-            description: 'Ace your applications and interviews.', 
-            icon: '📝' 
+            description: 'Obtain the best tips and strategies for you.', 
+            icon: '📝',
+            path: '/college-selection/admission-tips'
         },
     ];
 

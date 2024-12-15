@@ -33,7 +33,7 @@
     radial-gradient(#ffffff 1px, transparent 1px);
   background-size: 50px 50px;
   background-position: 0 0, 25px 25px;
-  opacity: 0.05;
+  opacity: 0.08;
   z-index: 1;
   pointer-events: none;
 }

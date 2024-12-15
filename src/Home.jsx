@@ -90,7 +90,7 @@ const Home = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.4 }}
           >
-            Start Learning
+            Start Planning
           </motion.button>
         </div>
       </motion.header>
