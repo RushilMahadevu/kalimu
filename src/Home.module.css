@@ -51,6 +51,22 @@ html, body {
   background-position: 0 0, 25px 25px;
   opacity: 0.3;
   z-index: 1;
+  animation: twinkleStars 3s infinite ease-in-out;
+}
+
+@keyframes twinkleStars {
+  0%, 100% {
+    opacity: 0.1;
+  }
+  25% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.3;
+  }
+  75% {
+    opacity: 0.2;
+  }
 }
 
 .heroContent {
@@ -83,11 +99,21 @@ html, body {
   border-radius: 8px;
   cursor: pointer;
   box-shadow: 0 4px 6px rgba(0,0,0,0.1), 0 0 20px rgba(138, 43, 226, 0.3);
+  animation: pulse 3s infinite ease-in-out;
 }
 
 .ctaButton:hover {
   transform: scale(1.05);
   box-shadow: 0 10px 20px rgba(0,0,0,0.2), 0 0 30px rgba(138, 43, 226, 0.5);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.075);
+  }
 }
 
 .featuresSection {

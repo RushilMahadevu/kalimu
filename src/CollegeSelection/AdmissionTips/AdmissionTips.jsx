@@ -99,48 +99,52 @@ const AdmissionProfile = () => {
       <div className="preferences-form">
         <h2 className="form-title">Your Profile</h2>
 
-        <div className="input-group">
-          <label htmlFor="gpa">Current GPA</label>
-          <input
-            id="gpa"
-            type="text"
-            placeholder="e.g., 3.7, 4.2"
-            value={profile.gpa}
-            onChange={(e) => handleInputChange("gpa", e.target.value)}
-          />
+        <div className="input-row">
+          <div className="input-group separated">
+            <label htmlFor="gpa">Current GPA</label>
+            <input
+              id="gpa"
+              type="text"
+              placeholder="e.g., 3.7, 4.2"
+              value={profile.gpa}
+              onChange={(e) => handleInputChange("gpa", e.target.value)}
+            />
+          </div>
+
+          <div className="input-group separated">
+            <label htmlFor="testScores">Standardized Test Scores</label>
+            <input
+              id="testScores"
+              type="text"
+              placeholder="e.g., SAT 1450, ACT 32"
+              value={profile.testScores}
+              onChange={(e) => handleInputChange("testScores", e.target.value)}
+            />
+          </div>
         </div>
 
-        <div className="input-group">
-          <label htmlFor="testScores">Standardized Test Scores</label>
-          <input
-            id="testScores"
-            type="text"
-            placeholder="e.g., SAT 1450, ACT 32"
-            value={profile.testScores}
-            onChange={(e) => handleInputChange("testScores", e.target.value)}
-          />
-        </div>
+        <div className="input-row">
+          <div className="input-group separated">
+            <label htmlFor="extracurriculars">Key Extracurricular Activities</label>
+            <input
+              id="extracurriculars"
+              type="text"
+              placeholder="e.g., Debate Club President, Robotics Team"
+              value={profile.extracurriculars}
+              onChange={(e) => handleInputChange("extracurriculars", e.target.value)}
+            />
+          </div>
 
-        <div className="input-group">
-          <label htmlFor="extracurriculars">Key Extracurricular Activities</label>
-          <input
-            id="extracurriculars"
-            type="text"
-            placeholder="e.g., Debate Club President, Robotics Team"
-            value={profile.extracurriculars}
-            onChange={(e) => handleInputChange("extracurriculars", e.target.value)}
-          />
-        </div>
-
-        <div className="input-group">
-          <label htmlFor="academicInterest">Primary Academic Interest</label>
-          <input
-            id="academicInterest"
-            type="text"
-            placeholder="e.g., Computer Science, Biomedical Engineering"
-            value={profile.academicInterest}
-            onChange={(e) => handleInputChange("academicInterest", e.target.value)}
-          />
+          <div className="input-group separated">
+            <label htmlFor="academicInterest">Primary Academic Interest</label>
+            <input
+              id="academicInterest"
+              type="text"
+              placeholder="e.g., Computer Science, Biomedical Engineering"
+              value={profile.academicInterest}
+              onChange={(e) => handleInputChange("academicInterest", e.target.value)}
+            />
+          </div>
         </div>
 
         <div className="input-group">
@@ -154,13 +158,15 @@ const AdmissionProfile = () => {
           />
         </div>
 
-        <button
-          className="submit-button"
-          onClick={generateAdmissionTips}
-          disabled={isLoading}
-        >
-          {isLoading ? "Generating Strategies..." : "Get My Admission Tips"}
-        </button>
+        <div className="button-group">
+          <button
+            className="submit-button"
+            onClick={generateAdmissionTips}
+            disabled={isLoading}
+          >
+            {isLoading ? "Generating Strategies..." : "Get My Admission Tips"}
+          </button>
+        </div>
 
         {error && <div className="error-message">{error}</div>}
       </div>
