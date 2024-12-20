@@ -41,6 +41,10 @@ graph TD
     E --> E3[Skill Development Path]
     E --> E4[Mental Health Resources]
     E --> E5[Time Management Coach]
+
+    classDef default fill:#6a0dad,stroke:#4b0082,stroke-width:2px;
+    class A,B,C,D,E default;
+
 ```
 
 ## Features
