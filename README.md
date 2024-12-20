@@ -12,7 +12,7 @@ Kalimu is an AI-powered educational platform designed to support high school stu
 
 ```mermaid
 graph TD
-    A[High School Journey Map] --> B[Academic Planning]
+    A[Kalimu] --> B[Academic Planning]
     A --> C[College Preparation]
     A --> D[Student Life]
     A --> E[Personal Development]
