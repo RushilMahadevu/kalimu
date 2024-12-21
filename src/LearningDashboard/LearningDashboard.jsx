@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Award } from "lucide-react";
+import { GraduationCap, Brain } from "lucide-react";
 import styles from "./LearningDashboard.module.css";
 
 const LearningDashboard = () => {
@@ -8,14 +8,14 @@ const LearningDashboard = () => {
     {
       id: 1,
       title: "College Selection",
-      icon: <Award className={styles.courseIcon} />,
+      icon: <GraduationCap className={styles.courseIcon} />,
       description: "Find the right college for you",
       link: "/college-selection",
     },
     {
       id: 2,
       title: "Academic Planning",
-      icon: <Award className={styles.courseIcon} />,
+      icon: <Brain className={styles.courseIcon} />,
       description: "Plan your academic journey",
       link: "/academic-planning",
     },
@@ -30,15 +30,28 @@ const LearningDashboard = () => {
         </Link>
       </header>
 
-          {courses.map((course) => (
-            <Link key={course.id} to={course.link} className={`${styles.courseCard}`}>
-              {course.icon}
-              <h3>{course.title}</h3>
-              <p>{course.description}</p>
-            </Link>
-          ))}
+      <div className={styles.roadmapContainer}>
+        <div className={styles.nodeTree}>
+          <div className={styles.startNode}>
+            <h2>Start Learning</h2>
+          </div>
+          <div className={styles.connectionLines}>
+            <div className={styles.verticalLine}></div>
+            <div className={styles.horizontalLines}></div>
+          </div>
+          <div className={styles.courseNodes}>
+            {courses.map((course) => (
+              <Link key={course.id} to={course.link} className={styles.courseCard}>
+                {course.icon}
+                <h3>{course.title}</h3>
+                <p>{course.description}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
-);
+  );
 };
 
 export default LearningDashboard;

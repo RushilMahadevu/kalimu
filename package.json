@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "dev-no-warnings": "node --no-warnings node_modules/vite/bin/vite.js"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^0.9.12",
@@ -18,7 +19,7 @@
     "firebase": "^11.0.2",
     "framer-motion": "^11.14.4",
     "genkit": "^0.9.12",
-    "openai": "^4.76.3",
+    "punycode": "^2.3.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.0.2"
