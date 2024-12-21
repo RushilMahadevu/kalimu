@@ -4,6 +4,8 @@ import LearningDashboard from './LearningDashboard/LearningDashboard';
 import CollegeSelection from './CollegeSelection/CollegeSelection';
 import CollegeMatcher from './CollegeSelection/CollegeMatcher/CollegeMatcher';
 import AdmissionTips from './CollegeSelection/AdmissionTips/AdmissionTips';
+import ScholarshipFinder from './CollegeSelection/ScholarshipFinder/ScholarshipFinder';
+import AcademicPlanning from './AcademicPlanning/AcademicPlanning';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -65,19 +67,21 @@ function AnimatedRoutes() {
             <LearningDashboard />
           </PageWrapper>
         } />
-        <Route path="/college-selection" element={
+        <Route path="/college-selection/*" element={
           <PageWrapper>
-            <CollegeSelection />
+            <Routes>
+              <Route path="" element={<CollegeSelection />} />
+              <Route path="matcher" element={<CollegeMatcher />} />
+              <Route path="admission-tips" element={<AdmissionTips />} />
+              <Route path="scholarship-finder" element={< ScholarshipFinder />} />
+            </Routes>
           </PageWrapper>
         } />
-        <Route path="/college-selection/matcher" element={
+        <Route path="/academic-planning/*" element={
           <PageWrapper>
-            <CollegeMatcher />
-          </PageWrapper>
-        } />
-        <Route path="/college-selection/admission-tips" element={
-          <PageWrapper>
-            <AdmissionTips />
+            <Routes>
+              <Route path="" element={<AcademicPlanning />} />
+            </Routes>
           </PageWrapper>
         } />
       </Routes>

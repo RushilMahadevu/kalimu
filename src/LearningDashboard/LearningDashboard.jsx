@@ -4,13 +4,22 @@ import { Award } from "lucide-react";
 import styles from "./LearningDashboard.module.css";
 
 const LearningDashboard = () => {
-  const course = {
-    id: 1,
-    title: "College Selection",
-    icon: <Award className={styles.courseIcon} />,
-    description: "Find the right college for you",
-    link: "/college-selection",
-  };
+  const courses = [
+    {
+      id: 1,
+      title: "College Selection",
+      icon: <Award className={styles.courseIcon} />,
+      description: "Find the right college for you",
+      link: "/college-selection",
+    },
+    {
+      id: 2,
+      title: "Academic Planning",
+      icon: <Award className={styles.courseIcon} />,
+      description: "Plan your academic journey",
+      link: "/academic-planning",
+    },
+  ];
 
   return (
     <div className={styles.dashboardContainer}>
@@ -21,18 +30,15 @@ const LearningDashboard = () => {
         </Link>
       </header>
 
-      <section className={styles.coursesSection}>
-        <h2>Your Courses</h2>
-        <div className={styles.courseGrid}>
-          <Link to={course.link} className={`${styles.courseCard}`}>
-            {course.icon}
-            <h3>{course.title}</h3>
-            <p>{course.description}</p>
-          </Link>
-        </div>
-      </section>
+          {courses.map((course) => (
+            <Link key={course.id} to={course.link} className={`${styles.courseCard}`}>
+              {course.icon}
+              <h3>{course.title}</h3>
+              <p>{course.description}</p>
+            </Link>
+          ))}
     </div>
-  );
+);
 };
 
 export default LearningDashboard;

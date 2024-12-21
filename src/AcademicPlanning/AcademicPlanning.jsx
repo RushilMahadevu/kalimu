@@ -1,39 +1,32 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import styles from './CollegeSelection.module.css';
+import styles from './AcademicPlanning.module.css';
 
-const CollegeSelection = () => {
+const AcademicPlanning = () => {
     const navigate = useNavigate();
     const resources = [
         { 
             id: 1, 
-            title: 'College Matcher', 
-            description: 'Find the best colleges for your goals.', 
-            icon: '🎓',
-            path: '/college-selection/matcher'
+            title: 'Course Planner', 
+            description: 'Plan your courses for the upcoming semesters.', 
+            icon: '📅',
+            path: '/academic-planning/course-planner'
         },
         { 
             id: 2, 
-            title: 'Admission Tips', 
-            description: 'Obtain the best tips and strategies for you.', 
-            icon: '📝',
-            path: '/college-selection/admission-tips'
-        },
-        { 
-            id: 3, 
-            title: 'Scholarship Finder', 
-            description: 'Find the best scholarships for you.', 
-            icon: '💰',
-            path: '/college-selection/scholarship-finder'
+            title: 'Study Resources', 
+            description: 'Access study materials and resources.', 
+            icon: '📚',
+            path: '/academic-planning/study-resources'
         },
     ];
 
     return (
-        <div className={styles.collegeContainer}>
-            <header className={styles.collegeHeader}>
-                <h1 className='collegeTitle'>College Selection</h1>
+        <div className={styles.academicContainer}>
+            <header className={styles.academicHeader}>
+                <h1 className='academicTitle'>Academic Planning</h1>
                 <div className={styles.navigationButtons}>
-                    <Link to="/learning" className={styles.backButton}>Back to Courses</Link>
+                    <Link to="/learning" className={styles.backButton}>Back to Dashboard</Link>
                 </div>
             </header>
             <section className={styles.resourcesSection}>
@@ -57,4 +50,4 @@ const CollegeSelection = () => {
     );
 };
 
-export default CollegeSelection;
+export default AcademicPlanning;
