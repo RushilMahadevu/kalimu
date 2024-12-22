@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Diameter, FileText, Coins } from 'lucide-react';
 import styles from './CollegeSelection.module.css';
 
 const CollegeSelection = () => {
@@ -9,21 +10,21 @@ const CollegeSelection = () => {
             id: 1, 
             title: 'College Matcher', 
             description: 'Find the best colleges for your goals.', 
-            icon: '🎓',
+            icon: <Diameter size={48} />,
             path: '/college-selection/matcher'
         },
         { 
             id: 2, 
             title: 'Admission Tips', 
             description: 'Obtain the best tips and strategies for you.', 
-            icon: '📝',
+            icon: <FileText size={48} />,
             path: '/college-selection/admission-tips'
         },
         { 
             id: 3, 
             title: 'Scholarship Finder', 
             description: 'Find the best scholarships for you.', 
-            icon: '💰',
+            icon: <Coins size={48} />,
             path: '/college-selection/scholarship-finder'
         },
     ];

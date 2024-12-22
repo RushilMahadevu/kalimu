@@ -50,17 +50,26 @@
 }
 
 .preferences-form {
-  background-color: rgba(30, 30, 44, 0.8);
+  background: rgba(30, 30, 44, 0.8);
+  backdrop-filter: blur(10px);
   padding: 3rem;
   border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 
-    0 15px 30px rgba(0,0,0,0.2),
-    0 0 30px rgba(138, 43, 226, 0.1);
+    0 15px 35px rgba(31, 38, 135, 0.2),
+    0 0 20px rgba(138, 43, 226, 0.2);
   max-width: 700px;
   width: 100%;
   margin-top: 2rem;
   position: relative;
   z-index: 2;
+  transition: all 0.4s ease;
+}
+
+.preferences-form:hover {
+  box-shadow: 
+    0 20px 45px rgba(31, 38, 135, 0.25),
+    0 0 30px rgba(138, 43, 226, 0.3);
 }
 
 .form-title {
@@ -85,14 +94,19 @@
 
 .input-group input, 
 .input-group select {
+  height: 3.5rem;
+  box-sizing: border-box;
   width: 100%;
   padding: 1.25rem;
+  padding-right: 2.5rem;
   border: none;
   border-radius: 10px;
   background-color: rgba(106, 90, 205, 0.2);
   color: var(--text-color);
   font-size: 1rem;
   transition: all 0.3s ease;
+  text-align: left;
+  vertical-align: middle;
 }
 
 .input-group input:focus, 
@@ -142,16 +156,49 @@
 }
 
 .recommendation-card {
-  background-color: rgba(106, 90, 205, 0.2);
+  background: rgba(106, 90, 205, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   padding: 2.5rem;
   border-radius: 16px;
-  box-shadow: 0 15px 30px rgba(0,0,0,0.2);
-  transition: all 0.4s ease;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+}
+
+.recommendation-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 16px;
+  padding: 2px;
+  background: linear-gradient(
+    45deg,
+    rgba(106, 90, 205, 0.5),
+    rgba(138, 43, 226, 0.5)
+  );
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
 }
 
 .recommendation-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+  transform: translateY(-8px);
+  background: rgba(106, 90, 205, 0.15);
+  box-shadow: 
+    0 15px 35px rgba(31, 38, 135, 0.2),
+    0 0 20px rgba(138, 43, 226, 0.3);
+}
+
+.recommendation-card:hover::before {
+  opacity: 1;
+  animation: border-glow 3s linear infinite;
 }
 
 .recommendation-card h3 {
@@ -223,4 +270,82 @@
   .page-title {
     font-size: 2rem;
   }
+}
+
+/* Custom styling for the range input */
+.input-group input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--accent-color) 0%, var(--primary-color) 100%);
+  box-shadow: 0 0 15px rgba(138, 43, 226, 0.4);
+}
+
+/* Slider thumb styling */
+.input-group input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent-color);
+  cursor: pointer;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 
+    0 0 10px rgba(138, 43, 226, 0.6),
+    0 0 20px rgba(138, 43, 226, 0.4);
+  transition: all 0.3s ease;
+}
+
+.input-group input[type="range"]::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent-color);
+  cursor: pointer;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 
+    0 0 10px rgba(138, 43, 226, 0.6),
+    0 0 20px rgba(138, 43, 226, 0.4);
+  transition: all 0.3s ease;
+}
+
+/* Hover effects */
+.input-group input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 
+    0 0 15px rgba(138, 43, 226, 0.8),
+    0 0 30px rgba(138, 43, 226, 0.6);
+}
+
+.input-group input[type="range"]::-moz-range-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 
+    0 0 15px rgba(138, 43, 226, 0.8),
+    0 0 30px rgba(138, 43, 226, 0.6);
+}
+
+/* Custom styling for select arrows */
+.input-group select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 20px center;
+  background-size: 1em;
+  line-height: 1rem;
+}
+
+/* Ensure consistent text positioning */
+.input-group input::placeholder,
+.input-group select option {
+  line-height: 1rem;
+  vertical-align: middle;
+}
+
+/* Remove default arrow in IE */
+.input-group select::-ms-expand {
+  display: none;
 }

@@ -242,3 +242,87 @@
     font-size: 2rem;
   }
 }
+
+.tips-container {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  min-height: 100vh;
+  padding: 4rem 2rem;
+  position: relative;
+}
+
+.tip-card {
+  background: rgba(106, 90, 205, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 2.5rem;
+  margin-bottom: 2rem;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+}
+
+.tip-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 16px;
+  padding: 2px;
+  background: linear-gradient(
+    45deg,
+    rgba(106, 90, 205, 0.5),
+    rgba(138, 43, 226, 0.5)
+  );
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.tip-card:hover {
+  transform: translateY(-8px);
+  background: rgba(106, 90, 205, 0.15);
+  box-shadow: 
+    0 15px 35px rgba(31, 38, 135, 0.2),
+    0 0 20px rgba(138, 43, 226, 0.3);
+}
+
+.tip-card:hover::before {
+  opacity: 1;
+  animation: border-glow 3s linear infinite;
+}
+
+/* Add this animation to all three CSS files if not already present */
+@keyframes border-glow {
+  0% {
+    background-position: 0% 50%;
+    background: linear-gradient(
+      45deg,
+      rgba(106, 90, 205, 0.5),
+      rgba(138, 43, 226, 0.5)
+    );
+  }
+  50% {
+    background-position: 100% 50%;
+    background: linear-gradient(
+      45deg,
+      rgba(138, 43, 226, 0.5),
+      rgba(106, 90, 205, 0.5)
+    );
+  }
+  100% {
+    background-position: 0% 50%;
+    background: linear-gradient(
+      45deg,
+      rgba(106, 90, 205, 0.5),
+      rgba(138, 43, 226, 0.5)
+    );
+  }
+}
