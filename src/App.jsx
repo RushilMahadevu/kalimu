@@ -5,6 +5,7 @@ import CollegeSelection from './CollegeSelection/CollegeSelection';
 import CollegeMatcher from './CollegeSelection/CollegeMatcher/CollegeMatcher';
 import AdmissionTips from './CollegeSelection/AdmissionTips/AdmissionTips';
 import ScholarshipFinder from './CollegeSelection/ScholarshipFinder/ScholarshipFinder';
+import CommonAppHelper from './CollegeSelection/CommonAppHelper/CommonAppHelper';
 import AcademicPlanning from './AcademicPlanning/AcademicPlanning';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -77,6 +78,7 @@ function AnimatedRoutes() {
               <Route path="matcher" element={<CollegeMatcher />} />
               <Route path="admission-tips" element={<AdmissionTips />} />
               <Route path="scholarship-finder" element={< ScholarshipFinder />} />
+              <Route path="common-app-helper" element={< CommonAppHelper />} />
             </Routes>
           </PageWrapper>
         } />

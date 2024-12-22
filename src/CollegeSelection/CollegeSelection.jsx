@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Diameter, FileText, Coins } from 'lucide-react';
+import { Diameter, FileText, Coins, LayoutPanelLeft } from 'lucide-react';
 import styles from './CollegeSelection.module.css';
 
 const CollegeSelection = () => {
@@ -27,6 +27,13 @@ const CollegeSelection = () => {
             icon: <Coins size={48} />,
             path: '/college-selection/scholarship-finder'
         },
+        {
+            id: 4,
+            title: 'Common App Helper',
+            description: 'Help you with the Common App.',
+            icon: <LayoutPanelLeft size={48} />,
+            path: '/college-selection/common-app-helper'
+        }
     ];
 
     return (
