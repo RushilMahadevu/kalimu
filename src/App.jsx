@@ -12,20 +12,23 @@ import { AnimatePresence, motion } from 'framer-motion';
 const PageWrapper = ({ children }) => {
   const pageVariants = {
     initial: { 
-      opacity: 0
+      opacity: 0,
+      y: 20
     },
     in: { 
       opacity: 1,
+      y: 0,
       transition: {
-        duration: 0.25,
-        ease: 'easeInOut'
+        duration: 0.4,
+        ease: 'easeOut'
       }
     },
     out: { 
       opacity: 0,
+      y: -20,
       transition: {
-        duration: 0.25,
-        ease: 'easeInOut'
+        duration: 0.4,
+        ease: 'easeIn'
       }
     }
   };

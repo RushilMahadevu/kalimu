@@ -103,7 +103,7 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
   padding: 2.5rem;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: all 0.4s ease;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -139,7 +139,6 @@
 }
 
 .resourceCard:hover {
-  transform: translateY(-8px);
   background: rgba(106, 90, 205, 0.15);
   box-shadow: 
     0 15px 35px rgba(31, 38, 135, 0.2),
@@ -157,12 +156,13 @@
   margin-bottom: 1.5rem;
   color: var(--text-color);
   filter: drop-shadow(0 0 8px rgba(138, 43, 226, 0.4));
-  transition: all 0.4s ease;
+  transition: transform 0.3s ease, filter 0.3s ease, color 0.3s ease;
 }
 
 .resourceCard:hover .resourceIcon {
-  transform: scale(1.1);
+  transform: rotate(-8deg);
   filter: drop-shadow(0 0 12px rgba(138, 43, 226, 0.6));
+  color: var(--accent-color);
 }
 
 .resourceCard h3 {

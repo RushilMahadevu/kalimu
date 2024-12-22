@@ -72,13 +72,17 @@ const LearningDashboard = () => {
               start="start"
               end={`node-${course.id}`}
               color="var(--accent-color)"
-              strokeWidth={3}
+              strokeWidth={4}
               path="smooth"
               curveness={0.3}
-              startAnchor="bottom"
-              endAnchor="top"
-              animateDrawing={1}
-              headShape="circle"
+              startAnchor={{
+                position: "bottom",
+              }}
+              endAnchor={{
+                position: "top",
+                offset: { y: 0.65 }
+              }}
+              showHead={false}
               headSize={4}
             />
           ))}

@@ -51,13 +51,13 @@
   text-decoration: none;
   font-weight: 600;
   font-size: 1rem;
-  transition: all 0.4s ease;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 0 25px rgba(138, 43, 226, 0.3);
   letter-spacing: 0.5px;
 }
 
 .homeLink:hover {
   transform: scale(1.05);
+  transition: all 0.3s ease-in-out;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3), 0 0 35px rgba(138, 43, 226, 0.4);
 }
 
@@ -87,7 +87,6 @@
   border-radius: 16px;
   padding: 2rem;
   border: 1px solid rgba(106, 90, 205, 0.3);
-  transition: all 0.4s ease;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -95,11 +94,40 @@
   cursor: pointer;
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
   text-decoration: none;
+  transition: all 0.3s ease-in-out;
+  transform-origin: center;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.courseCard::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(138, 43, 226, 0.1);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease-out, height 0.6s ease-out;
+  z-index: 1;
+}
+
+.courseCard > * {
+  position: relative;
+  z-index: 2;
 }
 
 .courseCard:hover {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 
+              0 0 20px rgba(138, 43, 226, 0.3);
   background-color: rgba(106, 90, 205, 0.3);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.courseCard:active {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
 .courseActive {
@@ -120,11 +148,16 @@
   border-radius: 50%;
   padding: 1rem;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease, color 0.3s ease;
 }
 
 .courseActive .courseIcon {
   color: white;
+}
+
+.courseCard:hover .courseIcon {
+  transform: rotate(-8deg);
+  color: var(--accent-color);
 }
 
 .courseCard h3 {
@@ -140,6 +173,11 @@
   color: var(--text-color);
   font-weight: 600;
   letter-spacing: 0.5px;
+  transition: color 0.3s ease;
+}
+
+.courseCard:hover h3 {
+  color: var(--accent-color);
 }
 
 .courseCard p {
@@ -147,6 +185,11 @@
   font-size: 1.1rem;
   line-height: 1.7;
   margin-top: 0.5rem;
+  transition: color 0.3s ease;
+}
+
+.courseCard:hover p {
+  color: rgba(230, 230, 250, 0.9);
 }
 
 @media (max-width: 768px) {
@@ -221,9 +264,8 @@
   border-radius: 8px;
   text-decoration: none;
   color: inherit;
-  width: 400px;
+  width: 280px;
   text-align: center;
-  transition: transform 0.2s;
 }
 
 .treeContainer {
@@ -273,7 +315,6 @@
   text-decoration: none;
   color: var(--text-color);
   text-align: center;
-  transition: all 0.3s ease;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }
 
@@ -297,4 +338,12 @@
   .treeStructure {
     min-height: 600px;
   }
+}
+
+.xarrowElement {
+  transition: all 0.3s ease-in-out;
+}
+
+.xarrowPath {
+  transition: d 0.3s ease-in-out;
 }

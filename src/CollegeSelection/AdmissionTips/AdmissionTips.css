@@ -189,14 +189,14 @@
   width: 100%;
   margin-bottom: 3rem; 
   padding: 0 2rem; 
-  position: relative; /* Add this */
+  position: relative;
 }
 
 .back-button {
-  position: absolute; /* Add this */
-  top: 50%; /* Add this */
-  right: 2rem; /* Add this */
-  transform: translateY(-50%); /* Add this */
+  position: absolute;
+  top: 50%;
+  right: 2rem;
+  transform: translateY(-50%);
   background-color: var(--accent-color);
   color: white;
   border: none;
