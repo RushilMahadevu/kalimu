@@ -98,7 +98,6 @@
 }
 
 .courseCard:hover {
-  transform: translateY(-15px);
   background-color: rgba(106, 90, 205, 0.3);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
@@ -227,6 +226,75 @@
   transition: transform 0.2s;
 }
 
+.treeContainer {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.treeStructure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rem;
+  min-height: 500px;
+  padding: 2rem;
+  position: relative;
+}
+
+.startNode {
+  background-color: var(--accent-color);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  position: relative;
+  z-index: 2;
+}
+
+.courseNodes {
+  display: flex;
+  gap: 6rem;
+  position: relative;
+  z-index: 2;
+}
+
+.courseCard {
+  width: 280px;
+  background-color: rgba(106, 90, 205, 0.2);
+  border: 1px solid rgba(106, 90, 205, 0.3);
+  border-radius: 16px;
+  padding: 1.5rem;
+  text-decoration: none;
+  color: var(--text-color);
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
 .courseCard:hover {
-  transform: translateY(-7px);
+  box-shadow: 0 8px 24px rgba(106, 90, 205, 0.3), 0 0 0 2px var(--accent-color);
+  background-color: rgba(106, 90, 205, 0.25);
+  border-color: transparent;
+}
+
+@media (max-width: 1024px) {
+  .courseNodes {
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  .courseCard {
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .treeStructure {
+    min-height: 600px;
+  }
 }
