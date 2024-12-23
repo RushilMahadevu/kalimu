@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { GraduationCap, Brain, BookMarked, Bolt} from "lucide-react";
+import { GraduationCap, Brain, BookMarked, Bolt, MapPin } from "lucide-react";
 import Xarrow from "react-xarrows";
 import styles from "./LearningDashboard.module.css";
 
@@ -33,7 +33,7 @@ const LearningDashboard = () => {
       icon: <Bolt className={styles.courseIcon} />,
       description: "Grow your skills and knowledge",
       link: "/personal-development",
-    }
+    },
   ];
 
   return (
@@ -75,9 +75,7 @@ const LearningDashboard = () => {
               strokeWidth={4}
               path="smooth"
               curveness={0.3}
-              startAnchor={{
-                position: "bottom",
-              }}
+              startAnchor="bottom"
               endAnchor={{
                 position: "top",
                 offset: { y: 0.65 }

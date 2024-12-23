@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Diameter, FileText, Coins, LayoutPanelLeft } from 'lucide-react';
+import { Diameter, FileText, Coins, LayoutPanelLeft, MapPin } from 'lucide-react';
 import styles from './CollegeSelection.module.css';
 
 const CollegeSelection = () => {
@@ -33,6 +33,13 @@ const CollegeSelection = () => {
             description: 'Help you with the Common App.',
             icon: <LayoutPanelLeft size={48} />,
             path: '/college-selection/common-app-helper'
+        },
+        {
+            id: 5,
+            title: 'College Visit Planner',
+            description: 'Plan your college visits',
+            icon: <MapPin size={48} />,
+            path: '/college-selection/college-visit-planner'
         }
     ];
 

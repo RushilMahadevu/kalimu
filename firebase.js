@@ -1,21 +1,37 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { initializeFirestore, collection, getDocs } from 'firebase/firestore';
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyDgdlP036KalMU5JSJR3hat1XhxrIZqPr8",
-  authDomain: "kalimu-35418.firebaseapp.com",
-  projectId: "kalimu-35418",
-  storageBucket: "kalimu-35418.firebasestorage.app",
-  messagingSenderId: "696292516120",
-  appId: "1:696292516120:web:6bbfd9f89b551ead96fe6d",
-  measurementId: "G-TL4DHQWCD5"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: `${import.meta.env.VITE_FIREBASE_PROJECT_ID}.firebaseapp.com`,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+const auth = getAuth(app);
+const db = initializeFirestore(app, {
+  experimentalForceLongPolling: true,
+});
+
+// Function to load user visits
+const loadUserVisits = async (userId) => {
+  try {
+    const userVisitsRef = collection(db, 'users', userId, 'plannedVisits');
+    const snapshot = await getDocs(userVisitsRef);
+    return snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+  } catch (error) {
+    console.error('Error loading visits:', error);
+    return [];
+  }
+};
+
+export { auth, db, loadUserVisits };

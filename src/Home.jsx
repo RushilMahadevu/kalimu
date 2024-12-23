@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { Book, Brain, Target } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './Home.module.css';
+import { useAuth } from './auth/AuthContext';
 
 const Home = () => {
   const navigate = useNavigate();
+  const { user, signInWithGoogle } = useAuth();
   const [activeFeature, setActiveFeature] = useState(null);
 
   const features = [
@@ -56,6 +58,23 @@ const Home = () => {
     }
   };
 
+  const handleStartPlanning = async () => {
+    if (!user) {
+      try {
+        await signInWithGoogle();
+        // After successful sign-in, navigate to college selection
+        navigate('/learning');
+      } catch (error) {
+        console.error('Sign in failed:', error);
+        // Add user feedback for failed sign-in
+        alert('Failed to sign in. Please try again.');
+      }
+    } else {
+      // If user is already signed in, navigate directly
+      navigate('/learning');
+    }
+  };
+
   return (
     <div className={styles.homeContainer}>
       <motion.header 
@@ -83,14 +102,14 @@ const Home = () => {
           </motion.p>
           <motion.button
             className={styles.ctaButton}
-            onClick={() => navigate('/learning')}
+            onClick={handleStartPlanning}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.4 }}
           >
-            Start Planning
+            {user ? 'Start Planning' : 'Sign in to Start'}
           </motion.button>
         </div>
       </motion.header>

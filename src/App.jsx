@@ -6,9 +6,11 @@ import CollegeMatcher from './CollegeSelection/CollegeMatcher/CollegeMatcher';
 import AdmissionTips from './CollegeSelection/AdmissionTips/AdmissionTips';
 import ScholarshipFinder from './CollegeSelection/ScholarshipFinder/ScholarshipFinder';
 import CommonAppHelper from './CollegeSelection/CommonAppHelper/CommonAppHelper';
+import CollegeVisitPlanner from './CollegeSelection/CollegeVisitPlanner/CollegeVisitPlanner';
 import AcademicPlanning from './AcademicPlanning/AcademicPlanning';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
+import { AuthProvider } from './auth/AuthContext';
 
 const PageWrapper = ({ children }) => {
   const pageVariants = {
@@ -79,6 +81,7 @@ function AnimatedRoutes() {
               <Route path="admission-tips" element={<AdmissionTips />} />
               <Route path="scholarship-finder" element={< ScholarshipFinder />} />
               <Route path="common-app-helper" element={< CommonAppHelper />} />
+              <Route path="college-visit-planner" element={< CollegeVisitPlanner />} />
             </Routes>
           </PageWrapper>
         } />
@@ -97,9 +100,11 @@ function AnimatedRoutes() {
 function App() {
   return (
     <Router>
-      <div style={{ position: 'relative' }}>
-        <AnimatedRoutes />
-      </div>
+      <AuthProvider>
+        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+          <AnimatedRoutes />
+        </div>
+      </AuthProvider>
     </Router>
   );
 }
