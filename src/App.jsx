@@ -1,13 +1,21 @@
 import React from 'react';
 import Home from './Home';
+
+// Learning Dashboard
 import LearningDashboard from './LearningDashboard/LearningDashboard';
+
+// College Selection
 import CollegeSelection from './CollegeSelection/CollegeSelection';
 import CollegeMatcher from './CollegeSelection/CollegeMatcher/CollegeMatcher';
 import AdmissionTips from './CollegeSelection/AdmissionTips/AdmissionTips';
 import ScholarshipFinder from './CollegeSelection/ScholarshipFinder/ScholarshipFinder';
 import CommonAppHelper from './CollegeSelection/CommonAppHelper/CommonAppHelper';
 import CollegeVisitPlanner from './CollegeSelection/CollegeVisitPlanner/CollegeVisitPlanner';
+
+// Academic Planning
 import AcademicPlanning from './AcademicPlanning/AcademicPlanning';
+
+// Alt imports
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AuthProvider } from './auth/AuthContext';

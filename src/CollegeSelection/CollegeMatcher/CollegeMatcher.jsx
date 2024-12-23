@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import "./CollegeMatcher.css";
 
