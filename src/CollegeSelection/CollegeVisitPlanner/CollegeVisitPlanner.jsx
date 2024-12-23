@@ -152,7 +152,7 @@ const CollegeVisitPlanner = () => {
         <div className={styles.visitsTimeline}>
           <h2>
             <Calendar className={styles.timelineIcon} />
-            Planned Visits
+            Planned Visits  
           </h2>
           {plannedVisits.length === 0 ? (
             <p className={styles.noVisits}>No visits planned yet</p>
@@ -162,7 +162,9 @@ const CollegeVisitPlanner = () => {
                 <div key={visit.id} className={styles.timelineItem}>
                   <div className={styles.timelineDate}>
                     <MapPin className={styles.dateIcon} />
-                    {new Date(visit.date).toLocaleDateString()}
+                    {new Date(visit.date).toLocaleDateString(undefined, {
+                      timeZone: 'UTC'
+                    })}
                   </div>
                   <div className={styles.timelineContent}>
                     <h3>{visit.college}</h3>

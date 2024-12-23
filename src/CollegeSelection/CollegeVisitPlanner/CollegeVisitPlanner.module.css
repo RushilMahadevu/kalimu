@@ -30,12 +30,11 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 3rem;
-  padding-bottom: 1rem;
+  padding-bottom: 1.5rem;
   border-bottom: 1px solid rgba(138, 43, 226, 0.2);
 }
 
 .header h1 {
-  font-family: "Inter", sans-serif;
   font-size: 2.5rem;
   font-weight: 600;
   color: var(--text-color);
@@ -46,15 +45,18 @@
   background-color: var(--accent-color);
   color: white;
   padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+  border-radius: 10px;
   text-decoration: none;
-  font-weight: 500;
-  transition: all 0.3s ease;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.4s ease;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2), 0 0 25px rgba(138, 43, 226, 0.3);
+  letter-spacing: 0.5px;
 }
 
 .backButton:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(138, 43, 226, 0.3);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.3), 0 0 35px rgba(138, 43, 226, 0.4);
 }
 
 .content {
@@ -65,66 +67,88 @@
   gap: 3rem;
   max-width: 1400px;
   margin: 0 auto;
-  font-family: "Inter", sans-serif;
 }
 
 .planForm {
   background: rgba(106, 90, 205, 0.1);
-  padding: 2rem;
+  backdrop-filter: blur(10px);
+  padding: 2.5rem;
   border-radius: 16px;
   border: 1px solid rgba(138, 43, 226, 0.2);
-  font-family: "Inter", sans-serif;
+  transition: all 0.4s ease;
+}
+
+.planForm:hover {
+  background: rgba(106, 90, 205, 0.15);
+  box-shadow: 
+    0 15px 35px rgba(31, 38, 135, 0.2),
+    0 0 20px rgba(138, 43, 226, 0.3);
 }
 
 .inputGroup {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.8rem;
 }
 
 .inputGroup label {
-  font-family: "Inter", sans-serif;
   display: block;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
   font-weight: 500;
   color: var(--text-color);
+  text-shadow: 0 0 8px rgba(138, 43, 226, 0.3);
 }
 
 .inputGroup input {
-  font-family: "Inter", sans-serif;
   width: 100%;
   padding: 0.75rem;
-  border-radius: 8px;
+  border-radius: 10px;
   border: 1px solid rgba(138, 43, 226, 0.3);
   background: rgba(106, 90, 205, 0.1);
   color: var(--text-color);
   font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.inputGroup input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 15px rgba(138, 43, 226, 0.4);
+  background: rgba(106, 90, 205, 0.2);
 }
 
 .interestsSection {
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .interestTags {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
+  gap: 0.8rem;
+  margin-top: 1rem;
 }
 
 .interestTag {
-  font-family: "Inter", sans-serif;
-  padding: 0.5rem 1rem;
+  padding: 0.6rem 1.2rem;
   border-radius: 20px;
   border: 1px solid rgba(138, 43, 226, 0.3);
   background: transparent;
   color: var(--text-color);
   cursor: pointer;
   transition: all 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.interestTag:hover {
+  background: rgba(138, 43, 226, 0.1);
+  border-color: var(--accent-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(138, 43, 226, 0.2);
 }
 
 .interestTag.selected {
   background: var(--accent-color);
   color: white;
   border-color: transparent;
+  box-shadow: 0 4px 12px rgba(138, 43, 226, 0.3);
 }
 
 .submitButton {
@@ -133,15 +157,17 @@
   background: var(--accent-color);
   color: white;
   border: none;
-  border-radius: 8px;
-  font-weight: 500;
+  border-radius: 10px;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.4s ease;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2), 0 0 25px rgba(138, 43, 226, 0.3);
+  margin-top: 1rem;
 }
 
 .submitButton:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(138, 43, 226, 0.3);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.3), 0 0 35px rgba(138, 43, 226, 0.4);
 }
 
 .visitsTimeline {
@@ -151,28 +177,63 @@
 .visitsTimeline h2 {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.8rem;
   margin-bottom: 2rem;
   font-size: 1.8rem;
   color: var(--text-color);
-}
-
-.timelineIcon {
-  color: var(--accent-color);
+  text-shadow: 0 0 12px rgba(138, 43, 226, 0.4);
 }
 
 .timelineItems {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.8rem;
 }
 
 .timelineItem {
   background: rgba(106, 90, 205, 0.1);
-  border-radius: 12px;
-  padding: 1.5rem;
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 2rem;
   border: 1px solid rgba(138, 43, 226, 0.2);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: relative;
+  overflow: hidden;
+}
+
+.timelineItem::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 16px;
+  padding: 2px;
+  background: linear-gradient(
+    45deg,
+    rgba(106, 90, 205, 0.5),
+    rgba(138, 43, 226, 0.5)
+  );
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.timelineItem:hover {
+  transform: translateY(-5px);
+  background: rgba(106, 90, 205, 0.15);
+  box-shadow: 
+    0 15px 35px rgba(31, 38, 135, 0.2),
+    0 0 20px rgba(138, 43, 226, 0.3);
+}
+
+.timelineItem:hover::before {
+  opacity: 1;
+  animation: border-glow 3s linear infinite;
 }
 
 .timelineDate {
@@ -187,6 +248,7 @@
 .dateIcon {
   width: 18px;
   height: 18px;
+  color: white;
 }
 
 .timelineContent h3 {
