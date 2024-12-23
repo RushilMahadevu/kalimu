@@ -167,20 +167,17 @@ const CollegeVisitPlanner = () => {
                     })}
                   </div>
                   <div className={styles.timelineContent}>
-                    <h3>{visit.college}</h3>
-                    <div className={styles.visitInterests}>
-                      {visit.interests.map((interest) => (
-                        <span key={interest} className={styles.interestBadge}>
-                          {interest}
-                        </span>
-                      ))}
+                    <div className={styles.plannedVisitCard}>
+                      <h3>{visit.college}</h3>
+                      <p>Date: {new Date(visit.date).toLocaleDateString()}</p>
+                      <p>Interests: {visit.interests.join(', ')}</p>
+                      <button 
+                        onClick={() => removeVisit(visit.id)}
+                        className={styles.removeButton}
+                      >
+                        Remove Visit
+                      </button>
                     </div>
-                    <button
-                      className={styles.removeButton}
-                      onClick={() => removeVisit(visit.id)}
-                    >
-                      Remove Visit
-                    </button>
                   </div>
                 </div>
               ))}
