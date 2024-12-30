@@ -63,28 +63,28 @@
 
 .navigationButtons {
   position: absolute;
-  top: 50%;
-  right: 2rem;
+  top: 25%;
+  right: 3rem;
   transform: translateY(-50%);
 }
 
 .backButton {
+  display: inline-block;
   background-color: var(--accent-color);
   color: white;
-  border: none;
-  padding: 12px 25px;
-  font-size: 1rem;
+  padding: 0.75rem 1.5rem;
   border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.4s ease;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.2), 0 0 30px rgba(138, 43, 226, 0.4);
   text-decoration: none;
-  display: inline-block;
-  letter-spacing: 0.5px; 
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.4s ease;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2), 0 0 25px rgba(138, 43, 226, 0.3);
+  letter-spacing: 0.5px;
 }
 
 .backButton:hover {
-  box-shadow: 0 15px 25px rgba(0,0,0,0.3), 0 0 40px rgba(138, 43, 226, 0.6);
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.3), 0 0 35px rgba(138, 43, 226, 0.4);
 }
 
 .resourcesSection {
