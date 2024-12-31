@@ -1,4 +1,4 @@
-# Kalimu
+# Kalimu (in production)
 
 <img src="https://cdn-icons-png.flaticon.com/512/7329/7329446.png" alt="Notepad Icon" width="100"/>
 
