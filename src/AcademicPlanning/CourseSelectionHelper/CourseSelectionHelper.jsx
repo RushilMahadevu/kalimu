@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import "./CourseSelectionHelper.module.css";
+import "./CourseSelectionHelper.css";
 
 const CourseSelectionHelper = () => {
   const genAI = new GoogleGenerativeAI(
