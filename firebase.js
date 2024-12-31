@@ -35,16 +35,22 @@ const loadUserVisits = async (userId) => {
 };
 
 const loadGPAHistory = async (userId) => {
+  if (!userId || !auth.currentUser) {
+    console.error('No user ID provided or user not authenticated');
+    return [];
+  }
+  
   try {
     const userGPARef = collection(db, 'users', userId, 'gpaHistory');
     const snapshot = await getDocs(userGPARef);
-    return snapshot.docs.map(doc => ({
+    const history = snapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
     }));
+    return history.sort((a, b) => b.timestamp - a.timestamp);
   } catch (error) {
     console.error('Error loading GPA history:', error);
-    return [];
+    return []; // Return empty array instead of throwing
   }
 };
 

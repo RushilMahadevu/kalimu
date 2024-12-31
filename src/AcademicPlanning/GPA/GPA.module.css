@@ -173,7 +173,7 @@
 }
 
 .gpaDate {
-  color: var(--text-color);
+  color: white;
   opacity: 0.8;
 }
 
@@ -186,6 +186,7 @@
   padding: 0.5rem;
   background: rgba(138, 43, 226, 0.1);
   border-radius: 6px;
+  color: white;
 }
 
 .noHistory {

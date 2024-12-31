@@ -20,18 +20,19 @@ const GPA = () => {
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
-      if (user) {
-        try {
+      setIsLoading(true);
+      setError(null);
+      try {
+        if (user) {
           const history = await loadGPAHistory(user.uid);
           setGpaHistory(history);
-        } catch (error) {
-          console.error('Error loading GPA history:', error);
-          setError('Failed to load GPA history');
-        } finally {
-          setIsLoading(false);
+        } else {
+          setGpaHistory([]);
         }
-      } else {
-        setGpaHistory([]);
+      } catch (error) {
+        console.error('Error loading GPA history:', error);
+        setError('Failed to load GPA history. Please try again.');
+      } finally {
         setIsLoading(false);
       }
     });
@@ -64,21 +65,32 @@ const GPA = () => {
       return;
     }
 
+    // Validate course data
+    const validCourses = courses.every(course => 
+      course.name.trim() && 
+      course.grade && 
+      course.credits && 
+      !isNaN(parseFloat(course.credits))
+    );
+
+    if (!validCourses) {
+      setError('Please fill in all course information correctly');
+      return;
+    }
+
+    let totalPoints = 0;
+    let totalCredits = 0;
+
+    courses.forEach(course => {
+      const credits = parseFloat(course.credits);
+      totalPoints += gradePoints[course.grade] * credits;
+      totalCredits += credits;
+    });
+
+    const gpa = totalCredits > 0 ? (totalPoints / totalCredits).toFixed(2) : '0.00';
+    setCurrentGPA(gpa);
+
     try {
-      let totalPoints = 0;
-      let totalCredits = 0;
-
-      courses.forEach(course => {
-        if (course.grade && course.credits) {
-          const credits = parseFloat(course.credits);
-          totalPoints += gradePoints[course.grade] * credits;
-          totalCredits += credits;
-        }
-      });
-
-      const gpa = totalCredits > 0 ? (totalPoints / totalCredits).toFixed(2) : '0.00';
-      setCurrentGPA(gpa);
-
       const gpaData = {
         gpa: parseFloat(gpa),
         courses: courses.map(course => ({
@@ -92,10 +104,10 @@ const GPA = () => {
 
       const userGPARef = collection(db, 'users', auth.currentUser.uid, 'gpaHistory');
       const docRef = await addDoc(userGPARef, gpaData);
-      setGpaHistory([{ ...gpaData, id: docRef.id }, ...gpaHistory]);
       
-      // Reset form
+      setGpaHistory(prev => [{...gpaData, id: docRef.id}, ...prev]);
       setCourses([{ name: '', grade: '', credits: '' }]);
+      setError(null); // Clear any previous errors
     } catch (error) {
       console.error('Error saving GPA:', error);
       setError('Failed to save GPA calculation. Please try again.');
@@ -103,12 +115,16 @@ const GPA = () => {
   };
 
   const deleteGPARecord = async (id) => {
-    if (!auth.currentUser) return;
+    if (!auth.currentUser) {
+      setError('Please sign in to delete GPA records');
+      return;
+    }
 
     try {
       const gpaRef = doc(db, 'users', auth.currentUser.uid, 'gpaHistory', id);
       await deleteDoc(gpaRef);
-      setGpaHistory(gpaHistory.filter(record => record.id !== id));
+      setGpaHistory(prev => prev.filter(record => record.id !== id));
+      setError(null); // Clear any previous errors
     } catch (error) {
       console.error('Error removing GPA record:', error);
       setError('Failed to delete GPA record. Please try again.');
