@@ -23,7 +23,7 @@ const AcademicPlanning = () => {
             id: 2, 
             title: 'GPA Calculator & Tracker', 
             icon: <Calculator size={48} />,
-            path: '/academic-planning/gpa-calculator'
+            path: '/academic-planning/gpa'
         },
         { 
             id: 3, 

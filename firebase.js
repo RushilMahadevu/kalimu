@@ -34,4 +34,18 @@ const loadUserVisits = async (userId) => {
   }
 };
 
-export { auth, db, loadUserVisits };
+const loadGPAHistory = async (userId) => {
+  try {
+    const userGPARef = collection(db, 'users', userId, 'gpaHistory');
+    const snapshot = await getDocs(userGPARef);
+    return snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+  } catch (error) {
+    console.error('Error loading GPA history:', error);
+    return [];
+  }
+};
+
+export { auth, db, loadUserVisits, loadGPAHistory };

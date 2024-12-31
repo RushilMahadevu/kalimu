@@ -15,6 +15,7 @@ import CollegeVisitPlanner from './CollegeSelection/CollegeVisitPlanner/CollegeV
 // Academic Planning
 import AcademicPlanning from './AcademicPlanning/AcademicPlanning';
 import CourseSelectionHelper from './AcademicPlanning/CourseSelectionHelper/CourseSelectionHelper';
+import GPA from './AcademicPlanning/GPA/GPA';
 
 // Alt imports
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
@@ -99,6 +100,7 @@ function AnimatedRoutes() {
             <Routes>
               <Route path="" element={<AcademicPlanning />} />
               <Route path="course-selection" element={<CourseSelectionHelper />} />
+              <Route path="gpa" element={<GPA />} />
             </Routes>
           </PageWrapper>
         } />
