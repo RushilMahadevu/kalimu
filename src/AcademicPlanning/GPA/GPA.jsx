@@ -14,6 +14,7 @@ const GPA = () => {
   const [currentGPA, setCurrentGPA] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [chartData, setChartData] = useState(null);
 
   const gradePoints = {
     'A+': 4.0, 'A': 4.0, 'A-': 3.7,
@@ -30,6 +31,7 @@ const GPA = () => {
         if (user) {
           const history = await loadGPAHistory(user.uid);
           setGpaHistory(history);
+          calculateOverallGPA(history);
         } else {
           setGpaHistory([]);
         }
@@ -109,7 +111,9 @@ const GPA = () => {
       const userGPARef = collection(db, 'users', auth.currentUser.uid, 'gpaHistory');
       const docRef = await addDoc(userGPARef, gpaData);
       
-      setGpaHistory(prev => [{...gpaData, id: docRef.id}, ...prev]);
+      const updatedHistory = [{...gpaData, id: docRef.id}, ...gpaHistory];
+      setGpaHistory(updatedHistory);
+      calculateOverallGPA(updatedHistory);
       setCourses([{ name: '', grade: '', credits: '' }]);
       setError(null); // Clear any previous errors
     } catch (error) {
@@ -127,7 +131,9 @@ const GPA = () => {
     try {
       const gpaRef = doc(db, 'users', auth.currentUser.uid, 'gpaHistory', id);
       await deleteDoc(gpaRef);
-      setGpaHistory(prev => prev.filter(record => record.id !== id));
+      const updatedHistory = gpaHistory.filter(record => record.id !== id);
+      setGpaHistory(updatedHistory);
+      calculateOverallGPA(updatedHistory);
       setError(null); // Clear any previous errors
     } catch (error) {
       console.error('Error removing GPA record:', error);
@@ -135,10 +141,25 @@ const GPA = () => {
     }
   };
 
-  const getPieChartData = () => {
-    const gpaValue = parseFloat(currentGPA);
+  const calculateOverallGPA = (history) => {
+    let totalPoints = 0;
+    let totalCredits = 0;
+
+    history.forEach(record => {
+      record.courses.forEach(course => {
+        const credits = parseFloat(course.credits);
+        totalPoints += gradePoints[course.grade] * credits;
+        totalCredits += credits;
+      });
+    });
+
+    const overallGPA = totalCredits > 0 ? (totalPoints / totalCredits).toFixed(2) : '0.00';
+    setCurrentGPA(overallGPA);
+
+    const gpaValue = parseFloat(overallGPA);
     const maxGPA = 4.0;
-    return {
+
+    setChartData({
       labels: ['Current GPA', 'Remaining'],
       datasets: [
         {
@@ -147,7 +168,7 @@ const GPA = () => {
           hoverBackgroundColor: ['#7B1FA2', '#B0B0B0'],
         },
       ],
-    };
+    });
   };
 
   return (
@@ -219,10 +240,10 @@ const GPA = () => {
         </div>
       </form>
 
-      {currentGPA && (
+      {currentGPA && chartData && (
         <div className={styles.currentGPA}>
-          <h2>Current GPA: {currentGPA}</h2>
-          <Pie data={getPieChartData()} />
+          <h2>Overall GPA: {currentGPA}</h2>
+          <Pie data={chartData} />
         </div>
       )}
 
