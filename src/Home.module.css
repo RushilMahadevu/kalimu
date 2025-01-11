@@ -81,8 +81,8 @@ html, body {
   margin-bottom: 1rem;
   font-weight: 600;
   color: var(--text-color);
-  text-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
 }
+
 
 .heroSubtitle {
   font-size: 1.5rem;

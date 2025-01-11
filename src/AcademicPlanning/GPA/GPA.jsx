@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { auth, db, loadGPAHistory } from '../../../firebase.js';
 import { collection, addDoc, deleteDoc, doc } from 'firebase/firestore';
+import { Pie } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import styles from './GPA.module.css';
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 const GPA = () => {
   const [courses, setCourses] = useState([{ name: '', grade: '', credits: '' }]);
@@ -131,6 +135,21 @@ const GPA = () => {
     }
   };
 
+  const getPieChartData = () => {
+    const gpaValue = parseFloat(currentGPA);
+    const maxGPA = 4.0;
+    return {
+      labels: ['Current GPA', 'Remaining'],
+      datasets: [
+        {
+          data: [gpaValue, maxGPA - gpaValue],
+          backgroundColor: ['#8A2BE2', '#D3D3D3'],
+          hoverBackgroundColor: ['#7B1FA2', '#B0B0B0'],
+        },
+      ],
+    };
+  };
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
@@ -203,6 +222,7 @@ const GPA = () => {
       {currentGPA && (
         <div className={styles.currentGPA}>
           <h2>Current GPA: {currentGPA}</h2>
+          <Pie data={getPieChartData()} />
         </div>
       )}
 

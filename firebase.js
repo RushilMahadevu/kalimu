@@ -19,6 +19,23 @@ const db = initializeFirestore(app, {
   experimentalForceLongPolling: true,
 });
 
+
+const handleAuthError = (error) => {
+  if (error.code === 'auth/popup-closed-by-user') {
+    return {
+      error: true,
+      message: 'Sign-in cancelled. Please try again if you want to sign in.'
+    };
+  }
+  return {
+    error: true,
+    message: 'An error occurred during sign-in. Please try again.'
+  };
+};
+
+export { auth, db, loadUserVisits, loadGPAHistory, handleAuthError };
+
+
 // Function to load user visits
 const loadUserVisits = async (userId) => {
   try {
@@ -53,5 +70,3 @@ const loadGPAHistory = async (userId) => {
     return []; // Return empty array instead of throwing
   }
 };
-
-export { auth, db, loadUserVisits, loadGPAHistory };
