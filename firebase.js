@@ -1,15 +1,25 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { initializeFirestore, collection, getDocs } from 'firebase/firestore';
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import {
+  initializeFirestore,
+  collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+  query,
+  orderBy,
+} from "firebase/firestore"; // Ensure addDoc is imported here
 
 const firebaseConfig = {
-  apiKey: process.env.VITE_FIREBASE_API_KEY,
-  authDomain: `${process.env.VITE_FIREBASE_AUTH_DOMAIN}.firebaseapp.com`,
-  projectId: process.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.VITE_FIREBASE_APP_ID,
-  measurementId: process.env.VITE_FIREBASE_MEASUREMENT_ID
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: `${import.meta.env.VITE_FIREBASE_AUTH_DOMAIN}.firebaseapp.com`,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 // Initialize Firebase
@@ -19,54 +29,157 @@ const db = initializeFirestore(app, {
   experimentalForceLongPolling: true,
 });
 
-
 const handleAuthError = (error) => {
-  if (error.code === 'auth/popup-closed-by-user') {
+  if (error.code === "auth/popup-closed-by-user") {
     return {
       error: true,
-      message: 'Sign-in cancelled. Please try again if you want to sign in.'
+      message: "Sign-in cancelled. Please try again if you want to sign in.",
     };
   }
   return {
     error: true,
-    message: 'An error occurred during sign-in. Please try again.'
+    message: "An error occurred during sign-in. Please try again.",
   };
 };
 
-export { auth, db, loadUserVisits, loadGPAHistory, handleAuthError };
-
-
-// Function to load user visits
 const loadUserVisits = async (userId) => {
   try {
-    const userVisitsRef = collection(db, 'users', userId, 'plannedVisits');
+    const userVisitsRef = collection(db, "users", userId, "plannedVisits");
     const snapshot = await getDocs(userVisitsRef);
-    return snapshot.docs.map(doc => ({
+    return snapshot.docs.map((doc) => ({
       id: doc.id,
-      ...doc.data()
+      ...doc.data(),
     }));
   } catch (error) {
-    console.error('Error loading visits:', error);
+    console.error("Error loading visits:", error);
     return [];
   }
 };
 
 const loadGPAHistory = async (userId) => {
   if (!userId || !auth.currentUser) {
-    console.error('No user ID provided or user not authenticated');
+    console.error("No user ID provided or user not authenticated");
     return [];
   }
-  
+
   try {
-    const userGPARef = collection(db, 'users', userId, 'gpaHistory');
+    const userGPARef = collection(db, "users", userId, "gpaHistory");
     const snapshot = await getDocs(userGPARef);
-    const history = snapshot.docs.map(doc => ({
+    const history = snapshot.docs.map((doc) => ({
       id: doc.id,
-      ...doc.data()
+      ...doc.data(),
     }));
     return history.sort((a, b) => b.timestamp - a.timestamp);
   } catch (error) {
-    console.error('Error loading GPA history:', error);
+    console.error("Error loading GPA history:", error);
     return []; // Return empty array instead of throwing
   }
+};
+
+const loadStudyScheduleHistory = async (userId) => {
+  if (!userId || !auth.currentUser) {
+    console.error("No user ID provided or user not authenticated");
+    return [];
+  }
+
+  try {
+    const userScheduleRef = collection(db, "users", userId, "studyScheduleHistory");
+    const snapshot = await getDocs(userScheduleRef);
+    const history = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    return history.sort((a, b) => b.timestamp - a.timestamp);
+  } catch (error) {
+    console.error("Error loading study schedule history:", error);
+    return []; // Return empty array instead of throwing
+  }
+};
+
+const loadHomeworkTasks = async () => {
+  if (!auth.currentUser) {
+    throw new Error("Please sign in to view tasks");
+  }
+
+  try {
+    const tasksRef = collection(db, "users", auth.currentUser.uid, "homework");
+    const q = query(tasksRef, orderBy("dueDate", "asc")); // Order by dueDate
+    const snapshot = await getDocs(q); // Execute the query
+
+    const loadedTasks = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    return loadedTasks; // Return the tasks to be handled by the calling component
+  } catch (error) {
+    console.error("Error loading homework tasks:", error);
+    throw new Error("Failed to load homework tasks");
+  }
+};
+
+// Adding homework task
+const addHomeworkTask = async (taskData) => {
+  if (!auth.currentUser) {
+    throw new Error("Please sign in to add tasks");
+  }
+
+  try {
+    const task = {
+      ...taskData,
+      createdAt: new Date().toISOString(),
+      userId: auth.currentUser.uid,
+    };
+
+    const tasksRef = collection(db, "users", auth.currentUser.uid, "homework");
+    await addDoc(tasksRef, task); // Using addDoc correctly
+    return task; // Return the newly created task
+  } catch (error) {
+    console.error("Error adding homework task:", error);
+    throw new Error("Failed to add homework task");
+  }
+};
+
+// Updating homework task status
+const updateHomeworkTaskStatus = async (taskId, status) => {
+  if (!auth.currentUser) {
+    throw new Error("Please sign in to update tasks");
+  }
+
+  try {
+    const taskRef = doc(db, "users", auth.currentUser.uid, "homework", taskId);
+    await updateDoc(taskRef, { status });
+    return { id: taskId, status };
+  } catch (error) {
+    console.error("Error updating homework task status:", error);
+    throw new Error("Failed to update task status");
+  }
+};
+
+// Deleting homework task
+const deleteHomeworkTask = async (taskId) => {
+  if (!auth.currentUser) {
+    throw new Error("Please sign in to delete tasks");
+  }
+
+  try {
+    const taskRef = doc(db, "users", auth.currentUser.uid, "homework", taskId);
+    await deleteDoc(taskRef);
+    return taskId;
+  } catch (error) {
+    console.error("Error deleting homework task:", error);
+    throw new Error("Failed to delete task");
+  }
+};
+
+export {
+  auth,
+  db,
+  loadUserVisits,
+  loadGPAHistory,
+  loadStudyScheduleHistory,
+  handleAuthError,
+  loadHomeworkTasks,
+  addHomeworkTask,
+  updateHomeworkTaskStatus,
+  deleteHomeworkTask,
 };

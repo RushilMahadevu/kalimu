@@ -29,7 +29,7 @@ const AcademicPlanning = () => {
             id: 3, 
             title: 'Study Schedule Optimizer', 
             icon: <Calendar size={48} />,
-            path: '/academic-planning/schedule-optimizer'
+            path: '/academic-planning/study-schedule'
         },
         {
             id: 4,

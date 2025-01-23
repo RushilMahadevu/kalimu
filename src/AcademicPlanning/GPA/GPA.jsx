@@ -37,7 +37,11 @@ const GPA = () => {
         }
       } catch (error) {
         console.error('Error loading GPA history:', error);
-        setError('Failed to load GPA history. Please try again.');
+        if (error.code === 'permission-denied') {
+          setError('You do not have permission to access the GPA history.');
+        } else {
+          setError('Failed to load GPA history. Please try again.');
+        }
       } finally {
         setIsLoading(false);
       }

@@ -1,0 +1,206 @@
+.container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: "Inter", sans-serif;
+  position: relative;
+  min-height: 100vh;
+}
+
+.header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(138, 43, 226, 0.2);
+}
+
+.header h1 {
+  margin-bottom: 0;
+}
+
+.backButton {
+  background-color: var(--accent-color);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.4s ease;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2), 0 0 25px rgba(138, 43, 226, 0.3);
+}
+
+.backButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.3), 0 0 35px rgba(138, 43, 226, 0.4);
+}
+
+.scheduleForm {
+  background: rgba(106, 90, 205, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 2rem;
+  border-radius: 16px;
+  border: 1px solid rgba(138, 43, 226, 0.2);
+  margin-bottom: 2rem;
+}
+
+.taskRow {
+  display: grid;
+  grid-template-columns: 2fr 1fr auto;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  align-items: center;
+}
+
+.taskInput,
+.timeInput {
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid rgba(138, 43, 226, 0.3);
+  background: rgba(106, 90, 205, 0.1);
+  color: var(--text-color);
+  font-size: 1rem;
+}
+
+.taskInput:focus,
+.timeInput:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 15px rgba(138, 43, 226, 0.4);
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.addButton,
+.saveButton,
+.removeButton,
+.deleteButton {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.addButton {
+  background: rgba(138, 43, 226, 0.2);
+  color: var(--text-color);
+}
+
+.saveButton {
+  background: var(--accent-color);
+  color: white;
+  flex-grow: 1;
+}
+
+.removeButton,
+.deleteButton {
+  background: #ff4444;
+  color: white;
+}
+
+.addButton:hover,
+.saveButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(138, 43, 226, 0.3);
+}
+
+.scheduleHistory {
+  margin-top: 3rem;
+}
+
+.scheduleHistory h2 {
+  color: var(--text-color);
+  margin-bottom: 1.5rem;
+}
+
+.historyList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.historyItem {
+  background: rgba(106, 90, 205, 0.1);
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid rgba(138, 43, 226, 0.2);
+}
+
+.historyHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.taskValue {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--accent-color);
+}
+
+.taskDate {
+  color: white;
+  opacity: 0.8;
+}
+
+.taskList {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.historyTask {
+  padding: 0.5rem;
+  background: rgba(138, 43, 226, 0.1);
+  border-radius: 6px;
+  color: white;
+}
+
+.noHistory {
+  text-align: center;
+  color: var(--text-color);
+  opacity: 0.6;
+  font-style: italic;
+}
+
+.error {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  border: 1px solid #ef9a9a;
+}
+
+.loading {
+  text-align: center;
+  color: var(--text-color);
+  opacity: 0.6;
+  padding: 1rem;
+}
+
+@media (max-width: 768px) {
+  .taskRow {
+    grid-template-columns: 1fr;
+  }
+  
+  .buttonGroup {
+    flex-direction: column;
+  }
+
+  .header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+}
