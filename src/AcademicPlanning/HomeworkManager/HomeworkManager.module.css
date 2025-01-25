@@ -47,11 +47,8 @@
 }
 
 .title {
-  color: var(--accent-color);
   font-size: 2rem;
   font-weight: 700;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   text-shadow: 0 0 30px rgba(192, 132, 252, 0.2);
 }
 

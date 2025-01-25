@@ -42,7 +42,6 @@ const HomeworkManager = () => {
 
   const loadTasks = async () => {
     if (!auth.currentUser) {
-      setError("Please sign in to view your tasks");
       setIsLoading(false);
       return;
     }
@@ -120,16 +119,22 @@ const HomeworkManager = () => {
     setIsGeneratingOverview(true);
     try {
       const prompt = `
-        As a homework analysis expert, analyze these assignments and provide a concise overview:
-        ${JSON.stringify(tasks)}
+        As a homework analysis expert, analyze these assignments and provide insights.
+        Tasks: ${JSON.stringify(tasks)}
 
-        Provide insights in this JSON format:
+        Return a JSON response with EXACTLY this structure:
         {
-          "summary": "Brief overview of workload",
-          "urgentTasks": "List of urgent tasks",
-          "timeManagement": "Time management suggestion",
-          "studyTips": "Specific study tip based on subjects"
+          "summary": "Brief overview analyzing total workload and upcoming deadlines",
+          "urgentTasks": "List the most urgent tasks based on due dates and priority",
+          "timeManagement": "Provide specific time management advice for these tasks",
+          "studyTips": "Give subject-specific study strategies based on the tasks"
         }
+
+        Requirements:
+        1. All fields must be detailed text strings
+        2. urgentTasks should list specific task names and deadlines
+        3. Include concrete study strategies for each subject
+        4. Keep responses focused and actionable
       `;
 
       const genAI = new GoogleGenerativeAI(process.env.VITE_REACT_APP_GEMINI_API_KEY);
@@ -138,14 +143,28 @@ const HomeworkManager = () => {
       const response = await result.response;
       const text = response.text();
 
-      // Parse JSON from response
-      const jsonMatch = text.match(/```json\n?([\s\S]*?)\n?```/) || [null, text];
-      const overview = JSON.parse(jsonMatch[1]);
+      let overview;
+      try {
+        // First try direct JSON parsing
+        overview = JSON.parse(text);
+      } catch (e) {
+        // If direct parsing fails, try extracting JSON from markdown
+        const jsonMatch = text.match(/```json\n?([\s\S]*?)\n?```/) || [null, text];
+        overview = JSON.parse(jsonMatch[1].trim());
+      }
+
+      // Validate that all required fields are present
+      const requiredFields = ['summary', 'urgentTasks', 'timeManagement', 'studyTips'];
+      const missingFields = requiredFields.filter(field => !overview[field]);
       
+      if (missingFields.length > 0) {
+        throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
+      }
+
       setAiOverview(overview);
     } catch (error) {
       console.error("Failed to generate overview:", error);
-      setError("Failed to generate AI overview");
+      setError("Failed to generate complete AI overview. Please try again.");
     } finally {
       setIsGeneratingOverview(false);
     }
