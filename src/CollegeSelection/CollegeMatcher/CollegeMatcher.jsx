@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import "./CollegeMatcher.css";
@@ -6,7 +6,7 @@ import "./CollegeMatcher.css";
 const CollegeMatcher = () => {
   // Initialize Gemini AI client
   const genAI = new GoogleGenerativeAI(
-    process.env.VITE_REACT_APP_GEMINI_API_KEY
+    import.meta.env.VITE_REACT_APP_GEMINI_API_KEY
   );
 
   // State for user preferences
@@ -68,7 +68,7 @@ const CollegeMatcher = () => {
       `;
 
       // Generate content using Gemini
-      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
       const result = await model.generateContent(prompt);
       const response = await result.response;
       const text = response.text();

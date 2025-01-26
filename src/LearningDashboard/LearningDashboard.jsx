@@ -1,6 +1,5 @@
-import React from "react";
 import { Link } from "react-router-dom";
-import { GraduationCap, Brain, BookMarked, Bolt, MapPin } from "lucide-react";
+import { GraduationCap, Brain, BookMarked, Bolt } from "lucide-react";
 import Xarrow from "react-xarrows";
 import styles from "./LearningDashboard.module.css";
 

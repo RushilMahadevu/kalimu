@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, MapPin, ClipboardCheck } from 'lucide-react';
+import { Calendar, MapPin } from 'lucide-react';
 import { auth, db, loadUserVisits } from '../../../firebase.js';
-import { collection, addDoc, query, where, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { collection, addDoc, deleteDoc, doc } from 'firebase/firestore';
 import styles from './CollegeVisitPlanner.module.css';
 
 const CollegeVisitPlanner = () => {

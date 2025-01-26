@@ -1,4 +1,4 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 import Home from './Home';
 
 // Learning Dashboard
@@ -66,6 +66,10 @@ const PageWrapper = ({ children }) => {
       {children}
     </motion.div>
   );
+};
+
+PageWrapper.propTypes = {
+  children: PropTypes.node.isRequired
 };
 
 // Animated Routes Component

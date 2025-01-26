@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import "./ScholarshipFinder.css";
 
 const ScholarshipFinder = () => {
   // Initialize Gemini AI client
   const genAI = new GoogleGenerativeAI(
-    process.env.VITE_REACT_APP_GEMINI_API_KEY
+    import.meta.env.VITE_REACT_APP_GEMINI_API_KEY
   );
 
   // State for user preferences
