@@ -12,23 +12,23 @@ Kalimu is an AI-powered educational platform designed to support high school stu
 
 ```mermaid
 graph TD
-    A[Kalimu] --> B[Academic Planning]
-    A --> C[College Preparation]
+    A[Kalimu] --> B[College Selection]
+    A --> C[Academic Planning]
     A --> D[Student Life]
     A --> E[Personal Development]
 
-    B --> B1[Course Selection Helper]
-    B --> B2[GPA Calculator & Tracker]
-    B --> B3[Study Schedule Optimizer]
-    B --> B4[Homework Manager]
-    B --> B5[Test Prep Assistant]
-    B --> B6[Academic Progress Tracker]
+    B --> B1[College Matcher]
+    B --> B2[Admission Tips]
+    B --> B3[Scholarship Finder]
+    B --> B4[Common App Helper]
+    B --> B5[College Visit Planner]
 
-    C --> C1[College Matcher]
-    C --> C2[Admission Tips]
-    C --> C3[Scholarship Finder]
-    C --> C4[Common App Helper]
-    C --> C5[College Visit Planner]
+    C --> C1[Course Selection Helper]
+    C --> C2[GPA Calculator & Tracker]
+    C --> C3[Study Schedule Optimizer]
+    C --> C4[Homework Manager]
+    C --> C5[Test Prep Assistant]
+    C --> C6[Academic Progress Tracker]
 
     D --> D1[Club & Activity Recommender]
     D --> D2[Sports Management]
@@ -49,7 +49,15 @@ graph TD
 
 ## Features
 
-### 📚 Academic Planning
+### `🎓 College Preparation`
+
+- **College Matcher:** Personalized college recommendations
+- **Admission Tips:** Strategic guidance for college applications
+- **Scholarship Finder:** Comprehensive scholarship database and matching
+- **Common App Helper:** Step-by-step application assistance
+- **College Visit Planner:** Campus visit organization tools
+
+### `📚 Academic Planning`
 
 - **Course Selection Helper:** Smart course recommendations based on interests and requirements
 - **GPA Calculator & Tracker:** Real-time GPA monitoring and forecasting
@@ -58,15 +66,7 @@ graph TD
 - **Test Prep Assistant:** Personalized test preparation support
 - **Academic Progress Tracker:** Graduation requirement monitoring
 
-### 🎓 College Preparation
-
-- **College Matcher:** Personalized college recommendations
-- **Admission Tips:** Strategic guidance for college applications
-- **Scholarship Finder:** Comprehensive scholarship database and matching
-- **Common App Helper:** Step-by-step application assistance
-- **College Visit Planner:** Campus visit organization tools
-
-### 🌟 Student Life
+### `🌟 Student Life`
 
 - **Club & Activity Recommender:** Personalized extracurricular suggestions
 - **Sports Management:** Athletic activity tracking
@@ -74,7 +74,7 @@ graph TD
 - **Leadership Development:** Leadership role identification
 - **Competition Tracker:** Academic competition management
 
-### 🚀 Personal Development
+### `🚀 Personal Development`
 
 - **Career Interest Explorer:** Early career guidance
 - **Summer Program Finder:** Enrichment opportunity matching
@@ -82,25 +82,42 @@ graph TD
 - **Mental Health Resources:** Wellness support and resources
 - **Time Management Coach:** Schedule optimization tools
 
-## Technical Stack
 
-- **AI Engine:** Google's Gemini API
-- **Core Capabilities:**
-  - Natural language processing for personalized interactions
-  - Machine learning for smart recommendations
-  - Real-time data processing for academic tracking
+## Tech Stack  
 
-## Getting Started
+### **AI Engine**
+- **Google’s Gemini API**  
+```javascript
+const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
+```  
 
-[Unfinished]
+### **Frontend**
+- **JavaScript**  
+  - React.js: Combines HTML and JavaScript using JSX (JavaScript XML).  
 
-## Contributing
-
-[Unfinished]
-
-## License
-
-[Unfinished]
+### **Backend**
+- **[Firebase](https://firebase.google.com/)**  
+  - Manages backend services and functionality.  
+  - Developed and maintained by Google.  
 
 ---
-Made with ❤️ for students
+
+## Getting Started  
+
+Coming soon...  
+
+---
+
+## Contributing  
+
+Coming soon...  
+
+---
+
+## License  
+
+Coming soon...  
+
+---
+
+**Made with ❤️ for students.**  
