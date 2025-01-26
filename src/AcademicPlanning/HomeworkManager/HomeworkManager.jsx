@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { auth } from "../../../firebase";
 import {
@@ -7,15 +7,7 @@ import {
   deleteHomeworkTask,
   updateHomeworkTaskStatus,
 } from "../../../firebase";
-import {
-  Calendar,
-  Clock,
-  Book,
-  CheckSquare,
-  Trash2,
-  Plus,
-  Edit3,
-} from "lucide-react";
+import { Clock, Book, CheckSquare, Trash2, Plus } from "lucide-react";
 import styles from "./HomeworkManager.module.css";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
@@ -115,7 +107,7 @@ const HomeworkManager = () => {
 
   const generateOverview = async () => {
     if (tasks.length === 0) return;
-    
+
     setIsGeneratingOverview(true);
     try {
       const prompt = `
@@ -129,36 +121,35 @@ const HomeworkManager = () => {
           "timeManagement": "Provide specific time management advice for these tasks",
           "studyTips": "Give subject-specific study strategies based on the tasks"
         }
-
         Requirements:
         1. All fields must be detailed text strings
         2. urgentTasks should list specific task names and deadlines
         3. Include concrete study strategies for each subject
-        4. Keep responses focused and actionable
+        4. Keep responses focused and actionable and concise
       `;
-
-      const genAI = new GoogleGenerativeAI(process.env.VITE_REACT_APP_GEMINI_API_KEY);
-      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+      const genAI = new GoogleGenerativeAI(
+        import.meta.env.VITE_REACT_APP_GEMINI_API_KEY
+      );
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
       const result = await model.generateContent(prompt);
       const response = await result.response;
       const text = response.text();
-
       let overview;
-      try {
-        // First try direct JSON parsing
-        overview = JSON.parse(text);
-      } catch (e) {
-        // If direct parsing fails, try extracting JSON from markdown
-        const jsonMatch = text.match(/```json\n?([\s\S]*?)\n?```/) || [null, text];
-        overview = JSON.parse(jsonMatch[1].trim());
-      }
+
+      const jsonMatch = text.match(/```json\n([\s\S]*)\n```/) || [null, text];
+      overview = jsonMatch[1] ? JSON.parse(jsonMatch[1]) : JSON.parse(text);
 
       // Validate that all required fields are present
-      const requiredFields = ['summary', 'urgentTasks', 'timeManagement', 'studyTips'];
-      const missingFields = requiredFields.filter(field => !overview[field]);
-      
+      const requiredFields = [
+        "summary",
+        "urgentTasks",
+        "timeManagement",
+        "studyTips",
+      ];
+      const missingFields = requiredFields.filter((field) => !overview[field]);
+
       if (missingFields.length > 0) {
-        throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
+        throw new Error(`Missing required fields: ${missingFields.join(", ")}`);
       }
 
       setAiOverview(overview);
@@ -176,9 +167,9 @@ const HomeworkManager = () => {
   });
 
   const safeRenderText = (text) => {
-    if (typeof text === 'string') return text;
-    if (typeof text === 'number') return text.toString();
-    return '';
+    if (typeof text === "string") return text;
+    if (typeof text === "number") return text.toString();
+    return "";
   };
 
   return (
@@ -217,20 +208,26 @@ const HomeworkManager = () => {
                     type="text"
                     placeholder="Subject"
                     value={newTask.subject}
-                    onChange={(e) => handleInputChange("subject", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("subject", e.target.value)
+                    }
                     className={styles["form-input"]}
                     required
                   />
                   <input
                     type="datetime-local"
                     value={newTask.dueDate}
-                    onChange={(e) => handleInputChange("dueDate", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("dueDate", e.target.value)
+                    }
                     className={styles["form-input"]}
                     required
                   />
                   <select
                     value={newTask.priority}
-                    onChange={(e) => handleInputChange("priority", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("priority", e.target.value)
+                    }
                     className={styles["form-select"]}
                   >
                     <option value="low">Low Priority</option>
@@ -278,10 +275,15 @@ const HomeworkManager = () => {
               <div className={styles["task-grid"]}>
                 {Array.isArray(filteredTasks) && filteredTasks.length > 0 ? (
                   filteredTasks.map((task) => (
-                    <div key={task.id || Math.random()} className={styles["task-card"]}>
+                    <div
+                      key={task.id || Math.random()}
+                      className={styles["task-card"]}
+                    >
                       <div className={styles["task-header"]}>
                         <div>
-                          <h3 className={styles["task-title"]}>{safeRenderText(task.title)}</h3>
+                          <h3 className={styles["task-title"]}>
+                            {safeRenderText(task.title)}
+                          </h3>
                           <div className={styles["task-meta"]}>
                             <div className={styles["task-meta-item"]}>
                               <Book size={16} />
@@ -290,7 +292,9 @@ const HomeworkManager = () => {
                             <div className={styles["task-meta-item"]}>
                               <Clock size={16} />
                               <span>
-                                {task.dueDate ? new Date(task.dueDate).toLocaleString() : 'No date set'}
+                                {task.dueDate
+                                  ? new Date(task.dueDate).toLocaleString()
+                                  : "No date set"}
                               </span>
                             </div>
                           </div>
@@ -300,7 +304,9 @@ const HomeworkManager = () => {
                             onClick={() =>
                               updateTaskStatus(
                                 task.id,
-                                task.status === "completed" ? "pending" : "completed"
+                                task.status === "completed"
+                                  ? "pending"
+                                  : "completed"
                               )
                             }
                             className={`${styles["task-button"]} ${
@@ -318,13 +324,23 @@ const HomeworkManager = () => {
                         </div>
                       </div>
                       {task.notes && (
-                        <p className={styles["task-notes"]}>{safeRenderText(task.notes)}</p>
+                        <p className={styles["task-notes"]}>
+                          {safeRenderText(task.notes)}
+                        </p>
                       )}
                       <div className={styles["priority-badge"]}>
-                        <span className={`${styles[`priority-${task.priority || 'medium'}`]}`}>
-                          {task.priority ? 
-                            `${task.priority.charAt(0).toUpperCase()}${task.priority.slice(1)} Priority` 
-                            : 'Medium Priority'}
+                        <span
+                          className={`${
+                            styles[`priority-${task.priority || "medium"}`]
+                          }`}
+                        >
+                          {task.priority
+                            ? `${task.priority
+                                .charAt(0)
+                                .toUpperCase()}${task.priority.slice(
+                                1
+                              )} Priority`
+                            : "Medium Priority"}
                         </span>
                       </div>
                     </div>
@@ -342,28 +358,32 @@ const HomeworkManager = () => {
               <button
                 onClick={generateOverview}
                 className={styles["generate-overview-button"]}
-                disabled={isGeneratingOverview || !Array.isArray(tasks) || tasks.length === 0}
+                disabled={
+                  isGeneratingOverview ||
+                  !Array.isArray(tasks) ||
+                  tasks.length === 0
+                }
               >
                 {isGeneratingOverview ? "Analyzing..." : "Generate Overview"}
               </button>
 
-              {aiOverview && typeof aiOverview === 'object' && (
+              {aiOverview && typeof aiOverview === "object" && (
                 <div className={styles["overview-content"]}>
                   <div className={styles["overview-section"]}>
                     <h3>Summary</h3>
                     <p>{safeRenderText(aiOverview.summary)}</p>
                   </div>
-                  
+
                   <div className={styles["overview-section"]}>
                     <h3>Urgent Tasks</h3>
                     <p>{safeRenderText(aiOverview.urgentTasks)}</p>
                   </div>
-                  
+
                   <div className={styles["overview-section"]}>
                     <h3>Time Management</h3>
                     <p>{safeRenderText(aiOverview.timeManagement)}</p>
                   </div>
-                  
+
                   <div className={styles["overview-section"]}>
                     <h3>Study Tips</h3>
                     <p>{safeRenderText(aiOverview.studyTips)}</p>
