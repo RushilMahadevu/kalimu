@@ -3,12 +3,18 @@ import { Link } from 'react-router-dom';
 import { auth, db, loadStudyScheduleHistory } from '../../../firebase.js';
 import { collection, addDoc, deleteDoc, doc } from 'firebase/firestore';
 import styles from './StudySchedule.module.css';
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { ChevronDown, ChevronUp } from 'lucide-react'; // Add this import
 
 const StudySchedule = () => {
   const [tasks, setTasks] = useState([{ name: '', time: '' }]);
   const [scheduleHistory, setScheduleHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [aiOptimization, setAiOptimization] = useState(null);
+  const [isGeneratingOptimization, setIsGeneratingOptimization] = useState(false);
+  const [selectedSchedule, setSelectedSchedule] = useState(null);
+  const [expandedSections, setExpandedSections] = useState({});
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
@@ -114,6 +120,113 @@ const StudySchedule = () => {
     }
   };
 
+  const generateOptimization = async () => {
+    const scheduleToAnalyze = selectedSchedule || tasks;
+    if (!scheduleToAnalyze || (Array.isArray(scheduleToAnalyze) && scheduleToAnalyze.length === 0)) return;
+
+    setIsGeneratingOptimization(true);
+    try {
+      const prompt = `
+        As a study schedule optimization expert, analyze this schedule and previous performance to provide recommendations.
+        Current/Selected Schedule: ${JSON.stringify(scheduleToAnalyze)}
+        Previous Schedules: ${JSON.stringify(scheduleHistory.slice(0, 3))}
+
+        Return a JSON response with EXACTLY this structure:
+        {
+          "overview": "Brief analysis comparing current schedule with past patterns",
+          "optimization": "Specific suggestions based on historical performance",
+          "breakSchedule": "Recommended break patterns between study sessions",
+          "effectiveness": "Tips to maximize study effectiveness based on past success"
+        }
+        Requirements:
+        1. Compare current schedule with past schedules
+        2. Identify patterns of successful study sessions
+        3. Suggest improvements based on historical data
+        4. Provide personalized recommendations
+      `;
+
+      const genAI = new GoogleGenerativeAI(import.meta.env.VITE_REACT_APP_GEMINI_API_KEY);
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const text = response.text();
+      
+      const jsonMatch = text.match(/```json\n([\s\S]*)\n```/) || [null, text];
+      const optimization = jsonMatch[1] ? JSON.parse(jsonMatch[1]) : JSON.parse(text);
+
+      setAiOptimization(optimization);
+    } catch (error) {
+      console.error("Failed to generate optimization:", error);
+      setError("Failed to generate AI optimization. Please try again.");
+    } finally {
+      setIsGeneratingOptimization(false);
+    }
+  };
+
+  const toggleSection = (sectionId) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [sectionId]: !prev[sectionId]
+    }));
+  };
+
+  const renderOptimizationSection = () => (
+    <div className={styles.aiOptimization}>
+      <h2>AI Schedule Optimization</h2>
+      <div className={styles.optimizationControls}>
+        <select 
+          className={styles.scheduleSelect}
+          onChange={(e) => {
+            const selected = e.target.value === 'current' 
+              ? tasks 
+              : scheduleHistory.find(s => s.id === e.target.value)?.tasks || tasks;
+            setSelectedSchedule(selected);
+          }}
+        >
+          <option value="current">Current Schedule</option>
+          {scheduleHistory.map((schedule) => (
+            <option key={schedule.id} value={schedule.id}>
+              Schedule from {new Date(schedule.date).toLocaleDateString()}
+            </option>
+          ))}
+        </select>
+        <button
+          onClick={generateOptimization}
+          className={styles.optimizeButton}
+          disabled={isGeneratingOptimization || (!selectedSchedule && tasks.every(task => !task.name))}
+        >
+          {isGeneratingOptimization ? "Analyzing..." : "Optimize Schedule"}
+        </button>
+      </div>
+
+      {aiOptimization && (
+        <div className={styles.optimizationResults}>
+          {[
+            { id: 'effectiveness', title: 'Study Effectiveness Tips', content: aiOptimization.effectiveness },
+            { id: 'breakSchedule', title: 'Break Schedule', content: aiOptimization.breakSchedule },
+            { id: 'overview', title: 'Schedule Analysis', content: aiOptimization.overview },
+            { id: 'optimization', title: 'Optimization Suggestions', content: aiOptimization.optimization }
+          ].map(section => (
+            <div key={section.id} className={styles.optimizationSection}>
+              <button 
+                className={styles.sectionHeader}
+                onClick={() => toggleSection(section.id)}
+              >
+                <h3>{section.title}</h3>
+                {expandedSections[section.id] ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+              </button>
+              {expandedSections[section.id] && (
+                <div className={styles.sectionContent}>
+                  <p>{section.content}</p>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
@@ -171,6 +284,8 @@ const StudySchedule = () => {
           </button>
         </div>
       </form>
+
+      {renderOptimizationSection()}
 
       <div className={styles.scheduleHistory}>
         <h2>Schedule History</h2>
