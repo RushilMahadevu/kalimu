@@ -4,7 +4,7 @@ import { auth, db, loadStudyScheduleHistory } from '../../../firebase.js';
 import { collection, addDoc, deleteDoc, doc } from 'firebase/firestore';
 import styles from './StudySchedule.module.css';
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { ChevronDown, ChevronUp } from 'lucide-react'; // Add this import
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 const StudySchedule = () => {
   const [tasks, setTasks] = useState([{ name: '', time: '' }]);
