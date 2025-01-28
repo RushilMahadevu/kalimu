@@ -2,6 +2,7 @@
   min-height: 100vh;
   background-color: #0f172a;
   color: #f1f5f9;
+  font-family: "Inter", sans-serif;
   padding: 2rem 1rem;
 }
 
@@ -14,12 +15,15 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.headerButtons {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
 .backButton {
-  position: absolute;
-  top: 0%;
-  margin-top: 50px;
-  right: 0%;
-  margin-right: 25px;
+  position: static; /* Remove absolute positioning */
+  margin: 0; /* Remove margins */
   background-color: #7c3aed;
   color: white;
   padding: 0.75rem 1.5rem;
@@ -32,6 +36,9 @@
 .backButton:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+
 }
 
 .addButton {
@@ -43,12 +50,15 @@
   padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
   font-weight: 500;
+  border: none;
   transition: all 0.2s ease;
 }
 
 .addButton:hover {
   background-color: #6d28d9;
   transform: translateY(-1px);
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
 }
 
 .contentWrapper {
@@ -79,7 +89,7 @@
 .formInput,
 .formSelect,
 .formTextarea {
-  width: 100%;
+  width: 97%;
   padding: 0.75rem 1rem;
   background-color: #334155;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -100,14 +110,29 @@
   padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
   transition: all 0.2s ease;
+  border: none;
+}
+
+.cancelButton:hover {
+  transform: translateY(-1px);
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
 }
 
 .submitButton {
   background-color: #7c3aed;
+  border: none;
   color: white;
   padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
   transition: all 0.2s ease;
+}
+
+.submitButton:hover {
+  background-color: #6d28d9;
+  transform: translateY(-1px);
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
 }
 
 .testGrid {
@@ -126,6 +151,7 @@
 .testCard:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
 }
 
 .testHeader {
@@ -165,6 +191,7 @@
 
 .deleteButton:hover {
   background-color: rgba(248, 113, 113, 0.2);
+  cursor: pointer;
 }
 
 .testNotes {
@@ -296,6 +323,11 @@
     flex-direction: column;
     gap: 1rem;
     align-items: stretch;
+  }
+
+  .headerButtons {
+    flex-direction: column;
+    gap: 0.5rem;
   }
 
   .formGrid {

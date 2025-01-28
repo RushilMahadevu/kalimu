@@ -137,16 +137,18 @@ const TestPrep = () => {
     <div className={styles.container}>
       <header className={styles.header}>
         <h1>Test Preparation Manager</h1>
-        <Link to="/academic-planning" className={styles.backButton}>
-          Back to Academic Planning
-        </Link>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className={styles.addButton}
-        >
-          <Plus size={20} />
-          Add Test
-        </button>
+        <div className={styles.headerButtons}>
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className={styles.addButton}
+          >
+            <Plus size={20} />
+            Add Test
+          </button>
+          <Link to="/academic-planning" className={styles.backButton}>
+            Back to Academic Planning
+          </Link>
+        </div>
       </header>
 
       {error && <div className={styles.error}>{error}</div>}
