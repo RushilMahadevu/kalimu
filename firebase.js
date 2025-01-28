@@ -14,7 +14,7 @@ import {
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: `${import.meta.env.VITE_FIREBASE_AUTH_DOMAIN}.firebaseapp.com`,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
@@ -61,8 +61,8 @@ const loadGPAHistory = async (userId) => {
     console.error("No user ID provided or user not authenticated");
     return [];
   }
-
   try {
+    
     const userGPARef = collection(db, "users", userId, "gpaHistory");
     const snapshot = await getDocs(userGPARef);
     const history = snapshot.docs.map((doc) => ({
