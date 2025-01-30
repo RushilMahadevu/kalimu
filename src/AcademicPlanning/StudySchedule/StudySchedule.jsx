@@ -15,6 +15,8 @@ const StudySchedule = () => {
   const [isGeneratingOptimization, setIsGeneratingOptimization] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState(null);
   const [expandedSections, setExpandedSections] = useState({});
+  const [highlightedContent, setHighlightedContent] = useState({});
+  const [isHighlighting, setIsHighlighting] = useState(false);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
@@ -126,6 +128,7 @@ const StudySchedule = () => {
 
     setIsGeneratingOptimization(true);
     try {
+      // First generate the optimization
       const prompt = `
         As a study schedule optimization expert, analyze this schedule and previous performance to provide recommendations.
         Current/Selected Schedule: ${JSON.stringify(scheduleToAnalyze)}
@@ -155,11 +158,60 @@ const StudySchedule = () => {
       const optimization = jsonMatch[1] ? JSON.parse(jsonMatch[1]) : JSON.parse(text);
 
       setAiOptimization(optimization);
+
+      // Then automatically highlight each section
+      const sections = [
+        { id: 'overview', content: optimization.overview },
+        { id: 'optimization', content: optimization.optimization },
+        { id: 'breakSchedule', content: optimization.breakSchedule },
+        { id: 'effectiveness', content: optimization.effectiveness }
+      ];
+
+      for (const section of sections) {
+        await highlightOptimization(section.id, section.content);
+      }
     } catch (error) {
       console.error("Failed to generate optimization:", error);
       setError("Failed to generate AI optimization. Please try again.");
     } finally {
       setIsGeneratingOptimization(false);
+    }
+  };
+
+  const highlightOptimization = async (sectionId, content) => {
+    if (!content || isHighlighting) return;
+
+    setIsHighlighting(true);
+    try {
+      const prompt = `
+        Analyze this study schedule optimization content and highlight key points:
+        "${content}"
+
+        Return a JSON response with this structure:
+        {
+          "formattedContent": "The content with **key points** marked in bold and *important recommendations* in italics",
+          "summary": "A 2-sentence summary of the main points"
+        }
+      `;
+
+      const genAI = new GoogleGenerativeAI(import.meta.env.VITE_REACT_APP_GEMINI_API_KEY);
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const text = response.text();
+      
+      const jsonMatch = text.match(/```json\n([\s\S]*)\n```/) || [null, text];
+      const analysis = jsonMatch[1] ? JSON.parse(jsonMatch[1]) : JSON.parse(text);
+
+      setHighlightedContent(prev => ({
+        ...prev,
+        [sectionId]: analysis
+      }));
+    } catch (error) {
+      console.error('Failed to highlight content:', error);
+      setError('Failed to analyze content. Please try again.');
+    } finally {
+      setIsHighlighting(false);
     }
   };
 
@@ -201,30 +253,84 @@ const StudySchedule = () => {
 
       {aiOptimization && (
         <div className={styles.optimizationResults}>
-          {[
-            { id: 'effectiveness', title: 'Study Effectiveness Tips', content: aiOptimization.effectiveness },
-            { id: 'breakSchedule', title: 'Break Schedule', content: aiOptimization.breakSchedule },
-            { id: 'overview', title: 'Schedule Analysis', content: aiOptimization.overview },
-            { id: 'optimization', title: 'Optimization Suggestions', content: aiOptimization.optimization }
-          ].map(section => (
-            <div key={section.id} className={styles.optimizationSection}>
-              <button 
-                className={styles.sectionHeader}
-                onClick={() => toggleSection(section.id)}
-              >
-                <h3>{section.title}</h3>
-                {expandedSections[section.id] ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+          <div key="overview" className={styles.optimizationSection}>
+            <div className={styles.sectionHeader}>
+              <button onClick={() => toggleSection('overview')}>
+                <h3>Schedule Analysis</h3>
+                {expandedSections['overview'] ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
               </button>
-              {expandedSections[section.id] && (
-                <div className={styles.sectionContent}>
-                  <p>{section.content}</p>
-                </div>
-              )}
             </div>
-          ))}
+            {expandedSections['overview'] && (
+              <div className={styles.sectionContent}>
+                {renderSectionContent('overview', aiOptimization.overview)}
+              </div>
+            )}
+          </div>
+
+          <div key="optimization" className={styles.optimizationSection}>
+            <div className={styles.sectionHeader}>
+              <button onClick={() => toggleSection('optimization')}>
+                <h3>Optimization Recommendations</h3>
+                {expandedSections['optimization'] ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+              </button>
+            </div>
+            {expandedSections['optimization'] && (
+              <div className={styles.sectionContent}>
+                {renderSectionContent('optimization', aiOptimization.optimization)}
+              </div>
+            )}
+          </div>
+
+          <div key="breakSchedule" className={styles.optimizationSection}>
+            <div className={styles.sectionHeader}>
+              <button onClick={() => toggleSection('breakSchedule')}>
+                <h3>Break Schedule Plan</h3>
+                {expandedSections['breakSchedule'] ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+              </button>
+            </div>
+            {expandedSections['breakSchedule'] && (
+              <div className={styles.sectionContent}>
+                {renderSectionContent('breakSchedule', aiOptimization.breakSchedule)}
+              </div>
+            )}
+          </div>
+
+          <div key="effectiveness" className={styles.optimizationSection}>
+            <div className={styles.sectionHeader}>
+              <button onClick={() => toggleSection('effectiveness')}>
+                <h3>Study Effectiveness Strategies</h3>
+                {expandedSections['effectiveness'] ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+              </button>
+            </div>
+            {expandedSections['effectiveness'] && (
+              <div className={styles.sectionContent}>
+                {renderSectionContent('effectiveness', aiOptimization.effectiveness)}
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
+  );
+
+  const renderSectionContent = (sectionId, content) => (
+    highlightedContent[sectionId] ? (
+      <div className={styles.highlightedContent}>
+        <div 
+          className={styles.formattedContent}
+          dangerouslySetInnerHTML={{
+            __html: highlightedContent[sectionId].formattedContent
+              .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+              .replace(/\*(.*?)\*/g, '<em>$1</em>')
+          }}
+        />
+        <div className={styles.contentSummary}>
+          <strong>Summary:</strong> {highlightedContent[sectionId].summary}
+        </div>
+      </div>
+    ) : (
+      <p>{content}</p>
+    )
   );
 
   return (
