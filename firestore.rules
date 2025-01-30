@@ -21,6 +21,22 @@ service cloud.firestore {
         allow delete: if request.auth != null && request.auth.uid == userId;
       }
 
+      // Add new rules for tests collection
+      match /tests/{testId} {
+        allow read: if request.auth != null && request.auth.uid == userId;
+        allow create: if request.auth != null 
+          && request.auth.uid == userId
+          && request.resource.data.keys().hasAll(['subject', 'topic', 'testDate', 'difficulty', 'studyNotes', 'createdAt'])
+          && request.resource.data.testDate is string
+          && request.resource.data.difficulty in ['easy', 'medium', 'hard'];
+        allow update: if request.auth != null 
+          && request.auth.uid == userId
+          && request.resource.data.keys().hasAll(['subject', 'topic', 'testDate', 'difficulty', 'studyNotes'])
+          && request.resource.data.testDate is string
+          && request.resource.data.difficulty in ['easy', 'medium', 'hard'];
+        allow delete: if request.auth != null && request.auth.uid == userId;
+      }
+
       match /plannedVisits/{visitId} {
         allow read: if request.auth != null && request.auth.uid == userId;
         allow create: if request.auth != null 

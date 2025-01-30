@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { auth, db } from '../../../firebase';
-import { collection, addDoc, deleteDoc, doc, getDocs } from 'firebase/firestore';
+import { auth } from '../../../firebase';
+import { loadTestPrep, addTestPrep, deleteTestPrep } from '../../../firebase';
 import styles from './TestPrep.module.css';
 import { Book, Calendar, Plus, Trash2 } from 'lucide-react';
 import { GoogleGenerativeAI } from "@google/generative-ai";
@@ -32,12 +32,7 @@ const TestPrep = () => {
     }
 
     try {
-      const testsRef = collection(db, 'users', auth.currentUser.uid, 'tests');
-      const snapshot = await getDocs(testsRef);
-      const loadedTests = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
+      const loadedTests = await loadTestPrep(auth.currentUser.uid);
       setTests(loadedTests);
     } catch (error) {
       setError('Failed to load tests');
@@ -68,9 +63,7 @@ const TestPrep = () => {
         createdAt: new Date().toISOString()
       };
 
-      const testsRef = collection(db, 'users', auth.currentUser.uid, 'tests');
-      await addDoc(testsRef, testData);
-      
+      await addTestPrep(testData);
       setNewTest({
         subject: '',
         topic: '',
@@ -88,8 +81,7 @@ const TestPrep = () => {
 
   const deleteTest = async (testId) => {
     try {
-      const testRef = doc(db, 'users', auth.currentUser.uid, 'tests', testId);
-      await deleteDoc(testRef);
+      await deleteTestPrep(auth.currentUser.uid, testId);
       loadTests();
     } catch (error) {
       setError('Failed to delete test');

@@ -171,6 +171,56 @@ const deleteHomeworkTask = async (taskId) => {
   }
 };
 
+// Add these new functions after the existing homework functions
+const loadTestPrep = async (userId) => {
+  if (!userId) {
+    throw new Error("No user ID provided");
+  }
+
+  try {
+    const testsRef = collection(db, "users", userId, "tests");
+    const q = query(testsRef, orderBy("testDate", "asc"));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+  } catch (error) {
+    console.error("Error loading tests:", error);
+    throw new Error("Failed to load tests");
+  }
+};
+
+const addTestPrep = async (testData) => {
+  if (!testData.userId) {
+    throw new Error("No user ID provided");
+  }
+
+  try {
+    const testsRef = collection(db, "users", testData.userId, "tests");
+    const docRef = await addDoc(testsRef, testData);
+    return { id: docRef.id, ...testData };
+  } catch (error) {
+    console.error("Error adding test:", error);
+    throw new Error("Failed to add test");
+  }
+};
+
+const deleteTestPrep = async (userId, testId) => {
+  if (!userId || !testId) {
+    throw new Error("Missing userId or testId");
+  }
+
+  try {
+    const testRef = doc(db, "users", userId, "tests", testId);
+    await deleteDoc(testRef);
+    return testId;
+  } catch (error) {
+    console.error("Error deleting test:", error);
+    throw new Error("Failed to delete test");
+  }
+};
+
 export {
   auth,
   db,
@@ -182,4 +232,7 @@ export {
   addHomeworkTask,
   updateHomeworkTaskStatus,
   deleteHomeworkTask,
+  loadTestPrep,
+  addTestPrep,
+  deleteTestPrep,
 };
