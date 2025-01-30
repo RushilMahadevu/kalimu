@@ -21,6 +21,15 @@ const TestPrep = () => {
   const [aiRecommendations, setAiRecommendations] = useState(null);
   const [isGeneratingRecommendations, setIsGeneratingRecommendations] = useState(false);
 
+  const safeRenderText = (text) => {
+    if (typeof text === 'string') return text;
+    if (typeof text === 'number') return text.toString();
+    if (typeof text === 'object' && text !== null) {
+      return JSON.stringify(text); // Converts object to string representation
+    }
+    return '';
+  };
+
   useEffect(() => {
     loadTests();
   }, []);
@@ -97,6 +106,12 @@ const TestPrep = () => {
       const prompt = `
         As a test preparation expert, analyze these upcoming tests and provide study recommendations.
         Tests: ${JSON.stringify(tests)}
+
+        REQUIREMENTS:
+        - PRIMARY KEEP RESPONSES LIMITED TO 4-5 SENTENCES
+        - MAKE SURE to include a study plan based on test dates and difficulties
+        - Provide specific study techniques for each subject
+        - Recommend time allocation for optimal preparation
 
         Return a JSON response with EXACTLY this structure:
         {
@@ -209,15 +224,15 @@ const TestPrep = () => {
                 <div key={test.id} className={styles.testCard}>
                   <div className={styles.testHeader}>
                     <div>
-                      <h3 className={styles.testTitle}>{test.subject}</h3>
+                      <h3 className={styles.testTitle}>{safeRenderText(test.subject)}</h3>
                       <div className={styles.testMeta}>
                         <div className={styles.testMetaItem}>
                           <Book size={16} />
-                          <span>{test.topic}</span>
+                          <span>{safeRenderText(test.topic)}</span>
                         </div>
                         <div className={styles.testMetaItem}>
                           <Calendar size={16} />
-                          <span>{new Date(test.testDate).toLocaleString()}</span>
+                          <span>{test.testDate ? new Date(test.testDate).toLocaleString() : 'No date set'}</span>
                         </div>
                       </div>
                     </div>
@@ -229,7 +244,7 @@ const TestPrep = () => {
                     </button>
                   </div>
                   {test.studyNotes && (
-                    <p className={styles.testNotes}>{test.studyNotes}</p>
+                    <p className={styles.testNotes}>{safeRenderText(test.studyNotes)}</p>
                   )}
                   <div className={styles.difficultyBadge}>
                     <span className={styles[`difficulty-${test.difficulty}`]}>

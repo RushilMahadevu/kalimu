@@ -86,8 +86,9 @@
 
 .contentWrapper {
   display: grid;
-  grid-template-columns: 1fr 300px;
+  grid-template-columns: 1fr 400px; /* Increased from 300px to accommodate wider AI card */
   gap: 2rem;
+  max-width: 2050px; /* Add max-width to ensure content doesn't stretch too wide */
 }
 
 .mainContent {
@@ -252,13 +253,16 @@
   position: sticky;
   top: 2rem;
   height: fit-content;
+  width: 100%; /* Ensure sidebar takes full width of its grid column */
 }
 
 .aiCard {
+  width: 150%; /* Change from 150% to 100% */
   background-color: #1e293b;
   border-radius: 1rem;
   padding: 1.5rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-left: 0; /* Remove negative margin */
 }
 
 .generateButton {
@@ -282,6 +286,7 @@
 }
 
 .recommendationsContent {
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -300,6 +305,7 @@
 }
 
 .recommendationSection p {
+  width: 100%;
   font-size: 0.875rem;
   line-height: 1.5;
   color: #f1f5f9;
@@ -334,10 +340,17 @@
 @media (max-width: 1024px) {
   .contentWrapper {
     grid-template-columns: 1fr;
+    padding: 0 1rem;
   }
 
   .aiSidebar {
     position: static;
+    width: 100%;
+  }
+
+  .aiCard {
+    width: 100%;
+    margin: 2rem 0;
   }
 }
 
