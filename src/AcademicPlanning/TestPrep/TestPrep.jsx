@@ -20,6 +20,8 @@ const TestPrep = () => {
   const [error, setError] = useState(null);
   const [aiRecommendations, setAiRecommendations] = useState(null);
   const [isGeneratingRecommendations, setIsGeneratingRecommendations] = useState(false);
+  const [highlightedNotes, setHighlightedNotes] = useState({});
+  const [isHighlighting, setIsHighlighting] = useState(false);
 
   const safeRenderText = (text) => {
     if (typeof text === 'string') return text;
@@ -140,6 +142,43 @@ const TestPrep = () => {
     }
   };
 
+  const highlightNotes = async (testId, notes) => {
+    if (!notes || isHighlighting) return;
+
+    setIsHighlighting(true);
+    try {
+      const prompt = `
+        Analyze these study notes and highlight key concepts:
+        "${notes}"
+
+        Return a JSON response with this structure:
+        {
+          "formattedNotes": "The notes with **key terms** marked in bold and *important concepts* in italics",
+          "summary": "A 2-sentence summary of the main points"
+        }
+      `;
+
+      const genAI = new GoogleGenerativeAI(import.meta.env.VITE_REACT_APP_GEMINI_API_KEY);
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const text = response.text();
+      
+      const jsonMatch = text.match(/```json\n([\s\S]*)\n```/) || [null, text];
+      const analysis = jsonMatch[1] ? JSON.parse(jsonMatch[1]) : JSON.parse(text);
+
+      setHighlightedNotes(prev => ({
+        ...prev,
+        [testId]: analysis
+      }));
+    } catch (error) {
+      console.error('Failed to highlight notes:', error);
+      setError('Failed to analyze notes. Please try again.');
+    } finally {
+      setIsHighlighting(false);
+    }
+  };
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
@@ -244,7 +283,34 @@ const TestPrep = () => {
                     </button>
                   </div>
                   {test.studyNotes && (
-                    <p className={styles.testNotes}>{safeRenderText(test.studyNotes)}</p>
+                    <>
+                      <div className={styles.notesHeader}>
+                        <h4>Study Notes</h4>
+                        <button
+                          onClick={() => highlightNotes(test.id, test.studyNotes)}
+                          className={styles.highlightButton}
+                          disabled={isHighlighting}
+                        >
+                          {isHighlighting ? 'Analyzing...' : 'Highlight Key Points'}
+                        </button>
+                      </div>
+                      {highlightedNotes[test.id] ? (
+                        <div className={styles.highlightedNotes}>
+                          <div className={styles.formattedNotes} 
+                               dangerouslySetInnerHTML={{ 
+                                 __html: highlightedNotes[test.id].formattedNotes
+                                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                                        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                               }} 
+                          />
+                          <div className={styles.notesSummary}>
+                            <strong>Summary:</strong> {highlightedNotes[test.id].summary}
+                          </div>
+                        </div>
+                      ) : (
+                        <p className={styles.testNotes}>{safeRenderText(test.studyNotes)}</p>
+                      )}
+                    </>
                   )}
                   <div className={styles.difficultyBadge}>
                     <span className={styles[`difficulty-${test.difficulty}`]}>
