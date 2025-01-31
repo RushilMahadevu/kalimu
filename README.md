@@ -87,52 +87,52 @@ graph TD
 
 ### **AI Engine**
 - **Google’s Gemini API**  
-```javascript
-const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
-```
+    ```javascript
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
+    ```
 - **Prompt Engineering (Ex. from `Admission Tips`)**
-``` js
-const prompt = `
-As an expert college admissions counselor, provide 5 highly personalized 
-and strategic admission tips based on this student profile:
-- GPA: ${profile.gpa}
-- Test Scores: ${profile.testScores}
-- Extracurricular Activities: ${profile.extracurriculars}
-- Academic Interest: ${profile.academicInterest}
-- Challenged Background: ${profile.challengedBackground}
-
-For each tip, provide:
-1. Specific, actionable advice
-2. Rationale behind the recommendation
-3. Potential impact on college applications
-
-Respond in a strict JSON format with these exact keys:
-[
-  {
-    "tipTitle": "",
-    "tipDescription": "",
-    "strategicRationale": "",
-    "potentialImpact": ""
-  }
-]
-
-Ensure tips are highly specific and tailored to the student's unique profile.
-`;
-```
+    ``` js
+    const prompt = `
+    As an expert college admissions counselor, provide 5 highly personalized 
+    and strategic admission tips based on this student profile:
+    - GPA: ${profile.gpa}
+    - Test Scores: ${profile.testScores}
+    - Extracurricular Activities: ${profile.extracurriculars}
+    - Academic Interest: ${profile.academicInterest}
+    - Challenged Background: ${profile.challengedBackground}
+    
+    For each tip, provide:
+    1. Specific, actionable advice
+    2. Rationale behind the recommendation
+    3. Potential impact on college applications
+    
+    Respond in a strict JSON format with these exact keys:
+    [
+      {
+        "tipTitle": "",
+        "tipDescription": "",
+        "strategicRationale": "",
+        "potentialImpact": ""
+      }
+    ]
+    
+    Ensure tips are highly specific and tailored to the student's unique profile.
+    `;
+    ```
 
 ### **Frontend**
 - **JavaScript**  
   - React.js: Combines HTML and JavaScript using JSX (JavaScript XML).
 - **Color Theme**
-```css
-:root {
-  --primary-color: #6a5acd; /* Slate Purple */
-  --secondary-color: #36454f; /* Charcoal Gray */
-  --background-color: #1e1e2c; /* Deep Space Blue */
-  --text-color: #e6e6fa; /* Lavender */
-  --accent-color: #8a2be2; /* Blue Violet */
-}
-```
+    ```css
+    :root {
+      --primary-color: #6a5acd; /* Slate Purple */
+      --secondary-color: #36454f; /* Charcoal Gray */
+      --background-color: #1e1e2c; /* Deep Space Blue */
+      --text-color: #e6e6fa; /* Lavender */
+      --accent-color: #8a2be2; /* Blue Violet */
+    }
+    ```
 
 ### **Backend**
 - **Firebase**
@@ -142,17 +142,17 @@ Ensure tips are highly specific and tailored to the student's unique profile.
     - **📦 Storage**
       
     - **Config**
-    ```js
-    const firebaseConfig = {
-      apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-      authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-      projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-      storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-      messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-      appId: import.meta.env.VITE_FIREBASE_APP_ID,
-      measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
-    };
-    ```
+        ```js
+        const firebaseConfig = {
+          apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+          authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+          projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+          storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+          messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+          appId: import.meta.env.VITE_FIREBASE_APP_ID,
+          measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
+        };
+        ```
 ---
 
 ## Getting Started  
