@@ -93,7 +93,17 @@ const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
 
 ### **Frontend**
 - **JavaScript**  
-  - React.js: Combines HTML and JavaScript using JSX (JavaScript XML).  
+  - React.js: Combines HTML and JavaScript using JSX (JavaScript XML).
+- **Color Theme**
+```css
+:root {
+  --primary-color: #6a5acd; /* Slate Purple */
+  --secondary-color: #36454f; /* Charcoal Gray */
+  --background-color: #1e1e2c; /* Deep Space Blue */
+  --text-color: #e6e6fa; /* Lavender */
+  --accent-color: #8a2be2; /* Blue Violet */
+}
+```
 
 ### **Backend**
 - **[Firebase](https://firebase.google.com/)**  
