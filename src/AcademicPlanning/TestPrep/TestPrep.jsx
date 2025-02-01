@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { auth } from '../../../firebase';
-import { loadTestPrep, addTestPrep, deleteTestPrep } from '../../../firebase';
+import { loadTestPrep, addTestPrep, deleteTestPrep, updateTestPrep } from '../../../firebase';
 import styles from './TestPrep.module.css';
-import { Book, Calendar, Plus, Trash2 } from 'lucide-react';
+import { Book, Calendar, Plus, Trash2, Pencil } from 'lucide-react';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const TestPrep = () => {
@@ -21,7 +21,8 @@ const TestPrep = () => {
   const [aiRecommendations, setAiRecommendations] = useState(null);
   const [isGeneratingRecommendations, setIsGeneratingRecommendations] = useState(false);
   const [highlightedNotes, setHighlightedNotes] = useState({});
-  const [isHighlighting, setIsHighlighting] = useState(false);
+  const [highlightingTestId, setHighlightingTestId] = useState(null);
+  const [editingTest, setEditingTest] = useState(null);
 
   const safeRenderText = (text) => {
     if (typeof text === 'string') return text;
@@ -100,6 +101,22 @@ const TestPrep = () => {
     }
   };
 
+  const updateTest = async (testId, updatedData) => {
+    if (!auth.currentUser) {
+      setError('Please sign in to update tests');
+      return;
+    }
+
+    try {
+      await updateTestPrep(auth.currentUser.uid, testId, updatedData);
+      setEditingTest(null);
+      loadTests();
+    } catch (error) {
+      setError('Failed to update test');
+      console.error('Error updating test:', error);
+    }
+  };
+
   const generateRecommendations = async () => {
     if (tests.length === 0) return;
 
@@ -143,9 +160,9 @@ const TestPrep = () => {
   };
 
   const highlightNotes = async (testId, notes) => {
-    if (!notes || isHighlighting) return;
+    if (!notes || highlightingTestId) return;
 
-    setIsHighlighting(true);
+    setHighlightingTestId(testId); // Set which test is being analyzed
     try {
       const prompt = `
         Analyze these study notes and highlight key concepts:
@@ -175,7 +192,7 @@ const TestPrep = () => {
       console.error('Failed to highlight notes:', error);
       setError('Failed to analyze notes. Please try again.');
     } finally {
-      setIsHighlighting(false);
+      setHighlightingTestId(null); // Clear the highlighting state
     }
   };
 
@@ -262,25 +279,87 @@ const TestPrep = () => {
               {tests.map((test) => (
                 <div key={test.id} className={styles.testCard}>
                   <div className={styles.testHeader}>
-                    <div>
-                      <h3 className={styles.testTitle}>{safeRenderText(test.subject)}</h3>
-                      <div className={styles.testMeta}>
-                        <div className={styles.testMetaItem}>
-                          <Book size={16} />
-                          <span>{safeRenderText(test.topic)}</span>
-                        </div>
-                        <div className={styles.testMetaItem}>
-                          <Calendar size={16} />
-                          <span>{test.testDate ? new Date(test.testDate).toLocaleString() : 'No date set'}</span>
+                    {editingTest?.id === test.id ? (
+                      <div className={styles.editForm}>
+                        <input
+                          type="text"
+                          value={editingTest.subject}
+                          onChange={(e) => setEditingTest({...editingTest, subject: e.target.value})}
+                          className={styles.formInput}
+                        />
+                        <input
+                          type="text"
+                          value={editingTest.topic}
+                          onChange={(e) => setEditingTest({...editingTest, topic: e.target.value})}
+                          className={styles.formInput}
+                        />
+                        <input
+                          type="datetime-local"
+                          value={editingTest.testDate}
+                          onChange={(e) => setEditingTest({...editingTest, testDate: e.target.value})}
+                          className={styles.formInput}
+                        />
+                        <select
+                          value={editingTest.difficulty}
+                          onChange={(e) => setEditingTest({...editingTest, difficulty: e.target.value})}
+                          className={styles.formSelect}
+                        >
+                          <option value="easy">Easy</option>
+                          <option value="medium">Medium</option>
+                          <option value="hard">Hard</option>
+                        </select>
+                        <textarea
+                          value={editingTest.studyNotes}
+                          onChange={(e) => setEditingTest({...editingTest, studyNotes: e.target.value})}
+                          className={styles.formTextarea}
+                          rows="3"
+                        />
+                        <div className={styles.editActions}>
+                          <button
+                            onClick={() => setEditingTest(null)}
+                            className={styles.cancelButton}
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            onClick={() => updateTest(test.id, editingTest)}
+                            className={styles.submitButton}
+                          >
+                            Save
+                          </button>
                         </div>
                       </div>
-                    </div>
-                    <button
-                      onClick={() => deleteTest(test.id)}
-                      className={styles.deleteButton}
-                    >
-                      <Trash2 size={20} />
-                    </button>
+                    ) : (
+                      <>
+                        <div>
+                          <h3 className={styles.testTitle}>{safeRenderText(test.subject)}</h3>
+                          <div className={styles.testMeta}>
+                            <div className={styles.testMetaItem}>
+                              <Book size={16} />
+                              <span>{safeRenderText(test.topic)}</span>
+                            </div>
+                            <div className={styles.testMetaItem}>
+                              <Calendar size={16} />
+                              <span>{test.testDate ? new Date(test.testDate).toLocaleString() : 'No date set'}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className={styles.testActions}>
+                          <button
+                            onClick={() => setEditingTest({...test})}
+                            className={styles.editButton}
+                          >
+                            <Pencil size={20} />
+                          </button>
+                          <button
+                            onClick={() => deleteTest(test.id)}
+                            className={styles.deleteButton}
+                          >
+                            <Trash2 size={20} />
+                          </button>
+                        </div>
+                      </>
+                    )}
                   </div>
                   {test.studyNotes && (
                     <>
@@ -289,9 +368,9 @@ const TestPrep = () => {
                         <button
                           onClick={() => highlightNotes(test.id, test.studyNotes)}
                           className={styles.highlightButton}
-                          disabled={isHighlighting}
+                          disabled={highlightingTestId === test.id}
                         >
-                          {isHighlighting ? 'Analyzing...' : 'Highlight Key Points'}
+                          {highlightingTestId === test.id ? 'Analyzing...' : 'Highlight Key Points'}
                         </button>
                       </div>
                       {highlightedNotes[test.id] ? (

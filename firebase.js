@@ -221,6 +221,22 @@ const deleteTestPrep = async (userId, testId) => {
   }
 };
 
+// Add this new function with the other test prep functions
+const updateTestPrep = async (userId, testId, updatedData) => {
+  if (!userId || !testId) {
+    throw new Error("Missing userId or testId");
+  }
+
+  try {
+    const testRef = doc(db, "users", userId, "tests", testId);
+    await updateDoc(testRef, updatedData);
+    return { id: testId, ...updatedData };
+  } catch (error) {
+    console.error("Error updating test:", error);
+    throw new Error("Failed to update test");
+  }
+};
+
 export {
   auth,
   db,
@@ -235,4 +251,5 @@ export {
   loadTestPrep,
   addTestPrep,
   deleteTestPrep,
+  updateTestPrep,
 };
