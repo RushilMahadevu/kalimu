@@ -10,6 +10,8 @@ import {
   doc,
   query,
   orderBy,
+  setDoc,
+  getDoc,
 } from "firebase/firestore"; // Ensure addDoc is imported here
 
 const firebaseConfig = {
@@ -253,6 +255,35 @@ const updateHomeworkTask = async (userId, taskId, updatedData) => {
   }
 };
 
+const saveNotes = async (userId, notes) => {
+  if (!userId) {
+    throw new Error("No user ID provided");
+  }
+
+  try {
+    const notesRef = doc(db, "users", userId, "notes", "current");
+    await setDoc(notesRef, { content: notes, updatedAt: new Date().toISOString() });
+  } catch (error) {
+    console.error("Error saving notes:", error);
+    throw new Error("Failed to save notes");
+  }
+};
+
+const loadNotes = async (userId) => {
+  if (!userId) {
+    throw new Error("No user ID provided");
+  }
+
+  try {
+    const notesRef = doc(db, "users", userId, "notes", "current");
+    const notesDoc = await getDoc(notesRef);
+    return notesDoc.exists() ? notesDoc.data().content : '';
+  } catch (error) {
+    console.error("Error loading notes:", error);
+    throw new Error("Failed to load notes");
+  }
+};
+
 export {
   auth,
   db,
@@ -269,4 +300,6 @@ export {
   deleteTestPrep,
   updateTestPrep,
   updateHomeworkTask,
+  saveNotes,
+  loadNotes,
 };

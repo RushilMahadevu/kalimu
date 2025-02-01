@@ -1,0 +1,251 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+
+:root {
+  --primary-color: #6a5acd;
+  --secondary-color: #36454f;
+  --background-color: #1e1e2c;
+  --text-color: #e6e6fa;
+  --accent-color: #8a2be2;
+}
+
+.notesContainer {
+  background: rgba(30, 30, 44, 0.8);
+  backdrop-filter: blur(10px);
+  padding: 30px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 98%;
+  max-width: 1200px;  /* increased from 800px */
+  height: auto;       /* change from 75vh to auto */
+  max-height: 90vh;   /* keep max-height */
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  box-shadow: 
+    0 15px 35px rgba(31, 38, 135, 0.2),
+    0 0 20px rgba(138, 43, 226, 0.2);
+  color: var(--text-color);
+  font-family: 'Inter', sans-serif;
+}
+
+.notesArea {
+  width: 97%;
+  min-height: 200px;  /* minimum height */
+  max-height: 100vh;   /* maximum height */
+  height: auto;       /* auto height */
+  padding: 1.25rem;
+  background-color: rgba(106, 90, 205, 0.2);
+  border: none;
+  border-radius: 10px;
+  color: var(--text-color);
+  font-size: 1.1rem;
+  line-height: 1.6;
+  resize: vertical;
+  margin-top: 10px;
+  transition: all 0.3s ease;
+  font-family: 'Inter', sans-serif;
+  flex: 1;            /* allow it to grow */
+  overflow-y: auto;   /* allow scrolling */
+}
+
+.notesArea:focus {
+  outline: none;
+  box-shadow: 0 0 15px rgba(138, 43, 226, 0.4);
+  background-color: rgba(106, 90, 205, 0.3);
+}
+
+.notesButton {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: var(--accent-color);
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2), 0 0 30px rgba(138, 43, 226, 0.4);
+  z-index: 1000;
+  transition: all 0.4s ease;
+}
+
+.notesButton:hover {
+  transform: scale(1.1);
+  box-shadow: 0 15px 25px rgba(0,0,0,0.3), 0 0 40px rgba(138, 43, 226, 0.6);
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1001;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.header h2 {
+  color: var(--text-color);
+  font-size: 1.75rem;
+  font-weight: 600;
+  text-shadow: 0 0 12px rgba(138, 43, 226, 0.4);
+  font-family: 'Inter', sans-serif;
+}
+
+.headerButtons {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.tidyButton {
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tidyButton:hover:not(:disabled) {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(138, 43, 226, 0.4);
+}
+
+.tidyButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--text-color);
+  transition: all 0.3s ease;
+}
+
+.closeButton:hover {
+  color: var(--accent-color);
+  transform: scale(1.1);
+}
+
+.toggleButton {
+  background-color: var(--secondary-color);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Inter', sans-serif;
+}
+
+.toggleButton:hover {
+  background-color: var(--primary-color);
+  transform: scale(1.05);
+}
+
+.savingIndicator {
+  font-size: 0.875rem;
+  color: var(--text-color);
+  opacity: 0.7;
+  margin-left: 1rem;
+  font-weight: normal;
+}
+
+.formattedNotes {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: rgba(106, 90, 205, 0.1);
+  border-radius: 8px;
+  max-height: 40vh;    /* limit height of formatted section */
+  overflow-y: auto;    /* allow scrolling in formatted section */
+  margin-bottom: 10px; /* add space between sections */
+}
+
+.formattedNotes h1 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: var(--text-color);
+}
+
+.formattedNotes h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.8rem;
+  color: var(--text-color);
+}
+
+.formattedNotes h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.6rem;
+  color: var(--text-color);
+}
+
+.formattedNotes strong {
+  color: var(--accent-color);
+  font-weight: 600;
+}
+
+.formattedNotes em {
+  color: var(--primary-color);
+  font-style: italic;
+}
+
+.formattedNotes ul {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.formattedNotes li {
+  margin-bottom: 0.5rem;
+}
+
+.formattedNotes p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.loadingIndicator {
+  text-align: center;
+  padding: 20px;
+  color: var(--text-color);
+  font-style: italic;
+}
+
+.notesContent {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: calc(90vh - 80px); /* subtract header height */
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .notesContainer {
+    width: 95%;
+    height: 98vh;
+    max-height: 98vh;
+  }
+}

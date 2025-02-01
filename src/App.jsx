@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import Home from './Home';
+import styles from './Notes.module.css';
 
 // Learning Dashboard
 import LearningDashboard from './LearningDashboard/LearningDashboard';
@@ -24,6 +25,8 @@ import TestPrep from './AcademicPlanning/TestPrep/TestPrep';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AuthProvider } from './auth/AuthContext';
+import { useState } from 'react';
+import Notes from './Notes';
 
 const PageWrapper = ({ children }) => {
   const pageVariants = {
@@ -120,11 +123,21 @@ function AnimatedRoutes() {
 }
 
 function App() {
+  const [showNotes, setShowNotes] = useState(false);
+
   return (
     <Router>
       <AuthProvider>
         <div style={{ position: 'relative', width: '100%', height: '100%' }}>
           <AnimatedRoutes />
+          <Notes isOpen={showNotes} onClose={() => setShowNotes(false)} />
+          <button 
+            className={styles.notesButton}
+            onClick={() => setShowNotes(true)}
+            title="Open Notes"
+          >
+            📝
+          </button>
         </div>
       </AuthProvider>
     </Router>
