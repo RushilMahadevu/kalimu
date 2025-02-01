@@ -262,7 +262,7 @@ const saveNotes = async (userId, notes) => {
 
   try {
     const notesRef = doc(db, "users", userId, "notes", "current");
-    await setDoc(notesRef, { content: notes, updatedAt: new Date().toISOString() });
+    await setDoc(notesRef, { notes, updatedAt: new Date().toISOString() });
   } catch (error) {
     console.error("Error saving notes:", error);
     throw new Error("Failed to save notes");
@@ -277,7 +277,7 @@ const loadNotes = async (userId) => {
   try {
     const notesRef = doc(db, "users", userId, "notes", "current");
     const notesDoc = await getDoc(notesRef);
-    return notesDoc.exists() ? notesDoc.data().content : '';
+    return notesDoc.exists() ? notesDoc.data().notes : {};
   } catch (error) {
     console.error("Error loading notes:", error);
     throw new Error("Failed to load notes");

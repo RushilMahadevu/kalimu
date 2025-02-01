@@ -19,12 +19,135 @@
   height: auto; /* change from 75vh to auto */
   max-height: 90vh; /* keep max-height */
   display: flex;
-  flex-direction: column;
+  flex-direction: row; /* changed from column */
   overflow-y: auto;
   box-shadow: 0 15px 35px rgba(31, 38, 135, 0.2),
     0 0 20px rgba(138, 43, 226, 0.2);
   color: var(--text-color);
   font-family: "Inter", sans-serif;
+}
+
+.sidebar {
+  width: 250px;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.notesList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.noteItem {
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: var(--text-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+  position: relative;
+  background-color: rgba(106, 90, 205, 0.1);
+  margin-bottom: 4px;
+}
+
+.noteItem:hover {
+  background-color: rgba(106, 90, 205, 0.2);
+}
+
+.noteItem.active {
+  background-color: rgba(106, 90, 205, 0.3);
+}
+
+.noteItem.dragging {
+  opacity: 0.5;
+  background-color: rgba(106, 90, 205, 0.3);
+}
+
+.noteTitle {
+  flex: 1;
+  padding: 2px 4px;
+  border-radius: 4px;
+  cursor: text;
+}
+
+.noteTitle:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.noteTitleEdit {
+  flex: 1;
+  background: none;
+  border: none;
+  color: var(--text-color);
+  font-size: inherit;
+  font-family: inherit;
+  padding: 2px 4px;
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.noteTitleEdit:focus {
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.dragHandle {
+  cursor: grab;
+  padding: 0 8px;
+  opacity: 0.6;
+  font-size: 1.2rem;
+}
+
+.dragHandle:hover {
+  opacity: 1;
+}
+
+.mainContent {
+  flex: 1;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.newNoteButton {
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 15px;
+}
+
+.newNoteButton:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(138, 43, 226, 0.4);
+}
+
+.deleteNoteButton {
+  background: none;
+  border: none;
+  color: var(--text-color);
+  opacity: 0.6;
+  cursor: pointer;
+  padding: 4px;
+  font-size: 1rem;
+}
+
+.deleteNoteButton:hover {
+  opacity: 1;
+  color: #ff4444;
 }
 
 .notesArea {
