@@ -6,8 +6,9 @@ import {
   addHomeworkTask,
   deleteHomeworkTask,
   updateHomeworkTaskStatus,
+  updateHomeworkTask,
 } from "../../../firebase";
-import { Clock, Book, CheckSquare, Trash2, Plus } from "lucide-react";
+import { Clock, Book, CheckSquare, Trash2, Plus, Pencil } from "lucide-react";
 import styles from "./HomeworkManager.module.css";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
@@ -27,6 +28,7 @@ const HomeworkManager = () => {
   const [filter, setFilter] = useState("all");
   const [aiOverview, setAiOverview] = useState(null);
   const [isGeneratingOverview, setIsGeneratingOverview] = useState(false);
+  const [editingTask, setEditingTask] = useState(null);
 
   useEffect(() => {
     loadTasks();
@@ -98,6 +100,22 @@ const HomeworkManager = () => {
   const updateTaskStatus = async (taskId, newStatus) => {
     try {
       await updateHomeworkTaskStatus(taskId, newStatus);
+      loadTasks();
+    } catch (error) {
+      setError("Failed to update task");
+      console.error("Error updating task:", error);
+    }
+  };
+
+  const updateTask = async (taskId, updatedData) => {
+    if (!auth.currentUser) {
+      setError("Please sign in to update tasks");
+      return;
+    }
+
+    try {
+      await updateHomeworkTask(auth.currentUser.uid, taskId, updatedData);
+      setEditingTask(null);
       loadTasks();
     } catch (error) {
       setError("Failed to update task");
@@ -279,70 +297,163 @@ const HomeworkManager = () => {
                       key={task.id || Math.random()}
                       className={styles["task-card"]}
                     >
-                      <div className={styles["task-header"]}>
-                        <div>
-                          <h3 className={styles["task-title"]}>
-                            {safeRenderText(task.title)}
-                          </h3>
-                          <div className={styles["task-meta"]}>
-                            <div className={styles["task-meta-item"]}>
-                              <Book size={16} />
-                              <span>{safeRenderText(task.subject)}</span>
-                            </div>
-                            <div className={styles["task-meta-item"]}>
-                              <Clock size={16} />
-                              <span>
-                                {task.dueDate
-                                  ? new Date(task.dueDate).toLocaleString()
-                                  : "No date set"}
-                              </span>
-                            </div>
+                      {editingTask?.id === task.id ? (
+                        <div className={styles["edit-form"]}>
+                          <input
+                            type="text"
+                            value={editingTask.title}
+                            onChange={(e) =>
+                              setEditingTask({
+                                ...editingTask,
+                                title: e.target.value,
+                              })
+                            }
+                            className={styles["form-input"]}
+                          />
+                          <input
+                            type="text"
+                            value={editingTask.subject}
+                            onChange={(e) =>
+                              setEditingTask({
+                                ...editingTask,
+                                subject: e.target.value,
+                              })
+                            }
+                            className={styles["form-input"]}
+                          />
+                          <input
+                            type="datetime-local"
+                            value={editingTask.dueDate}
+                            onChange={(e) =>
+                              setEditingTask({
+                                ...editingTask,
+                                dueDate: e.target.value,
+                              })
+                            }
+                            className={styles["form-input"]}
+                          />
+                          <select
+                            value={editingTask.priority}
+                            onChange={(e) =>
+                              setEditingTask({
+                                ...editingTask,
+                                priority: e.target.value,
+                              })
+                            }
+                            className={styles["form-select"]}
+                          >
+                            <option value="low">Low Priority</option>
+                            <option value="medium">Medium Priority</option>
+                            <option value="high">High Priority</option>
+                          </select>
+                          <textarea
+                            value={editingTask.notes}
+                            onChange={(e) =>
+                              setEditingTask({
+                                ...editingTask,
+                                notes: e.target.value,
+                              })
+                            }
+                            className={styles["form-textarea"]}
+                            rows="3"
+                          />
+                          <div className={styles["edit-actions"]}>
+                            <button
+                              onClick={() => setEditingTask(null)}
+                              className={styles["task-button"]}
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              onClick={() => updateTask(task.id, editingTask)}
+                              className={styles["add-task-button"]}
+                            >
+                              Save
+                            </button>
                           </div>
                         </div>
-                        <div className={styles["task-actions"]}>
-                          <button
-                            onClick={() =>
-                              updateTaskStatus(
-                                task.id,
-                                task.status === "completed"
-                                  ? "pending"
-                                  : "completed"
-                              )
-                            }
-                            className={`${styles["task-button"]} ${
-                              task.status === "completed" ? styles.complete : ""
-                            }`}
-                          >
-                            <CheckSquare size={20} />
-                          </button>
-                          <button
-                            onClick={() => deleteTask(task.id)}
-                            className={`${styles["task-button"]} ${styles.delete}`}
-                          >
-                            <Trash2 size={20} />
-                          </button>
-                        </div>
-                      </div>
-                      {task.notes && (
-                        <p className={styles["task-notes"]}>
-                          {safeRenderText(task.notes)}
-                        </p>
+                      ) : (
+                        <>
+                          <div className={styles["task-header"]}>
+                            <div>
+                              <h3 className={styles["task-title"]}>
+                                {safeRenderText(task.title)}
+                              </h3>
+                              <div className={styles["task-meta"]}>
+                                <div className={styles["task-meta-item"]}>
+                                  <Book size={16} />
+                                  <span>
+                                    {safeRenderText(task.subject)}
+                                  </span>
+                                </div>
+                                <div className={styles["task-meta-item"]}>
+                                  <Clock size={16} />
+                                  <span>
+                                    {task.dueDate
+                                      ? new Date(task.dueDate).toLocaleString()
+                                      : "No date set"}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                            <div className={styles["task-actions"]}>
+                              <button
+                                onClick={() =>
+                                  setEditingTask({ ...task })
+                                }
+                                className={styles["edit-button"]}
+                              >
+                                <Pencil size={20} />
+                              </button>
+                              <button
+                                onClick={() =>
+                                  updateTaskStatus(
+                                    task.id,
+                                    task.status === "completed"
+                                      ? "pending"
+                                      : "completed"
+                                  )
+                                }
+                                className={`${styles["task-button"]} ${
+                                  task.status === "completed"
+                                    ? styles.complete
+                                    : ""
+                                }`}
+                              >
+                                <CheckSquare size={20} />
+                              </button>
+                              <button
+                                onClick={() => deleteTask(task.id)}
+                                className={`${styles["task-button"]} ${styles.delete}`}
+                              >
+                                <Trash2 size={20} />
+                              </button>
+                            </div>
+                          </div>
+                          {task.notes && (
+                            <p className={styles["task-notes"]}>
+                              {safeRenderText(task.notes)}
+                            </p>
+                          )}
+                          <div className={styles["priority-badge"]}>
+                            <span
+                              className={`${
+                                styles[
+                                  `priority-${task.priority || "medium"}`
+                                ]
+                              }`}
+                            >
+                              {task.priority
+                                ? `${task.priority
+                                    .charAt(0)
+                                    .toUpperCase()}${task.priority.slice(
+                                    1
+                                  )} Priority`
+                                : "Medium Priority"}
+                            </span>
+                          </div>
+                        </>
                       )}
-                      <div className={styles["priority-badge"]}>
-                        <span
-                          className={`${
-                            styles[`priority-${task.priority || "medium"}`]
-                          }`}
-                        >
-                          {task.priority
-                            ? `${task.priority
-                                .charAt(0)
-                                .toUpperCase()}${task.priority.slice(
-                                1
-                              )} Priority`
-                            : "Medium Priority"}
-                        </span>
-                      </div>
                     </div>
                   ))
                 ) : (

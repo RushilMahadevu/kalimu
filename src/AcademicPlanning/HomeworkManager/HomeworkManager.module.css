@@ -54,6 +54,7 @@
 
 .add-task-button {
   display: flex;
+  border: none;
   align-items: center;
   gap: 0.5rem;
   background-color: #7c3aed;
@@ -199,11 +200,12 @@
 }
 
 .task-button {
+  border: none;
   color: #f1f5f9;
   padding: 0.5rem;
   border-radius: 0.5rem;
   background-color: #334155;
-  transition: all 0.1s ease;
+  transition: all 0.3s ease;
 }
 
 .task-button:hover {
@@ -213,10 +215,20 @@
 
 .task-button.complete {
   color: #4ade80;
+  border: none;
+}
+
+.task-button.complete:hover {
+  background-color: rgba(74, 222, 128, 0.2);
 }
 
 .task-button.delete {
   color: #f87171;
+  border: none;
+}
+
+.task-button.delete:hover {
+  background-color: rgba(248, 113, 113, 0.2);
 }
 
 .task-notes {
@@ -362,6 +374,7 @@
 }
 
 .generate-overview-button {
+  border: none;
   width: 100%;
   background-color: #7c3aed;
   color: white;
@@ -414,4 +427,33 @@
   .ai-sidebar {
     position: static;
   }
+}
+
+.edit-button {
+  color: #60a5fa;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  background-color: #334155;
+  transition: all 0.2s ease;
+}
+
+.edit-button:hover {
+  background-color: rgba(96, 165, 250, 0.2);
+  cursor: pointer;
+}
+
+.edit-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 10px;
 }

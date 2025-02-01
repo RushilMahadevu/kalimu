@@ -237,6 +237,22 @@ const updateTestPrep = async (userId, testId, updatedData) => {
   }
 };
 
+// Add this new function with the other homework-related functions
+const updateHomeworkTask = async (userId, taskId, updatedData) => {
+  if (!userId || !taskId) {
+    throw new Error("Missing userId or taskId");
+  }
+
+  try {
+    const taskRef = doc(db, "users", userId, "homework", taskId);
+    await updateDoc(taskRef, updatedData);
+    return { id: taskId, ...updatedData };
+  } catch (error) {
+    console.error("Error updating homework task:", error);
+    throw new Error("Failed to update homework task");
+  }
+};
+
 export {
   auth,
   db,
@@ -252,4 +268,5 @@ export {
   addTestPrep,
   deleteTestPrep,
   updateTestPrep,
+  updateHomeworkTask,
 };
