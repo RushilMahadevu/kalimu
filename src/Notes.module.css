@@ -180,7 +180,7 @@
   padding: 15px;
   background: rgba(106, 90, 205, 0.1);
   border-radius: 8px;
-  max-height: 40vh;    /* limit height of formatted section */
+  max-height: 100vh;    /* limit height of formatted section */
   overflow-y: auto;    /* allow scrolling in formatted section */
   margin-bottom: 10px; /* add space between sections */
 }

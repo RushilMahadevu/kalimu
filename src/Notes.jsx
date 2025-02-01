@@ -6,6 +6,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 function Notes({ isOpen, onClose }) {
   const [notes, setNotes] = useState('');
+  const [formattedNotes, setFormattedNotes] = useState('');  // Add this state
   const [isClosing, setIsClosing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isTidying, setIsTidying] = useState(false);
@@ -31,6 +32,7 @@ function Notes({ isOpen, onClose }) {
   const handleNotesChange = async (e) => {
     const newNotes = e.target.value;
     setNotes(newNotes);
+    setFormattedNotes(''); // Clear formatted notes when original notes change
     
     if (auth.currentUser) {
       setIsSaving(true);
@@ -77,12 +79,9 @@ function Notes({ isOpen, onClose }) {
       `;
 
       const result = await model.generateContent(prompt);
-      const formattedNotes = await result.response.text();
+      const tidiedNotes = await result.response.text();
       
-      setNotes(formattedNotes);
-      if (auth.currentUser) {
-        await saveNotes(auth.currentUser.uid, formattedNotes);
-      }
+      setFormattedNotes(tidiedNotes); // Store formatted version separately
     } catch (error) {
       console.error("Error tidying notes:", error);
     } finally {
@@ -101,15 +100,16 @@ function Notes({ isOpen, onClose }) {
       // Convert italics (*text*) to <em>
       .replace(/\*(.*?)\*/g, '<em>$1</em>')
       // Convert bullet points
-      .replace(/^\- (.*$)/gm, '<li>$1</li>')
+      .replace(/^- (.*$)/gm, '<li>$1</li>')  // Removed unnecessary escape
       .replace(/<li>.*<\/li>/g, match => `<ul>${match}</ul>`)
       // Convert line breaks to paragraphs
       .split('\n\n').map(para => `<p>${para}</p>`).join('');
   };
 
   const renderFormattedNotes = () => {
+    const textToFormat = formattedNotes || notes;
     return {
-      __html: convertMarkdownToHTML(notes)
+      __html: convertMarkdownToHTML(textToFormat)
     };
   };
 
@@ -131,8 +131,9 @@ function Notes({ isOpen, onClose }) {
             <button
               className={styles.toggleButton}
               onClick={() => setShowFormatted(!showFormatted)}
+              disabled={!formattedNotes} // Disable if no formatted notes
             >
-              {showFormatted ? "Hide Formatted" : "Show Formatted"}
+              {showFormatted ? "Show Original" : "Show Formatted"}
             </button>
             <button className={styles.closeButton} onClick={handleClose}>×</button>
           </div>
@@ -142,19 +143,20 @@ function Notes({ isOpen, onClose }) {
             <div className={styles.loadingIndicator}>Tidying up your notes...</div>
           ) : (
             <>
-              {showFormatted && (
+              {showFormatted && formattedNotes ? (
                 <div 
                   className={styles.formattedNotes}
                   dangerouslySetInnerHTML={renderFormattedNotes()}
                 />
+              ) : (
+                <textarea
+                  className={styles.notesArea}
+                  value={notes}
+                  onChange={handleNotesChange}
+                  placeholder="Type your notes here..."
+                  style={{ height: '100%' }}
+                />
               )}
-              <textarea
-                className={styles.notesArea}
-                value={notes}
-                onChange={handleNotesChange}
-                placeholder="Type your notes here..."
-                style={{ height: !showFormatted ? '100%' : undefined }}
-              />
             </>
           )}
         </div>
