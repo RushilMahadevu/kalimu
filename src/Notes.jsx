@@ -91,19 +91,28 @@ function Notes({ isOpen, onClose }) {
 
   const convertMarkdownToHTML = (text) => {
     return text
-      // Convert headers (# Header) to proper HTML headers
+      // First, handle bullet points and lists
+      .replace(/^\* (.*?):/gm, '<strong>$1:</strong>')  // Handle category headers with asterisks
+      .replace(/^\* ([^:]*?)$/gm, '<li>$1</li>')       // Handle regular bullet points
+      .replace(/^- (.*?)$/gm, '<li>$1</li>')           // Handle hyphen bullet points
+      .replace(/(?:<li>.*?<\/li>\n*)+/gs, match => `<ul>${match}</ul>`) // Group list items
+      
+      // Then handle other markdown elements
       .replace(/^# (.*$)/gm, '<h1>$1</h1>')
       .replace(/^## (.*$)/gm, '<h2>$1</h2>')
       .replace(/^### (.*$)/gm, '<h3>$1</h3>')
-      // Convert bold (**text**) to <strong>
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      // Convert italics (*text*) to <em>
-      .replace(/\*(.*?)\*/g, '<em>$1</em>')
-      // Convert bullet points
-      .replace(/^- (.*$)/gm, '<li>$1</li>')  // Removed unnecessary escape
-      .replace(/<li>.*<\/li>/g, match => `<ul>${match}</ul>`)
-      // Convert line breaks to paragraphs
-      .split('\n\n').map(para => `<p>${para}</p>`).join('');
+      .replace(/(?<![*\w])\*([^*]+)\*(?![*\w])/g, '<em>$1</em>') // More specific italics pattern
+      
+      // Finally, handle paragraphs
+      .split('\n\n')
+      .map(para => {
+        if (!para.includes('<ul>') && !para.includes('<h')) {
+          return `<p>${para}</p>`;
+        }
+        return para;
+      })
+      .join('\n');
   };
 
   const renderFormattedNotes = () => {
