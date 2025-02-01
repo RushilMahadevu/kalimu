@@ -49,6 +49,17 @@ graph TD
 
 ## Features
 
+### `📝 Notes`
+
+- **Real-time Cloud Synchronization:** Access your notes across all devices seamlessly
+- **Automatic Formatting and Categorization:** Organize your content efficiently without manual effort
+- **Topic-Based Organization:** Keep your notes sorted by subjects, topics, or custom categories
+- **Smart Highlighting:** Automatically identify and emphasize key points
+- **Live Markdown Preview:** Write in Markdown and preview the formatted content instantly
+- **Toggle Between Views:** Switch between the original and formatted versions of your notes
+- **Persistent Floating Access Button:** Quickly access your notes anytime with a floating button
+- **Spell-Check and Grammar Improvements:** Ensure your notes are clear and error-free
+
 ### `🎓 College Preparation`
 
 - **College Matcher:** Personalized college recommendations
@@ -173,4 +184,4 @@ Coming soon...
 
 ---
 
-**Made with ❤️ for students.**  
+**Made with ❤️ for students.**
