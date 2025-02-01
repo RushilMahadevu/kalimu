@@ -170,28 +170,34 @@ function Notes({ isOpen, onClose }) {
   };
 
   const convertMarkdownToHTML = (text) => {
+    if (!text) return '';
+    
     return text
-      // First, handle bullet points and lists
-      .replace(/^\* (.*?):/gm, '<strong>$1:</strong>')  // Handle category headers with asterisks
-      .replace(/^\* ([^:]*?)$/gm, '<li>$1</li>')       // Handle regular bullet points
-      .replace(/^- (.*?)$/gm, '<li>$1</li>')           // Handle hyphen bullet points
-      .replace(/(?:<li>.*?<\/li>\n*)+/gs, match => `<ul>${match}</ul>`) // Group list items
+      // Handle headers first with more specific regex
+      .replace(/^###\s+(.*?)$/gm, (_, content) => `<h3>${content.trim()}</h3>`)
+      .replace(/^##\s+(.*?)$/gm, (_, content) => `<h2>${content.trim()}</h2>`)
+      .replace(/^#\s+(.*?)$/gm, (_, content) => `<h1>${content.trim()}</h1>`)
       
-      // Then handle other markdown elements
-      .replace(/^# (.*$)/gm, '<h1>$1</h1>')
-      .replace(/^## (.*$)/gm, '<h2>$1</h2>')
-      .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+      // Handle lists
+      .replace(/^\* (.*?):/gm, '<strong>$1:</strong>')
+      .replace(/^\* ([^:]*?)$/gm, '<li>$1</li>')
+      .replace(/^- (.*?)$/gm, '<li>$1</li>')
+      .replace(/(?:<li>.*?<\/li>\n*)+/gs, match => `<ul>${match}</ul>`)
+      
+      // Handle inline formatting
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replace(/(?<![*\w])\*([^*]+)\*(?![*\w])/g, '<em>$1</em>') // More specific italics pattern
+      .replace(/(?<![*\w])\*([^*]+)\*(?![*\w])/g, '<em>$1</em>')
       
-      // Finally, handle paragraphs
+      // Handle paragraphs
       .split('\n\n')
       .map(para => {
+        if (!para.trim()) return '';
         if (!para.includes('<ul>') && !para.includes('<h')) {
-          return `<p>${para}</p>`;
+          return `<p>${para.trim()}</p>`;
         }
-        return para;
+        return para.trim();
       })
+      .filter(Boolean)
       .join('\n');
   };
 
