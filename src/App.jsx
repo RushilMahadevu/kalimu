@@ -20,6 +20,7 @@ import GPA from './AcademicPlanning/GPA/GPA';
 import StudySchedule from './AcademicPlanning/StudySchedule/StudySchedule';
 import HomeworkManager from './AcademicPlanning/HomeworkManager/HomeworkManager';
 import TestPrep from './AcademicPlanning/TestPrep/TestPrep';
+import ProgressTracker from './AcademicPlanning/ProgressTracker/ProgressTracker';
 
 // Alt imports
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
@@ -114,6 +115,7 @@ function AnimatedRoutes() {
               <Route path="study-schedule" element={<StudySchedule />} />
               <Route path="homework-manager" element={<HomeworkManager />} />
               <Route path="test-prep" element={<TestPrep />} />
+              <Route path="progress-tracker" element={<ProgressTracker />} />
             </Routes>
           </PageWrapper>
         } />
