@@ -91,12 +91,27 @@ const ProgressTracker = () => {
     if (!auth.currentUser) return;
 
     try {
-      const subject = {
-        ...newSubject,
-        progress: calculateProgress(newSubject.currentGrade, newSubject.targetGrade)
+      // Validate and convert data before sending to Firebase
+      if (!newSubject.name || !newSubject.currentGrade || !newSubject.targetGrade) {
+        console.error("Missing required fields");
+        return;
+      }
+
+      const progress = calculateProgress(newSubject.currentGrade, newSubject.targetGrade);
+      
+      const subjectData = {
+        name: newSubject.name.trim(),
+        currentGrade: parseFloat(newSubject.currentGrade),
+        targetGrade: parseFloat(newSubject.targetGrade),
+        notes: newSubject.notes?.trim() || '',
+        progress: progress,
       };
-      await addSubject(auth.currentUser.uid, subject);
-      await loadUserSubjects(); // Reload subjects after adding
+
+      // Log the data being sent to Firebase
+      console.log("Adding subject with data:", subjectData);
+
+      await addSubject(auth.currentUser.uid, subjectData);
+      await loadUserSubjects();
       setNewSubject({
         name: "",
         currentGrade: "",
@@ -132,10 +147,14 @@ const ProgressTracker = () => {
     if (!auth.currentUser) return;
 
     try {
-      await updateSubject(auth.currentUser.uid, id, {
+      const processedData = {
         ...updatedData,
+        // Convert string values to numbers for Firestore
+        currentGrade: Number(updatedData.currentGrade),
+        targetGrade: Number(updatedData.targetGrade),
         progress: calculateProgress(updatedData.currentGrade, updatedData.targetGrade)
-      });
+      };
+      await updateSubject(auth.currentUser.uid, id, processedData);
       await loadUserSubjects(); // Reload subjects after update
       setEditingSubject(null);
     } catch (error) {

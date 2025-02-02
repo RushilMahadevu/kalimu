@@ -309,15 +309,40 @@ const addSubject = async (userId, subjectData) => {
   }
 
   try {
-    const subjectsRef = collection(db, "users", userId, "subjects");
-    const docRef = await addDoc(subjectsRef, {
-      ...subjectData,
+    // Additional validation before saving
+    if (!subjectData.name || 
+        typeof subjectData.currentGrade !== 'number' || 
+        typeof subjectData.targetGrade !== 'number') {
+      throw new Error("Invalid subject data format");
+    }
+
+    // Ensure grades are within valid range
+    if (subjectData.currentGrade < 0 || subjectData.currentGrade > 100 ||
+        subjectData.targetGrade < 0 || subjectData.targetGrade > 100) {
+      throw new Error("Grades must be between 0 and 100");
+    }
+
+    const processedData = {
+      name: String(subjectData.name),
+      currentGrade: subjectData.currentGrade,
+      targetGrade: subjectData.targetGrade,
+      notes: String(subjectData.notes || ''),
+      progress: subjectData.progress || 0,
       createdAt: new Date().toISOString()
-    });
-    return { id: docRef.id, ...subjectData };
+    };
+
+    console.log("Processed data for Firebase:", processedData);
+
+    const subjectsRef = collection(db, "users", userId, "subjects");
+    const docRef = await addDoc(subjectsRef, processedData);
+    
+    return { 
+      id: docRef.id, 
+      ...processedData 
+    };
   } catch (error) {
-    console.error("Error adding subject:", error);
-    throw new Error("Failed to add subject");
+    console.error("Detailed error adding subject:", error);
+    throw new Error("Failed to add subject: " + error.message);
   }
 };
 
@@ -327,12 +352,24 @@ const updateSubject = async (userId, subjectId, updatedData) => {
   }
 
   try {
-    const subjectRef = doc(db, "users", userId, "subjects", subjectId);
-    await updateDoc(subjectRef, {
-      ...updatedData,
+    // Validate data before updating
+    const validatedData = {
+      name: String(updatedData.name),
+      currentGrade: Number(updatedData.currentGrade),
+      targetGrade: Number(updatedData.targetGrade),
+      notes: String(updatedData.notes || ''),
+      progress: Number(updatedData.progress),
       updatedAt: new Date().toISOString()
-    });
-    return { id: subjectId, ...updatedData };
+    };
+
+    // Check if the numbers are valid
+    if (isNaN(validatedData.currentGrade) || isNaN(validatedData.targetGrade)) {
+      throw new Error("Invalid grade values");
+    }
+
+    const subjectRef = doc(db, "users", userId, "subjects", subjectId);
+    await updateDoc(subjectRef, validatedData);
+    return { id: subjectId, ...validatedData };
   } catch (error) {
     console.error("Error updating subject:", error);
     throw new Error("Failed to update subject");

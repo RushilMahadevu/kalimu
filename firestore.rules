@@ -73,15 +73,14 @@ service cloud.firestore {
         allow read: if request.auth != null && request.auth.uid == userId;
         allow create: if request.auth != null 
           && request.auth.uid == userId
-          && request.resource.data.keys().hasAll(['name', 'currentGrade', 'targetGrade', 'notes'])
+          && request.resource.data.keys().hasAll(['name', 'currentGrade', 'targetGrade', 'notes', 'progress', 'createdAt'])
           && request.resource.data.currentGrade is number
-          && request.resource.data.targetGrade is number;
-        allow update: if request.auth != null 
-          && request.auth.uid == userId
-          && request.resource.data.keys().hasAll(['name', 'currentGrade', 'targetGrade', 'notes'])
-          && request.resource.data.currentGrade is number
-          && request.resource.data.targetGrade is number;
-        allow delete: if request.auth != null && request.auth.uid == userId;
+          && request.resource.data.targetGrade is number
+          && request.resource.data.currentGrade >= 0
+          && request.resource.data.currentGrade <= 100
+          && request.resource.data.targetGrade >= 0
+          && request.resource.data.targetGrade <= 100;
+        allow update, delete: if request.auth != null && request.auth.uid == userId;
       }
     }
   }
