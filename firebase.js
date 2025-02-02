@@ -284,6 +284,76 @@ const loadNotes = async (userId) => {
   }
 };
 
+// Add these new functions for progress tracking
+const loadSubjects = async (userId) => {
+  if (!userId) {
+    throw new Error("No user ID provided");
+  }
+
+  try {
+    const subjectsRef = collection(db, "users", userId, "subjects");
+    const snapshot = await getDocs(subjectsRef);
+    return snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+  } catch (error) {
+    console.error("Error loading subjects:", error);
+    throw new Error("Failed to load subjects");
+  }
+};
+
+const addSubject = async (userId, subjectData) => {
+  if (!userId) {
+    throw new Error("No user ID provided");
+  }
+
+  try {
+    const subjectsRef = collection(db, "users", userId, "subjects");
+    const docRef = await addDoc(subjectsRef, {
+      ...subjectData,
+      createdAt: new Date().toISOString()
+    });
+    return { id: docRef.id, ...subjectData };
+  } catch (error) {
+    console.error("Error adding subject:", error);
+    throw new Error("Failed to add subject");
+  }
+};
+
+const updateSubject = async (userId, subjectId, updatedData) => {
+  if (!userId || !subjectId) {
+    throw new Error("Missing userId or subjectId");
+  }
+
+  try {
+    const subjectRef = doc(db, "users", userId, "subjects", subjectId);
+    await updateDoc(subjectRef, {
+      ...updatedData,
+      updatedAt: new Date().toISOString()
+    });
+    return { id: subjectId, ...updatedData };
+  } catch (error) {
+    console.error("Error updating subject:", error);
+    throw new Error("Failed to update subject");
+  }
+};
+
+const deleteSubject = async (userId, subjectId) => {
+  if (!userId || !subjectId) {
+    throw new Error("Missing userId or subjectId");
+  }
+
+  try {
+    const subjectRef = doc(db, "users", userId, "subjects", subjectId);
+    await deleteDoc(subjectRef);
+    return subjectId;
+  } catch (error) {
+    console.error("Error deleting subject:", error);
+    throw new Error("Failed to delete subject");
+  }
+};
+
 export {
   auth,
   db,
@@ -302,4 +372,8 @@ export {
   updateHomeworkTask,
   saveNotes,
   loadNotes,
+  loadSubjects,
+  addSubject,
+  updateSubject,
+  deleteSubject,
 };

@@ -68,6 +68,21 @@ service cloud.firestore {
       match /notes/{noteId} {
         allow read, write: if request.auth != null && request.auth.uid == userId;
       }
+
+      match /subjects/{subjectId} {
+        allow read: if request.auth != null && request.auth.uid == userId;
+        allow create: if request.auth != null 
+          && request.auth.uid == userId
+          && request.resource.data.keys().hasAll(['name', 'currentGrade', 'targetGrade', 'notes'])
+          && request.resource.data.currentGrade is number
+          && request.resource.data.targetGrade is number;
+        allow update: if request.auth != null 
+          && request.auth.uid == userId
+          && request.resource.data.keys().hasAll(['name', 'currentGrade', 'targetGrade', 'notes'])
+          && request.resource.data.currentGrade is number
+          && request.resource.data.targetGrade is number;
+        allow delete: if request.auth != null && request.auth.uid == userId;
+      }
     }
   }
 }
