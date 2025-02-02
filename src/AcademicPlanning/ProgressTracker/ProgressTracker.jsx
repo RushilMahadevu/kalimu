@@ -43,6 +43,7 @@ const ProgressTracker = () => {
     lowestGrade: 100
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [animatedSubjects, setAnimatedSubjects] = useState([]);
 
   useEffect(() => {
     loadUserSubjects();
@@ -85,6 +86,18 @@ const ProgressTracker = () => {
   useEffect(() => {
     calculateStatistics();
   }, [calculateStatistics]);
+
+  useEffect(() => {
+    if (subjects.length > 0) {
+      // Reset animated subjects when new subjects load
+      setAnimatedSubjects([]);
+      // Start animation after a short delay
+      const timer = setTimeout(() => {
+        setAnimatedSubjects(subjects.map(subject => subject.id));
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [subjects]);
 
   const handleAddSubject = async (e) => {
     e.preventDefault();
@@ -377,8 +390,13 @@ const ProgressTracker = () => {
                       <div className={styles["progress-section"]}>
                         <div className={styles["progress-bar"]}>
                           <div
-                            className={styles["progress-fill"]}
-                            style={{ width: `${subject.progress}%` }}
+                            className={`${styles["progress-fill"]} ${
+                              animatedSubjects.includes(subject.id) ? styles["animate-progress"] : ""
+                            }`}
+                            style={{ 
+                              "--target-width": `${subject.progress}%`,
+                              width: animatedSubjects.includes(subject.id) ? `${subject.progress}%` : "0%"
+                            }}
                           />
                         </div>
                         <div className={styles["progress-stats"]}>
