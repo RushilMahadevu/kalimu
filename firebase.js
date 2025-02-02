@@ -309,40 +309,30 @@ const addSubject = async (userId, subjectData) => {
   }
 
   try {
-    // Additional validation before saving
-    if (!subjectData.name || 
-        typeof subjectData.currentGrade !== 'number' || 
-        typeof subjectData.targetGrade !== 'number') {
-      throw new Error("Invalid subject data format");
-    }
-
-    // Ensure grades are within valid range
-    if (subjectData.currentGrade < 0 || subjectData.currentGrade > 100 ||
-        subjectData.targetGrade < 0 || subjectData.targetGrade > 100) {
-      throw new Error("Grades must be between 0 and 100");
+    // Basic validation
+    if (!subjectData.name || !subjectData.currentGrade || !subjectData.targetGrade) {
+      throw new Error("Missing required fields");
     }
 
     const processedData = {
       name: String(subjectData.name),
-      currentGrade: subjectData.currentGrade,
-      targetGrade: subjectData.targetGrade,
+      currentGrade: Number(subjectData.currentGrade),
+      targetGrade: Number(subjectData.targetGrade),
       notes: String(subjectData.notes || ''),
-      progress: subjectData.progress || 0,
+      progress: Number(subjectData.progress || 0),
       createdAt: new Date().toISOString()
     };
 
-    console.log("Processed data for Firebase:", processedData);
+    // Log the final data being sent to Firestore
+    console.log("Final data for Firestore:", processedData);
 
     const subjectsRef = collection(db, "users", userId, "subjects");
     const docRef = await addDoc(subjectsRef, processedData);
     
-    return { 
-      id: docRef.id, 
-      ...processedData 
-    };
+    return { id: docRef.id, ...processedData };
   } catch (error) {
-    console.error("Detailed error adding subject:", error);
-    throw new Error("Failed to add subject: " + error.message);
+    console.error("Full error details:", error);
+    throw new Error(`Failed to add subject: ${error.message}`);
   }
 };
 

@@ -91,27 +91,26 @@ const ProgressTracker = () => {
     if (!auth.currentUser) return;
 
     try {
-      // Validate and convert data before sending to Firebase
-      if (!newSubject.name || !newSubject.currentGrade || !newSubject.targetGrade) {
-        console.error("Missing required fields");
+      const currentGrade = parseFloat(newSubject.currentGrade);
+      const targetGrade = parseFloat(newSubject.targetGrade);
+
+      if (isNaN(currentGrade) || isNaN(targetGrade)) {
+        console.error("Invalid grade values");
         return;
       }
 
-      const progress = calculateProgress(newSubject.currentGrade, newSubject.targetGrade);
-      
       const subjectData = {
         name: newSubject.name.trim(),
-        currentGrade: parseFloat(newSubject.currentGrade),
-        targetGrade: parseFloat(newSubject.targetGrade),
-        notes: newSubject.notes?.trim() || '',
-        progress: progress,
+        currentGrade: currentGrade,
+        targetGrade: targetGrade,
+        notes: newSubject.notes?.trim() || "",
+        progress: calculateProgress(currentGrade, targetGrade)
       };
 
-      // Log the data being sent to Firebase
-      console.log("Adding subject with data:", subjectData);
-
+      console.log("Sending subject data:", subjectData);
       await addSubject(auth.currentUser.uid, subjectData);
       await loadUserSubjects();
+      
       setNewSubject({
         name: "",
         currentGrade: "",
@@ -121,7 +120,7 @@ const ProgressTracker = () => {
       });
       setShowForm(false);
     } catch (err) {
-      console.error("Error adding subject:", err);
+      console.error("Detailed error:", err);
     }
   };
 
