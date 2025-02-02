@@ -25,6 +25,14 @@
     0 0 20px rgba(138, 43, 226, 0.2);
   color: var(--text-color);
   font-family: "Inter", sans-serif;
+  opacity: 0;
+  transform: scale(0.98) translateY(20px);
+  transition: opacity 0.35s ease-out, transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.notesContainer.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .sidebar {
@@ -213,6 +221,12 @@
   justify-content: center;
   align-items: center;
   z-index: 1001;
+  opacity: 0;
+  transition: opacity 0.35s ease-out;
+}
+
+.modal.visible {
+  opacity: 1;
 }
 
 .header {

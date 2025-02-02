@@ -1,8 +1,22 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { Plus, Pencil, Trash2, TrendingUp, Target, Award, BookOpen } from "lucide-react";
-import { Bar } from 'react-chartjs-2';
-import { auth, loadSubjects, addSubject, updateSubject, deleteSubject } from "../../../firebase";
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  TrendingUp,
+  Target,
+  Award,
+  BookOpen,
+} from "lucide-react";
+import { Bar } from "react-chartjs-2";
+import {
+  auth,
+  loadSubjects,
+  addSubject,
+  updateSubject,
+  deleteSubject,
+} from "../../../firebase";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -10,8 +24,8 @@ import {
   BarElement,
   Title,
   Tooltip,
-  Legend
-} from 'chart.js';
+  Legend,
+} from "chart.js";
 import styles from "./ProgressTracker.module.css";
 
 ChartJS.register(
@@ -40,7 +54,7 @@ const ProgressTracker = () => {
     onTrackSubjects: 0,
     needsImprovementSubjects: 0,
     highestGrade: 0,
-    lowestGrade: 100
+    lowestGrade: 100,
   });
   const [isLoading, setIsLoading] = useState(true);
   const [animatedSubjects, setAnimatedSubjects] = useState([]);
@@ -68,10 +82,15 @@ const ProgressTracker = () => {
   const calculateStatistics = useCallback(() => {
     if (subjects.length === 0) return;
 
-    const totalProgress = subjects.reduce((acc, subject) => acc + subject.progress, 0);
-    const highest = Math.max(...subjects.map(s => Number(s.currentGrade)));
-    const lowest = Math.min(...subjects.map(s => Number(s.currentGrade)));
-    const onTrack = subjects.filter(s => Number(s.currentGrade) >= Number(s.targetGrade)).length;
+    const totalProgress = subjects.reduce(
+      (acc, subject) => acc + subject.progress,
+      0
+    );
+    const highest = Math.max(...subjects.map((s) => Number(s.currentGrade)));
+    const lowest = Math.min(...subjects.map((s) => Number(s.currentGrade)));
+    const onTrack = subjects.filter(
+      (s) => Number(s.currentGrade) >= Number(s.targetGrade)
+    ).length;
 
     setStatistics({
       averageProgress: (totalProgress / subjects.length).toFixed(1),
@@ -79,7 +98,7 @@ const ProgressTracker = () => {
       onTrackSubjects: onTrack,
       needsImprovementSubjects: subjects.length - onTrack,
       highestGrade: highest,
-      lowestGrade: lowest
+      lowestGrade: lowest,
     });
   }, [subjects]);
 
@@ -93,7 +112,7 @@ const ProgressTracker = () => {
       setAnimatedSubjects([]);
       // Start animation after a short delay
       const timer = setTimeout(() => {
-        setAnimatedSubjects(subjects.map(subject => subject.id));
+        setAnimatedSubjects(subjects.map((subject) => subject.id));
       }, 100);
       return () => clearTimeout(timer);
     }
@@ -117,13 +136,13 @@ const ProgressTracker = () => {
         currentGrade: currentGrade,
         targetGrade: targetGrade,
         notes: newSubject.notes?.trim() || "",
-        progress: calculateProgress(currentGrade, targetGrade)
+        progress: calculateProgress(currentGrade, targetGrade),
       };
 
       console.log("Sending subject data:", subjectData);
       await addSubject(auth.currentUser.uid, subjectData);
       await loadUserSubjects();
-      
+
       setNewSubject({
         name: "",
         currentGrade: "",
@@ -164,7 +183,10 @@ const ProgressTracker = () => {
         // Convert string values to numbers for Firestore
         currentGrade: Number(updatedData.currentGrade),
         targetGrade: Number(updatedData.targetGrade),
-        progress: calculateProgress(updatedData.currentGrade, updatedData.targetGrade)
+        progress: calculateProgress(
+          updatedData.currentGrade,
+          updatedData.targetGrade
+        ),
       };
       await updateSubject(auth.currentUser.uid, id, processedData);
       await loadUserSubjects(); // Reload subjects after update
@@ -175,60 +197,60 @@ const ProgressTracker = () => {
   };
 
   const chartData = {
-    labels: subjects.map(subject => subject.name),
+    labels: subjects.map((subject) => subject.name),
     datasets: [
       {
-        label: 'Current Grade',
-        data: subjects.map(subject => subject.currentGrade),
-        backgroundColor: 'rgba(124, 58, 237, 0.5)',
-        borderColor: 'rgba(124, 58, 237, 1)',
-        borderWidth: 1
+        label: "Current Grade",
+        data: subjects.map((subject) => subject.currentGrade),
+        backgroundColor: "rgba(124, 58, 237, 0.5)",
+        borderColor: "rgba(124, 58, 237, 1)",
+        borderWidth: 1,
       },
       {
-        label: 'Target Grade',
-        data: subjects.map(subject => subject.targetGrade),
-        backgroundColor: 'rgba(139, 92, 246, 0.3)',
-        borderColor: 'rgba(139, 92, 246, 1)',
-        borderWidth: 1
-      }
-    ]
+        label: "Target Grade",
+        data: subjects.map((subject) => subject.targetGrade),
+        backgroundColor: "rgba(139, 92, 246, 0.3)",
+        borderColor: "rgba(139, 92, 246, 1)",
+        borderWidth: 1,
+      },
+    ],
   };
 
   const chartOptions = {
     responsive: true,
     plugins: {
       legend: {
-        position: 'top',
+        position: "top",
         labels: {
-          color: '#f1f5f9'
-        }
+          color: "#f1f5f9",
+        },
       },
       title: {
         display: true,
-        text: 'Grade Comparison',
-        color: '#f1f5f9'
-      }
+        text: "Grade Comparison",
+        color: "#f1f5f9",
+      },
     },
     scales: {
       y: {
         beginAtZero: true,
         max: 100,
         grid: {
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: "rgba(255, 255, 255, 0.1)",
         },
         ticks: {
-          color: '#f1f5f9'
-        }
+          color: "#f1f5f9",
+        },
       },
       x: {
         grid: {
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: "rgba(255, 255, 255, 0.1)",
         },
         ticks: {
-          color: '#f1f5f9'
-        }
-      }
-    }
+          color: "#f1f5f9",
+        },
+      },
+    },
   };
 
   return (
@@ -280,13 +302,18 @@ const ProgressTracker = () => {
             </div>
 
             {showForm && (
-              <form onSubmit={handleAddSubject} className={styles["subject-form"]}>
+              <form
+                onSubmit={handleAddSubject}
+                className={styles["subject-form"]}
+              >
                 <div className={styles["form-grid"]}>
                   <input
                     type="text"
                     placeholder="Subject Name"
                     value={newSubject.name}
-                    onChange={(e) => setNewSubject({...newSubject, name: e.target.value})}
+                    onChange={(e) =>
+                      setNewSubject({ ...newSubject, name: e.target.value })
+                    }
                     className={styles["form-input"]}
                     required
                   />
@@ -294,7 +321,12 @@ const ProgressTracker = () => {
                     type="number"
                     placeholder="Current Grade %"
                     value={newSubject.currentGrade}
-                    onChange={(e) => setNewSubject({...newSubject, currentGrade: e.target.value})}
+                    onChange={(e) =>
+                      setNewSubject({
+                        ...newSubject,
+                        currentGrade: e.target.value,
+                      })
+                    }
                     className={styles["form-input"]}
                     required
                     min="0"
@@ -304,7 +336,12 @@ const ProgressTracker = () => {
                     type="number"
                     placeholder="Target Grade %"
                     value={newSubject.targetGrade}
-                    onChange={(e) => setNewSubject({...newSubject, targetGrade: e.target.value})}
+                    onChange={(e) =>
+                      setNewSubject({
+                        ...newSubject,
+                        targetGrade: e.target.value,
+                      })
+                    }
                     className={styles["form-input"]}
                     required
                     min="0"
@@ -314,14 +351,23 @@ const ProgressTracker = () => {
                 <textarea
                   placeholder="Notes"
                   value={newSubject.notes}
-                  onChange={(e) => setNewSubject({...newSubject, notes: e.target.value})}
+                  onChange={(e) =>
+                    setNewSubject({ ...newSubject, notes: e.target.value })
+                  }
                   className={styles["form-textarea"]}
                 />
                 <div className={styles["form-actions"]}>
-                  <button type="button" onClick={() => setShowForm(false)} className={styles["cancel-button"]}>
+                  <button
+                    type="button"
+                    onClick={() => setShowForm(false)}
+                    className={styles["cancel-button"]}
+                  >
                     Cancel
                   </button>
-                  <button type="submit" className={styles["add-subject-button"]}>
+                  <button
+                    type="submit"
+                    className={styles["add-subject-button"]}
+                  >
                     Add Subject
                   </button>
                 </div>
@@ -336,32 +382,57 @@ const ProgressTracker = () => {
                       <input
                         type="text"
                         value={editingSubject.name}
-                        onChange={(e) => setEditingSubject({...editingSubject, name: e.target.value})}
+                        onChange={(e) =>
+                          setEditingSubject({
+                            ...editingSubject,
+                            name: e.target.value,
+                          })
+                        }
                         className={styles["form-input"]}
                       />
                       <input
                         type="number"
                         value={editingSubject.currentGrade}
-                        onChange={(e) => setEditingSubject({...editingSubject, currentGrade: e.target.value})}
+                        onChange={(e) =>
+                          setEditingSubject({
+                            ...editingSubject,
+                            currentGrade: e.target.value,
+                          })
+                        }
                         className={styles["form-input"]}
                       />
                       <input
                         type="number"
                         value={editingSubject.targetGrade}
-                        onChange={(e) => setEditingSubject({...editingSubject, targetGrade: e.target.value})}
+                        onChange={(e) =>
+                          setEditingSubject({
+                            ...editingSubject,
+                            targetGrade: e.target.value,
+                          })
+                        }
                         className={styles["form-input"]}
                       />
                       <textarea
                         value={editingSubject.notes}
-                        onChange={(e) => setEditingSubject({...editingSubject, notes: e.target.value})}
+                        onChange={(e) =>
+                          setEditingSubject({
+                            ...editingSubject,
+                            notes: e.target.value,
+                          })
+                        }
                         className={styles["form-textarea"]}
                       />
                       <div className={styles["edit-actions"]}>
-                        <button onClick={() => setEditingSubject(null)} className={styles["cancel-button"]}>
+                        <button
+                          onClick={() => setEditingSubject(null)}
+                          className={styles["cancel-button"]}
+                        >
                           Cancel
                         </button>
                         <button
-                          onClick={() => updateSubjectHandler(subject.id, editingSubject)}
+                          onClick={() =>
+                            updateSubjectHandler(subject.id, editingSubject)
+                          }
                           className={styles["save-button"]}
                         >
                           Save
@@ -371,10 +442,12 @@ const ProgressTracker = () => {
                   ) : (
                     <>
                       <div className={styles["subject-header"]}>
-                        <h3 className={styles["subject-title"]}>{subject.name}</h3>
+                        <h3 className={styles["subject-title"]}>
+                          {subject.name}
+                        </h3>
                         <div className={styles["subject-actions"]}>
                           <button
-                            onClick={() => setEditingSubject({...subject})}
+                            onClick={() => setEditingSubject({ ...subject })}
                             className={styles["edit-button"]}
                           >
                             <Pencil size={18} />
@@ -391,11 +464,15 @@ const ProgressTracker = () => {
                         <div className={styles["progress-bar"]}>
                           <div
                             className={`${styles["progress-fill"]} ${
-                              animatedSubjects.includes(subject.id) ? styles["animate-progress"] : ""
+                              animatedSubjects.includes(subject.id)
+                                ? styles["animate-progress"]
+                                : ""
                             }`}
-                            style={{ 
+                            style={{
                               "--target-width": `${subject.progress}%`,
-                              width: animatedSubjects.includes(subject.id) ? `${subject.progress}%` : "0%"
+                              width: animatedSubjects.includes(subject.id)
+                                ? `${subject.progress}%`
+                                : "0%",
                             }}
                           />
                         </div>
@@ -405,7 +482,9 @@ const ProgressTracker = () => {
                         </div>
                       </div>
                       {subject.notes && (
-                        <p className={styles["subject-notes"]}>{subject.notes}</p>
+                        <p className={styles["subject-notes"]}>
+                          {subject.notes}
+                        </p>
                       )}
                     </>
                   )}

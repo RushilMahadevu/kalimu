@@ -8,29 +8,27 @@ function Notes({ isOpen, onClose }) {
   const [notes, setNotes] = useState({});
   const [activeNoteId, setActiveNoteId] = useState(null);
   const [formattedNotes, setFormattedNotes] = useState('');
-  const [isClosing, setIsClosing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isTidying, setIsTidying] = useState(false);
   const [showFormatted, setShowFormatted] = useState(true);
   const [editingTitleId, setEditingTitleId] = useState(null);
   const [draggedNote, setDraggedNote] = useState(null);
+  const [isVisible, setIsVisible] = useState(false);
   const titleInputRef = useRef(null);
 
-  const handleClose = () => {
-    setIsClosing(true);
-    // Save any pending changes
-    if (auth.currentUser && activeNoteId && notes[activeNoteId]) {
-      try {
-        saveNotes(auth.currentUser.uid, notes);
-      } catch (error) {
-        console.error("Error saving notes during close:", error);
-      }
+  useEffect(() => {
+    if (isOpen) {
+      requestAnimationFrame(() => setIsVisible(true));
+    } else {
+      setIsVisible(false);
     }
-    // Wait for animation to complete before actually closing
+  }, [isOpen]);
+
+  const handleClose = () => {
+    setIsVisible(false);
     setTimeout(() => {
-      setIsClosing(false);
       onClose();
-    }, 300);
+    }, 350); // Match the new 0.35s transition duration
   };
 
   useEffect(() => {
@@ -283,8 +281,8 @@ function Notes({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <div className={`${styles.modal} ${isClosing ? styles.closing : ''}`}>
-      <div className={styles.notesContainer}>
+    <div className={`${styles.modal} ${isVisible ? styles.visible : ''}`}>
+      <div className={`${styles.notesContainer} ${isVisible ? styles.visible : ''}`}>
         <div className={styles.sidebar}>
           <button className={styles.newNoteButton} onClick={createNewNote}>
             + New Note
