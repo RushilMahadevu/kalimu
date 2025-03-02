@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { GraduationCap, Brain, BookMarked, Bolt } from "lucide-react";
+import { GraduationCap, Brain } from "lucide-react";
 import Xarrow from "react-xarrows";
 import styles from "./LearningDashboard.module.css";
 
@@ -18,21 +18,7 @@ const LearningDashboard = () => {
       icon: <Brain className={styles.courseIcon} />,
       description: "Plan your academic journey",
       link: "/academic-planning",
-    },
-    {
-      id: 3,
-      title: "Student Life",
-      icon: <BookMarked className={styles.courseIcon} />,
-      description: "Explore student opportunities",
-      link: "/student-life",
-    },
-    {
-      id: 4,
-      title: "Personal Development",
-      icon: <Bolt className={styles.courseIcon} />,
-      description: "Grow your skills and knowledge",
-      link: "/personal-development",
-    },
+    }
   ];
 
   return (

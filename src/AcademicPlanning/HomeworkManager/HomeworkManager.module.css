@@ -98,13 +98,11 @@
 .form-input,
 .form-select,
 .form-textarea {
-  width: 100%;
   padding: 0.75rem 1rem;
   background-color: #334155;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 0.5rem;
   color: #f1f5f9;
-  transition: all 0.2s ease;
 }
 
 .form-input:focus,
@@ -115,9 +113,19 @@
   box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.2);
 }
 
+.form-input {
+  max-width: 93%;
+}
+
+.form-select {
+  max-width: 105%;
+}
+
 .form-textarea {
+  width: 97%;
   resize: vertical;
   min-height: 100px;
+  max-width: 97%;
 }
 
 .form-actions {
