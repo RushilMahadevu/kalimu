@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Book, Brain, Target } from 'lucide-react';
+import { Book, Brain, Target, ArrowRight, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './Home.module.css';
 import { useAuth } from './auth/AuthContext';
@@ -9,39 +9,52 @@ const Home = () => {
   const navigate = useNavigate();
   const { user, signInWithGoogle } = useAuth();
   const [activeFeature, setActiveFeature] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const features = [
     {
       icon: <Book className={styles.featureIcon} />,
       title: "Smart Learning",
-      description: "Personalized learning paths tailored to your unique needs"
+      description: "Personalized learning paths tailored to your unique needs",
+      gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
     },
     {
       icon: <Brain className={styles.featureIcon} />,
       title: "AI Powered",
-      description: "Adaptive learning technology that grows with you"
+      description: "Adaptive learning technology that grows with you",
+      gradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
     },
     {
       icon: <Target className={styles.featureIcon} />,
       title: "Goal Tracking",
-      description: "Set, monitor, and achieve your learning objectives"
+      description: "Set, monitor, and achieve your learning objectives",
+      gradient: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"
     }
   ];
 
-  // Hero section animation variants
-  const heroVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: { 
-      opacity: 1, 
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
       y: 0,
       transition: {
-        duration: 0.8,
+        duration: 0.6,
         ease: "easeOut"
       }
     }
   };
 
-  // Feature card animation variants
   const featureVariants = {
     hidden: { opacity: 0, scale: 0.9 },
     visible: (custom) => ({
@@ -54,67 +67,105 @@ const Home = () => {
     }),
     hover: {
       scale: 1.05,
+      y: -10,
       transition: { duration: 0.3 }
     }
   };
 
   const handleStartPlanning = async () => {
     if (!user) {
+      setIsLoading(true);
       try {
         await signInWithGoogle();
-        // After successful sign-in, navigate to college selection
         navigate('/learning');
       } catch (error) {
         console.error('Sign in failed:', error);
-        // Add user feedback for failed sign-in
         alert('Failed to sign in. Please try again.');
+      } finally {
+        setIsLoading(false);
       }
     } else {
-      // If user is already signed in, navigate directly
       navigate('/learning');
     }
   };
 
   return (
     <div className={styles.homeContainer}>
-      <motion.header 
+      {/* Hero Section */}
+      <motion.section 
         className={styles.heroSection}
         initial="hidden"
         animate="visible"
-        variants={heroVariants}
+        variants={containerVariants}
       >
         <div className={styles.heroContent}>
-          <motion.h1 
-            className={styles.heroTitle}
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            Welcome to Kalimu
+          <motion.div className={styles.heroBadge} variants={itemVariants}>
+            <Sparkles size={16} />
+            <span>AI-Powered Learning Platform</span>
+          </motion.div>
+          
+          <motion.h1 className={styles.heroTitle} variants={itemVariants}>
+            Welcome to <span className={styles.brandName}>Kalimu</span>
           </motion.h1>
-          <motion.p 
-            className={styles.heroSubtitle}
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            Revolutionize Your Learning Journey
+          
+          <motion.p className={styles.heroSubtitle} variants={itemVariants}>
+            Revolutionize your learning journey with personalized AI-driven education
           </motion.p>
-          <motion.button
-            className={styles.ctaButton}
-            onClick={handleStartPlanning}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-          >
-            {user ? 'Start Planning' : 'Sign in to Start'}
-          </motion.button>
+          
+          <motion.div className={styles.heroActions} variants={itemVariants}>
+            <motion.button
+              className={styles.ctaButton}
+              onClick={handleStartPlanning}
+              disabled={isLoading}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {isLoading ? (
+                <div className={styles.spinner} />
+              ) : (
+                <>
+                  {user ? 'Start Learning' : 'Sign in to Start'}
+                  <ArrowRight size={20} />
+                </>
+              )}
+            </motion.button>
+            
+            <motion.button
+              className={styles.secondaryButton}
+              onClick={() => document.getElementById('features').scrollIntoView({ behavior: 'smooth' })}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Learn More
+            </motion.button>
+          </motion.div>
         </div>
-      </motion.header>
+        
+        <div className={styles.heroVisual}>
+          <div className={styles.floatingElements}>
+            <div className={styles.floatingElement}></div>
+            <div className={styles.floatingElement}></div>
+            <div className={styles.floatingElement}></div>
+          </div>
+        </div>
+      </motion.section>
 
-      <section className={styles.featuresSection}>
+      {/* Features Section */}
+      <motion.section 
+        id="features"
+        className={styles.featuresSection}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        variants={containerVariants}
+      >
+        <motion.div className={styles.sectionHeader} variants={itemVariants}>
+          <h2 className={styles.sectionTitle}>Why Choose Kalimu?</h2>
+          <p className={styles.sectionSubtitle}>
+            Experience the future of learning with our cutting-edge features
+          </p>
+        </motion.div>
+        
         <div className={styles.featuresGrid}>
           <AnimatePresence>
             {features.map((feature, index) => (
@@ -122,33 +173,57 @@ const Home = () => {
                 key={index}
                 custom={index}
                 initial="hidden"
-                animate="visible"
+                whileInView="visible"
                 whileHover="hover"
                 variants={featureVariants}
                 className={`${styles.featureCard} ${activeFeature === index ? styles.featureActive : ''}`}
                 onMouseEnter={() => setActiveFeature(index)}
                 onMouseLeave={() => setActiveFeature(null)}
+                style={{ '--gradient': feature.gradient }}
               >
-                {feature.icon}
-                <motion.h3
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.2 * (index + 1) }}
-                >
-                  {feature.title}
-                </motion.h3>
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.2 * (index + 1) }}
-                >
-                  {feature.description}
-                </motion.p>
+                <div className={styles.featureIconWrapper}>
+                  {feature.icon}
+                </div>
+                <h3 className={styles.featureTitle}>{feature.title}</h3>
+                <p className={styles.featureDescription}>{feature.description}</p>
+                <div className={styles.featureOverlay}></div>
               </motion.div>
             ))}
           </AnimatePresence>
         </div>
-      </section>
+      </motion.section>
+
+      {/* CTA Section */}
+      <motion.section 
+        className={styles.ctaSection}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        variants={containerVariants}
+      >
+        <motion.div className={styles.ctaContent} variants={itemVariants}>
+          <h2 className={styles.ctaTitle}>Ready to Transform Your Learning?</h2>
+          <p className={styles.ctaSubtitle}>
+            Start your personalized learning journey with Kalimu today
+          </p>
+          <motion.button
+            className={styles.ctaButton}
+            onClick={handleStartPlanning}
+            disabled={isLoading}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            {isLoading ? (
+              <div className={styles.spinner} />
+            ) : (
+              <>
+                Get Started Now
+                <ArrowRight size={20} />
+              </>
+            )}
+          </motion.button>
+        </motion.div>
+      </motion.section>
     </div>
   );
 };
