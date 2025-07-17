@@ -1,349 +1,469 @@
-.dashboardContainer {
-  font-family: "Inter", sans-serif;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary-color: #6366f1;
+  --primary-light: #818cf8;
+  --primary-dark: #4f46e5;
+  --secondary-color: #1e293b;
+  --background-color: #0f172a;
+  --background-light: #1e293b;
+  --text-color: #f1f5f9;
+  --text-muted: #94a3b8;
+  --accent-color: #8b5cf6;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --error-color: #ef4444;
+  --border-color: #334155;
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   background-color: var(--background-color);
   color: var(--text-color);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+.dashboardContainer {
   min-height: 100vh;
-  padding: 2rem;
+  background: linear-gradient(135deg, var(--background-color) 0%, var(--background-light) 100%);
   position: relative;
+  overflow-x: hidden;
 }
 
 .dashboardContainer::before {
-  content: "";
-  position: absolute;
+  content: '';
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: radial-gradient(#ffffff 1px, transparent 1px),
-    radial-gradient(#ffffff 1px, transparent 1px);
-  background-size: 50px 50px;
-  background-position: 0 0, 25px 25px;
-  opacity: 0.1;
-  z-index: 1;
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
   pointer-events: none;
+  z-index: 0;
 }
 
+/* Header */
 .dashboardHeader {
+  padding: 2rem;
+  position: relative;
+  z-index: 2;
+}
+
+.headerContent {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2.5rem;
-  border-bottom: 1px solid rgba(106, 90, 205, 0.3);
-  padding-bottom: 1.5rem;
-  position: relative;
-  z-index: 2;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
-.dashboardHeader h1 {
-  font-size: 2.5rem;
-  color: var(--text-color);
-  text-shadow: 0 0 12px rgba(138, 43, 226, 0.4);
-  font-weight: 600;
-  letter-spacing: 0.5px;
+.welcomeSection {
+  flex: 1;
+  min-width: 300px;
+}
+
+.welcomeTitle {
+  font-size: clamp(1.8rem, 5vw, 2.5rem);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, var(--text-color) 0%, var(--primary-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.welcomeSubtitle {
+  font-size: 1.125rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
 }
 
 .homeLink {
-  display: inline-block;
-  background-color: var(--accent-color);
-  color: white;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  border-radius: 10px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  color: var(--text-color);
   text-decoration: none;
   font-weight: 600;
-  font-size: 1rem;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 0 25px rgba(138, 43, 226, 0.3);
-  letter-spacing: 0.5px;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
 }
 
 .homeLink:hover {
-  transform: scale(1.05);
-  transition: all 0.3s ease-in-out;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3), 0 0 35px rgba(138, 43, 226, 0.4);
+  background: var(--glass-border);
+  border-color: var(--primary-color);
+  transform: translateY(-2px);
 }
 
-.coursesSection h2 {
-  font-size: 2rem;
-  margin-bottom: 2.5rem;
-  margin-left: 1rem;
-  text-align: justify;
-  color: var(--text-color);
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  text-shadow: 0 0 12px rgba(138, 43, 226, 0.4);
-}
-
-.courseGrid {
+.statsContainer {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 2.5rem;
-  margin-top: 2rem;
-  position: relative;
-  z-index: 2;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1.5rem;
+  max-width: 600px;
 }
 
-.courseCard {
-  margin: 2rem;
-  background-color: rgba(106, 90, 205, 0.2);
+.statCard {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
   border-radius: 16px;
+  padding: 1.5rem;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.statCard:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-2px);
+}
+
+.statIcon {
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.statValue {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin-bottom: 0.25rem;
+}
+
+.statLabel {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+/* Section Headers */
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.sectionTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, var(--text-color) 0%, var(--primary-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.sectionSubtitle {
+  font-size: 1rem;
+  color: var(--text-muted);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Learning Path */
+.learningPathSection {
   padding: 2rem;
-  border: 1px solid rgba(106, 90, 205, 0.3);
+  position: relative;
+  z-index: 1;
+}
+
+.coursesContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
-  cursor: pointer;
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-  text-decoration: none;
-  transition: all 0.3s ease-in-out;
-  transform-origin: center;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  gap: 3rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.startNode {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-size: 1.25rem;
+  font-weight: 600;
+  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+  position: relative;
+  z-index: 3;
+}
+
+.startIcon {
+  font-size: 1.5rem;
+}
+
+.courseNodes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  width: 100%;
+  max-width: 800px;
+}
+
+.courseCard {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 2rem;
+  backdrop-filter: blur(10px);
   position: relative;
   overflow: hidden;
+  transition: all 0.3s ease;
 }
 
 .courseCard::before {
   content: '';
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  background: rgba(138, 43, 226, 0.1);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  transition: width 0.6s ease-out, height 0.6s ease-out;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--course-gradient);
+  opacity: 0;
+  transition: opacity 0.3s ease;
   z-index: 1;
 }
 
-.courseCard > * {
+.courseCard:hover::before {
+  opacity: 0.1;
+}
+
+.courseCard:hover {
+  border-color: var(--primary-color);
+  box-shadow: 0 20px 40px rgba(99, 102, 241, 0.2);
+  transform: translateY(-5px);
+}
+
+.courseLink {
+  display: block;
+  text-decoration: none;
+  color: inherit;
   position: relative;
   z-index: 2;
 }
 
-.courseCard:hover {
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 
-              0 0 20px rgba(138, 43, 226, 0.3);
-  background-color: rgba(106, 90, 205, 0.3);
+.courseIconWrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 70px;
+  height: 70px;
+  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+  border-radius: 18px;
+  margin-bottom: 1.5rem;
+  transition: transform 0.3s ease;
 }
 
-.courseCard:active {
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-}
-
-.courseActive {
-  background-color: var(--accent-color);
-  color: white;
-  border-color: var(--accent-color);
+.courseCard:hover .courseIconWrapper {
+  transform: scale(1.1) rotate(5deg);
 }
 
 .courseIcon {
-  width: 48px;
-  height: 48px;
-  color: var(--text-color);
-  margin-bottom: 1.5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 50%;
-  padding: 1rem;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease, color 0.3s ease;
-}
-
-.courseActive .courseIcon {
+  width: 32px;
+  height: 32px;
   color: white;
 }
 
-.courseCard:hover .courseIcon {
-  transform: rotate(-8deg);
-  color: var(--accent-color);
+.courseTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: var(--text-color);
 }
 
-.courseCard h3 {
+.courseDescription {
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.courseProgress {
+  margin-bottom: 1.5rem;
+}
+
+.progressBar {
+  width: 100%;
+  height: 8px;
+  background: var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.progressText {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.courseStatus {
   display: flex;
-  font-size: 1.8rem;
-  color: var(--accent-color);
-  text-shadow: 0 0 8px rgba(138, 43, 226, 0.6);
-  flex-direction: column;
+  justify-content: center;
+}
+
+.statusBadge {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.statusBadge.available {
+  background: var(--success-color);
+  color: white;
+}
+
+.statusBadge.locked {
+  background: var(--border-color);
+  color: var(--text-muted);
+}
+
+.statusBadge.completed {
+  background: var(--primary-color);
+  color: white;
+}
+
+/* Quick Actions */
+.quickActionsSection {
+  padding: 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.quickActionsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.quickActionCard {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.quickActionCard:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--primary-color);
+  transform: translateY(-5px);
+}
+
+.quickActionIcon {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin: 0 0 1rem 0;
-  font-size: 1.5rem;
-  color: var(--text-color);
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+  border-radius: 16px;
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.quickActionCard h3 {
+  font-size: 1.25rem;
   font-weight: 600;
-  letter-spacing: 0.5px;
-  transition: color 0.3s ease;
+  margin-bottom: 0.5rem;
+  color: var(--text-color);
 }
 
-.courseCard:hover h3 {
-  color: var(--accent-color);
+.quickActionCard p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
 }
 
-.courseCard p {
-  color: rgba(230, 230, 250, 0.7);
-  font-size: 1.1rem;
-  line-height: 1.7;
-  margin-top: 0.5rem;
-  transition: color 0.3s ease;
-}
-
-.courseCard:hover p {
-  color: rgba(230, 230, 250, 0.9);
-}
-
+/* Responsive Design */
 @media (max-width: 768px) {
-  .dashboardHeader {
+  .headerContent {
     flex-direction: column;
-    align-items: flex-start;
+    text-align: center;
   }
 
-  .courseGrid {
+  .welcomeSection {
+    min-width: auto;
+  }
+
+  .statsContainer {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .sectionTitle {
+    font-size: 1.75rem;
+  }
+
+  .courseNodes {
     grid-template-columns: 1fr;
   }
 
-  .coursesSection h2 {
-    font-size: 1.8rem;
+  .quickActionsGrid {
+    grid-template-columns: 1fr;
   }
 }
 
-.nodeTree {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem;
-  padding: 2rem;
-  position: relative;
-  z-index: 2;
-}
+@media (max-width: 480px) {
+  .dashboardContainer {
+    padding: 1rem;
+  }
 
-.startNode {
-  background-color: #4CAF50;
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 16px;
-  text-align: center;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-}
-
-.connectionLines {
-  position: relative;
-  width: 100%;
-  height: 60px;
-}
-
-.verticalLine {
-  position: absolute;
-  left: 50%;
-  height: 100%;
-  width: 2px;
-  background-color: rgba(106, 90, 205, 0.3);
-}
-
-.horizontalLines {
-  position: absolute;
-  bottom: 0;
-  left: 20%;
-  width: 60%;
-  height: 2px;
-  background-color: rgba(106, 90, 205, 0.3);
-}
-
-.courseNodes {
-  display: flex;
-  justify-content: center;
-  gap: 4rem;
-  width: 100%;
-}
-
-.courseCard {
-  background-color: rgba(106, 90, 205, 0.2);
-  border: 1px solid rgba(106, 90, 205, 0.3);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-  padding: 1.5rem;
-  border-radius: 8px;
-  text-decoration: none;
-  color: inherit;
-  width: 280px;
-  text-align: center;
-}
-
-.treeContainer {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
-  display: flex;
-  justify-content: center;
-}
-
-.treeStructure {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8rem;
-  min-height: 500px;
-  padding: 2rem;
-  position: relative;
-}
-
-.startNode {
-  background-color: var(--accent-color);
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  font-size: 1.5rem;
-  font-weight: 600;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  position: relative;
-  z-index: 2;
-}
-
-.courseNodes {
-  display: flex;
-  gap: 6rem;
-  position: relative;
-  z-index: 2;
-}
-
-.courseCard {
-  width: 280px;
-  background-color: rgba(106, 90, 205, 0.2);
-  border: 1px solid rgba(106, 90, 205, 0.3);
-  border-radius: 16px;
-  padding: 1.5rem;
-  text-decoration: none;
-  color: var(--text-color);
-  text-align: center;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-}
-
-.courseCard:hover {
-  box-shadow: 0 8px 24px rgba(106, 90, 205, 0.3), 0 0 0 2px var(--accent-color);
-  background-color: rgba(106, 90, 205, 0.25);
-  border-color: transparent;
-}
-
-@media (max-width: 1024px) {
-  .courseNodes {
-    flex-direction: column;
-    gap: 3rem;
+  .dashboardHeader,
+  .learningPathSection,
+  .quickActionsSection {
+    padding: 1rem;
   }
 
   .courseCard {
-    width: 100%;
-    max-width: 280px;
+    padding: 1.5rem;
   }
 
-  .treeStructure {
-    min-height: 600px;
+  .statsContainer {
+    grid-template-columns: 1fr;
+  }
+
+  .startNode {
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
   }
 }
 
-.xarrowElement {
-  transition: all 0.3s ease-in-out;
+/* Animation Classes */
+.courseActive {
+  border-color: var(--primary-color);
+  box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3);
 }
 
-.xarrowPath {
-  transition: d 0.3s ease-in-out;
+.courseActive::before {
+  opacity: 0.15;
 }
