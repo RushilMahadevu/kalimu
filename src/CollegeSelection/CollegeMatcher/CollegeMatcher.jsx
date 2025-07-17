@@ -1,7 +1,9 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import "./CollegeMatcher.css";
+import { ArrowLeft, Sparkles, Search, MapPin, DollarSign, Users, BookOpen, Star } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import styles from "./CollegeMatcher.module.css";
 
 const CollegeMatcher = () => {
   // Initialize Gemini AI client
@@ -90,125 +92,219 @@ const CollegeMatcher = () => {
   };
 
   return (
-    <div className="college-matcher-container">
-      <div className="header">
-        <Link to="/college-selection" className="back-button">
-          Back
-        </Link>
-      </div>
-      <h1 className="page-title">AI College Matcher</h1>
-
-      <div className="preferences-form">
-        <h2 className="form-title">Tell Us About Your College Preferences</h2>
-
-        <div className="input-group">
-          <label htmlFor="academicInterest">Academic Interest</label>
-          <input
-            id="academicInterest"
-            type="text"
-            placeholder="e.g., Computer Science, Biology"
-            value={preferences.academicInterest}
-            onChange={(e) =>
-              handleInputChange("academicInterest", e.target.value)
-            }
-          />
-        </div>
-
-        <div className="input-group">
-          <label htmlFor="location">Preferred Location</label>
-          <select
-            id="location"
-            value={preferences.location}
-            onChange={(e) => handleInputChange("location", e.target.value)}
-          >
-            <option value="">Select Region</option>
-            <option value="Northeast">Northeast</option>
-            <option value="Southeast">Southeast</option>
-            <option value="Midwest">Midwest</option>
-            <option value="West">West Coast</option>
-          </select>
-        </div>
-
-        <div className="input-group">
-          <label htmlFor="budget">
-            Annual Budget: ${preferences.budget.toLocaleString()}
-          </label>
-          <input
-            id="budget"
-            type="range"
-            min="10000"
-            max="100000"
-            step="1000"
-            value={preferences.budget}
-            onChange={(e) =>
-              handleInputChange("budget", Number(e.target.value))
-            }
-          />
-        </div>
-
-        <div className="input-group">
-          <label htmlFor="campusSize">Campus Size</label>
-          <select
-            id="campusSize"
-            value={preferences.campusSize}
-            onChange={(e) => handleInputChange("campusSize", e.target.value)}
-          >
-            <option value="small">Small (&lt; 5,000 students)</option>
-            <option value="medium">Medium (5,000-15,000 students)</option>
-            <option value="large">Large (&gt; 15,000 students)</option>
-          </select>
-        </div>
-
-        <div className="input-group">
-          <label htmlFor="specialNeeds">Specific Wants/Needs</label>
-          <input
-            id="specialNeeds"
-            type="text"
-            placeholder="e.g., Need-based aid, Research opportunities"
-            value={preferences.specialNeeds}
-            onChange={(e) => handleInputChange("specialNeeds", e.target.value)}
-          />
-        </div>
-
-        <button
-          className="submit-button"
-          onClick={generateRecommendations}
-          disabled={isLoading}
-        >
-          {isLoading ? "Generating Recommendations..." : "Find My Colleges"}
-        </button>
-
-        {error && <div className="error-message">{error}</div>}
-      </div>
-
-      {recommendations.length > 0 && (
-        <div className="recommendations-section">
-          <h2 className="recommendations-title">
-            Your College Recommendations
-          </h2>
-          <div className="recommendations-grid">
-            {recommendations.map((college, index) => (
-              <div key={index} className="recommendation-card">
-                <h3>{college.collegeName}</h3>
-                <p>
-                  <strong>Why a Good Match:</strong> {college.matchReason}
-                </p>
-                <p>
-                  <strong>Estimated Annual Cost:</strong>
-                  {college.estimatedCost.toLocaleString()}
-                </p>
-                <p>
-                  <strong>Key Strengths:</strong> {college.keyStrengths}
-                </p>
-                <p>
-                  <strong>Unique Opportunities:</strong>{" "}
-                  {college.uniqueOpportunities}
-                </p>
-              </div>
-            ))}
+    <div className={styles.matcherContainer}>
+      {/* Header */}
+      <motion.header 
+        className={styles.matcherHeader}
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        <div className={styles.headerContent}>
+          <div className={styles.titleSection}>
+            <div className={styles.titleBadge}>
+              <Sparkles size={16} />
+              <span>AI-Powered College Matching</span>
+            </div>
+            <h1 className={styles.matcherTitle}>College Matcher</h1>
+            <p className={styles.matcherSubtitle}>
+              Find your perfect college match with personalized AI recommendations
+            </p>
           </div>
+          
+          <Link to="/college-selection" className={styles.backButton}>
+            <ArrowLeft size={20} />
+            Back to College Selection
+          </Link>
         </div>
-      )}
+      </motion.header>
+
+      {/* Preferences Form */}
+      <motion.section 
+        className={styles.formSection}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+      >
+        <div className={styles.formContainer}>
+          <h2 className={styles.formTitle}>Tell Us About Your Preferences</h2>
+          
+          <div className={styles.formGrid}>
+            <div className={styles.inputGroup}>
+              <label htmlFor="academicInterest" className={styles.label}>
+                <BookOpen size={18} />
+                Academic Interest
+              </label>
+              <input
+                id="academicInterest"
+                type="text"
+                className={styles.input}
+                placeholder="e.g., Computer Science, Biology, Psychology"
+                value={preferences.academicInterest}
+                onChange={(e) => handleInputChange("academicInterest", e.target.value)}
+              />
+            </div>
+
+            <div className={styles.inputGroup}>
+              <label htmlFor="location" className={styles.label}>
+                <MapPin size={18} />
+                Preferred Location
+              </label>
+              <select
+                id="location"
+                className={styles.select}
+                value={preferences.location}
+                onChange={(e) => handleInputChange("location", e.target.value)}
+              >
+                <option value="">Select Region</option>
+                <option value="Northeast">Northeast</option>
+                <option value="Southeast">Southeast</option>
+                <option value="Midwest">Midwest</option>
+                <option value="West">West Coast</option>
+              </select>
+            </div>
+
+            <div className={styles.inputGroup}>
+              <label htmlFor="budget" className={styles.label}>
+                <DollarSign size={18} />
+                Annual Budget: ${preferences.budget.toLocaleString()}
+              </label>
+              <input
+                id="budget"
+                type="range"
+                className={styles.slider}
+                min="10000"
+                max="100000"
+                step="1000"
+                value={preferences.budget}
+                onChange={(e) => handleInputChange("budget", Number(e.target.value))}
+              />
+              <div className={styles.sliderLabels}>
+                <span>$10K</span>
+                <span>$100K</span>
+              </div>
+            </div>
+
+            <div className={styles.inputGroup}>
+              <label htmlFor="campusSize" className={styles.label}>
+                <Users size={18} />
+                Campus Size
+              </label>
+              <select
+                id="campusSize"
+                className={styles.select}
+                value={preferences.campusSize}
+                onChange={(e) => handleInputChange("campusSize", e.target.value)}
+              >
+                <option value="small">Small (&lt; 5,000 students)</option>
+                <option value="medium">Medium (5,000-15,000 students)</option>
+                <option value="large">Large (&gt; 15,000 students)</option>
+              </select>
+            </div>
+
+            <div className={styles.inputGroup}>
+              <label htmlFor="specialNeeds" className={styles.label}>
+                <Star size={18} />
+                Specific Wants/Needs
+              </label>
+              <input
+                id="specialNeeds"
+                type="text"
+                className={styles.input}
+                placeholder="e.g., Need-based aid, Research opportunities, Greek life"
+                value={preferences.specialNeeds}
+                onChange={(e) => handleInputChange("specialNeeds", e.target.value)}
+              />
+            </div>
+          </div>
+
+          <motion.button
+            className={styles.submitButton}
+            onClick={generateRecommendations}
+            disabled={isLoading}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            {isLoading ? (
+              <>
+                <div className={styles.spinner} />
+                Generating Recommendations...
+              </>
+            ) : (
+              <>
+                <Search size={20} />
+                Find My Perfect Colleges
+              </>
+            )}
+          </motion.button>
+
+          {error && (
+            <motion.div 
+              className={styles.errorMessage}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              {error}
+            </motion.div>
+          )}
+        </div>
+      </motion.section>
+
+      {/* Recommendations */}
+      <AnimatePresence>
+        {recommendations.length > 0 && (
+          <motion.section 
+            className={styles.recommendationsSection}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className={styles.recommendationsHeader}>
+              <h2 className={styles.recommendationsTitle}>Your College Recommendations</h2>
+              <p className={styles.recommendationsSubtitle}>
+                Based on your preferences, here are your personalized matches
+              </p>
+            </div>
+            
+            <div className={styles.recommendationsGrid}>
+              {recommendations.map((college, index) => (
+                <motion.div
+                  key={index}
+                  className={styles.recommendationCard}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  whileHover={{ y: -5 }}
+                >
+                  <div className={styles.cardHeader}>
+                    <h3 className={styles.collegeName}>{college.collegeName}</h3>
+                    <div className={styles.costBadge}>
+                      ${college.estimatedCost.toLocaleString()}
+                    </div>
+                  </div>
+                  
+                  <div className={styles.cardContent}>
+                    <div className={styles.matchSection}>
+                      <h4>Why It's a Great Match</h4>
+                      <p>{college.matchReason}</p>
+                    </div>
+                    
+                    <div className={styles.strengthsSection}>
+                      <h4>Key Strengths</h4>
+                      <p>{college.keyStrengths}</p>
+                    </div>
+                    
+                    <div className={styles.opportunitiesSection}>
+                      <h4>Unique Opportunities</h4>
+                      <p>{college.uniqueOpportunities}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.section>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, MapPin } from 'lucide-react';
+import { Calendar, MapPin, Clock, Plus, Trash2, ArrowLeft } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { auth, db, loadUserVisits } from '../../../firebase.js';
 import { collection, addDoc, deleteDoc, doc } from 'firebase/firestore';
 import styles from './CollegeVisitPlanner.module.css';
@@ -93,16 +94,39 @@ const CollegeVisitPlanner = () => {
   };
 
   return (
-    <div className={styles.plannerContainer}>
-      <header className={styles.header}>
-        <h1>College Visit Planner</h1>
+    <motion.div 
+      className={styles.container}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <motion.header 
+        className={styles.header}
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+      >
+        <h1 className={styles.title}>College Visit Planner</h1>
+        <p className={styles.subtitle}>Plan and organize your college visits</p>
         <Link to="/college-selection" className={styles.backButton}>
+          <ArrowLeft size={20} />
           Back to College Selection
         </Link>
-      </header>
+      </motion.header>
 
       <div className={styles.content}>
-        <form className={styles.planForm} onSubmit={handleAddVisit}>
+        <motion.form 
+          className={styles.planForm}
+          onSubmit={handleAddVisit}
+          initial={{ x: -20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          <h2 className={styles.sectionTitle}>
+            <Plus size={24} />
+            Add New Visit
+          </h2>
+          
           <div className={styles.inputGroup}>
             <label htmlFor="college">College Name</label>
             <input
@@ -145,47 +169,79 @@ const CollegeVisitPlanner = () => {
           </div>
 
           <button type="submit" className={styles.submitButton}>
+            <Plus size={20} />
             Add to Visit Schedule
           </button>
-        </form>
+        </motion.form>
 
-        <div className={styles.visitsTimeline}>
-          <h2>
-            <Calendar className={styles.timelineIcon} />
+        <motion.div 
+          className={styles.visitsTimeline}
+          initial={{ x: 20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
+          <h2 className={styles.sectionTitle}>
+            <Calendar size={24} />
             Planned Visits  
           </h2>
           {plannedVisits.length === 0 ? (
-            <p className={styles.noVisits}>No visits planned yet</p>
+            <div className={styles.noVisits}>
+              <Clock size={48} />
+              <p>No visits planned yet</p>
+              <p>Start by adding your first college visit above!</p>
+            </div>
           ) : (
             <div className={styles.timelineItems}>
-              {plannedVisits.map((visit) => (
-                <div key={visit.id} className={styles.timelineItem}>
+              {plannedVisits.map((visit, index) => (
+                <motion.div 
+                  key={visit.id} 
+                  className={styles.timelineItem}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                >
                   <div className={styles.timelineDate}>
-                    <MapPin className={styles.dateIcon} />
+                    <MapPin size={20} />
                     {new Date(visit.date).toLocaleDateString(undefined, {
-                      timeZone: 'UTC'
+                      timeZone: 'UTC',
+                      weekday: 'short',
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric'
                     })}
                   </div>
                   <div className={styles.timelineContent}>
                     <div className={styles.plannedVisitCard}>
                       <h3>{visit.college}</h3>
-                      <p>Date: {new Date(visit.date).toLocaleDateString()}</p>
-                      <p>Interests: {visit.interests.join(', ')}</p>
+                      <div className={styles.visitDetails}>
+                        <p><strong>Date:</strong> {new Date(visit.date).toLocaleDateString()}</p>
+                        <div className={styles.visitInterests}>
+                          <strong>Interests:</strong>
+                          <div className={styles.interestBadges}>
+                            {visit.interests.map((interest, i) => (
+                              <span key={i} className={styles.interestBadge}>
+                                {interest}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
                       <button 
                         onClick={() => removeVisit(visit.id)}
                         className={styles.removeButton}
                       >
+                        <Trash2 size={16} />
                         Remove Visit
                       </button>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           )}
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
