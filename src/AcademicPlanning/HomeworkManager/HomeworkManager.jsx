@@ -8,7 +8,8 @@ import {
   updateHomeworkTaskStatus,
   updateHomeworkTask,
 } from "../../../firebase";
-import { Clock, Book, CheckSquare, Trash2, Plus, Pencil } from "lucide-react";
+import { Clock, Book, CheckSquare, Trash2, Plus, Pencil, ArrowLeft, Sparkles, Calendar } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import styles from "./HomeworkManager.module.css";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
@@ -193,293 +194,368 @@ const HomeworkManager = () => {
   return (
     <div className={styles["homework-manager"]}>
       <div className={styles.container}>
-        <div className={styles["content-wrapper"]}>
-          <div className={styles["main-content"]}>
-            <header className={styles.header}>
+        {/* Header */}
+        <motion.header 
+          className={styles.header}
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className={styles["header-content"]}>
+            <div className={styles["title-section"]}>
+              <div className={styles["title-badge"]}>
+                <Sparkles size={16} />
+                <span>AI-Powered Task Management</span>
+              </div>
               <h1 className={styles.title}>Homework Manager</h1>
+              <p className={styles.subtitle}>
+                Organize and track your assignments with intelligent AI insights
+              </p>
+            </div>
+            
+            <div className={styles["header-actions"]}>
               <Link to="/academic-planning" className={styles.backButton}>
+                <ArrowLeft size={20} />
                 Back to Academic Planning
               </Link>
-              <button
+              <motion.button
                 onClick={() => setShowForm(!showForm)}
                 className={styles["add-task-button"]}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
                 <Plus size={20} />
                 Add Task
-              </button>
-            </header>
-
-            {error && <div className={styles["error-message"]}>{error}</div>}
-
-            {showForm && (
-              <form onSubmit={addTask} className={styles["task-form"]}>
-                <div className={styles["form-grid"]}>
-                  <input
-                    type="text"
-                    placeholder="Task Title"
-                    value={newTask.title}
-                    onChange={(e) => handleInputChange("title", e.target.value)}
-                    className={styles["form-input"]}
-                    required
-                  />
-                  <input
-                    type="text"
-                    placeholder="Subject"
-                    value={newTask.subject}
-                    onChange={(e) =>
-                      handleInputChange("subject", e.target.value)
-                    }
-                    className={styles["form-input"]}
-                    required
-                  />
-                  <input
-                    type="datetime-local"
-                    value={newTask.dueDate}
-                    onChange={(e) =>
-                      handleInputChange("dueDate", e.target.value)
-                    }
-                    className={styles["form-input"]}
-                    required
-                  />
-                  <select
-                    value={newTask.priority}
-                    onChange={(e) =>
-                      handleInputChange("priority", e.target.value)
-                    }
-                    className={styles["form-select"]}
-                  >
-                    <option value="low">Low Priority</option>
-                    <option value="medium">Medium Priority</option>
-                    <option value="high">High Priority</option>
-                  </select>
-                </div>
-                <textarea
-                  placeholder="Notes"
-                  value={newTask.notes}
-                  onChange={(e) => handleInputChange("notes", e.target.value)}
-                  className={styles["form-textarea"]}
-                  rows="3"
-                />
-                <div className={styles["form-actions"]}>
-                  <button
-                    type="button"
-                    onClick={() => setShowForm(false)}
-                    className={`${styles["task-button"]}`}
-                  >
-                    Cancel
-                  </button>
-                  <button type="submit" className={styles["add-task-button"]}>
-                    Add Task
-                  </button>
-                </div>
-              </form>
-            )}
-
-            <div className={styles["filter-bar"]}>
-              <select
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-                className={styles["filter-select"]}
-              >
-                <option value="all">All Tasks</option>
-                <option value="pending">Pending</option>
-                <option value="completed">Completed</option>
-              </select>
+              </motion.button>
             </div>
+          </div>
+        </motion.header>
 
-            {isLoading ? (
-              <div className={styles.loading}>Loading tasks...</div>
-            ) : (
-              <div className={styles["task-grid"]}>
-                {Array.isArray(filteredTasks) && filteredTasks.length > 0 ? (
-                  filteredTasks.map((task) => (
-                    <div
-                      key={task.id || Math.random()}
-                      className={styles["task-card"]}
-                    >
-                      {editingTask?.id === task.id ? (
-                        <div className={styles["edit-form"]}>
-                          <input
-                            type="text"
-                            value={editingTask.title}
-                            onChange={(e) =>
-                              setEditingTask({
-                                ...editingTask,
-                                title: e.target.value,
-                              })
-                            }
-                            className={styles["form-input"]}
-                          />
-                          <input
-                            type="text"
-                            value={editingTask.subject}
-                            onChange={(e) =>
-                              setEditingTask({
-                                ...editingTask,
-                                subject: e.target.value,
-                              })
-                            }
-                            className={styles["form-input"]}
-                          />
-                          <input
-                            type="datetime-local"
-                            value={editingTask.dueDate}
-                            onChange={(e) =>
-                              setEditingTask({
-                                ...editingTask,
-                                dueDate: e.target.value,
-                              })
-                            }
-                            className={styles["form-input"]}
-                          />
-                          <select
-                            value={editingTask.priority}
-                            onChange={(e) =>
-                              setEditingTask({
-                                ...editingTask,
-                                priority: e.target.value,
-                              })
-                            }
-                            className={styles["form-select"]}
-                          >
-                            <option value="low">Low Priority</option>
-                            <option value="medium">Medium Priority</option>
-                            <option value="high">High Priority</option>
-                          </select>
-                          <textarea
-                            value={editingTask.notes}
-                            onChange={(e) =>
-                              setEditingTask({
-                                ...editingTask,
-                                notes: e.target.value,
-                              })
-                            }
-                            className={styles["form-textarea"]}
-                            rows="3"
-                          />
-                          <div className={styles["edit-actions"]}>
-                            <button
-                              onClick={() => setEditingTask(null)}
-                              className={styles["task-button"]}
+        {error && (
+          <motion.div 
+            className={styles["error-message"]}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            {error}
+          </motion.div>
+        )}
+
+        <div className={styles["content-wrapper"]}>
+          <div className={styles["main-content"]}>
+            {/* Task Form */}
+            <AnimatePresence>
+              {showForm && (
+                <motion.section 
+                  className={styles["task-form-section"]}
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <form onSubmit={addTask} className={styles["task-form"]}>
+                    <h2 className={styles["form-title"]}>Add New Task</h2>
+                    
+                    <div className={styles["form-grid"]}>
+                      <input
+                        type="text"
+                        placeholder="Task Title"
+                        value={newTask.title}
+                        onChange={(e) => handleInputChange("title", e.target.value)}
+                        className={styles["form-input"]}
+                        required
+                      />
+                      <input
+                        type="text"
+                        placeholder="Subject"
+                        value={newTask.subject}
+                        onChange={(e) => handleInputChange("subject", e.target.value)}
+                        className={styles["form-input"]}
+                        required
+                      />
+                      <input
+                        type="datetime-local"
+                        value={newTask.dueDate}
+                        onChange={(e) => handleInputChange("dueDate", e.target.value)}
+                        className={styles["form-input"]}
+                        required
+                      />
+                      <select
+                        value={newTask.priority}
+                        onChange={(e) => handleInputChange("priority", e.target.value)}
+                        className={styles["form-select"]}
+                      >
+                        <option value="low">Low Priority</option>
+                        <option value="medium">Medium Priority</option>
+                        <option value="high">High Priority</option>
+                      </select>
+                    </div>
+                    
+                    <textarea
+                      placeholder="Notes"
+                      value={newTask.notes}
+                      onChange={(e) => handleInputChange("notes", e.target.value)}
+                      className={styles["form-textarea"]}
+                      rows="3"
+                    />
+                    
+                    <div className={styles["form-actions"]}>
+                      <motion.button
+                        type="button"
+                        onClick={() => setShowForm(false)}
+                        className={styles["task-button"]}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        Cancel
+                      </motion.button>
+                      <motion.button 
+                        type="submit" 
+                        className={styles["add-task-button"]}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <Plus size={16} />
+                        Add Task
+                      </motion.button>
+                    </div>
+                  </form>
+                </motion.section>
+              )}
+            </AnimatePresence>
+
+            {/* Filter Bar */}
+            <motion.section 
+              className={styles["filter-bar-section"]}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              <div className={styles["filter-bar"]}>
+                <select
+                  value={filter}
+                  onChange={(e) => setFilter(e.target.value)}
+                  className={styles["filter-select"]}
+                >
+                  <option value="all">All Tasks</option>
+                  <option value="pending">Pending</option>
+                  <option value="completed">Completed</option>
+                </select>
+              </div>
+            </motion.section>
+
+            {/* Tasks */}
+            <motion.section 
+              className={styles["tasks-section"]}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              {isLoading ? (
+                <div className={styles.loading}>Loading tasks...</div>
+              ) : (
+                <div className={styles["task-grid"]}>
+                  {Array.isArray(filteredTasks) && filteredTasks.length > 0 ? (
+                    filteredTasks.map((task, index) => (
+                      <motion.div
+                        key={task.id || Math.random()}
+                        className={styles["task-card"]}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: index * 0.1 }}
+                        whileHover={{ y: -2 }}
+                      >
+                        {editingTask?.id === task.id ? (
+                          <div className={styles["edit-form"]}>
+                            <input
+                              type="text"
+                              value={editingTask.title}
+                              onChange={(e) =>
+                                setEditingTask({
+                                  ...editingTask,
+                                  title: e.target.value,
+                                })
+                              }
+                              className={styles["form-input"]}
+                            />
+                            <input
+                              type="text"
+                              value={editingTask.subject}
+                              onChange={(e) =>
+                                setEditingTask({
+                                  ...editingTask,
+                                  subject: e.target.value,
+                                })
+                              }
+                              className={styles["form-input"]}
+                            />
+                            <input
+                              type="datetime-local"
+                              value={editingTask.dueDate}
+                              onChange={(e) =>
+                                setEditingTask({
+                                  ...editingTask,
+                                  dueDate: e.target.value,
+                                })
+                              }
+                              className={styles["form-input"]}
+                            />
+                            <select
+                              value={editingTask.priority}
+                              onChange={(e) =>
+                                setEditingTask({
+                                  ...editingTask,
+                                  priority: e.target.value,
+                                })
+                              }
+                              className={styles["form-select"]}
                             >
-                              Cancel
-                            </button>
-                            <button
-                              onClick={() => updateTask(task.id, editingTask)}
-                              className={styles["add-task-button"]}
-                            >
-                              Save
-                            </button>
+                              <option value="low">Low Priority</option>
+                              <option value="medium">Medium Priority</option>
+                              <option value="high">High Priority</option>
+                            </select>
+                            <textarea
+                              value={editingTask.notes}
+                              onChange={(e) =>
+                                setEditingTask({
+                                  ...editingTask,
+                                  notes: e.target.value,
+                                })
+                              }
+                              className={styles["form-textarea"]}
+                              rows="3"
+                            />
+                            <div className={styles["edit-actions"]}>
+                              <motion.button
+                                onClick={() => setEditingTask(null)}
+                                className={styles["task-button"]}
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                              >
+                                Cancel
+                              </motion.button>
+                              <motion.button
+                                onClick={() => updateTask(task.id, editingTask)}
+                                className={styles["add-task-button"]}
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                              >
+                                Save
+                              </motion.button>
+                            </div>
                           </div>
-                        </div>
-                      ) : (
-                        <>
-                          <div className={styles["task-header"]}>
-                            <div>
-                              <h3 className={styles["task-title"]}>
-                                {safeRenderText(task.title)}
-                              </h3>
-                              <div className={styles["task-meta"]}>
-                                <div className={styles["task-meta-item"]}>
-                                  <Book size={16} />
-                                  <span>
-                                    {safeRenderText(task.subject)}
-                                  </span>
-                                </div>
-                                <div className={styles["task-meta-item"]}>
-                                  <Clock size={16} />
-                                  <span>
-                                    {task.dueDate
-                                      ? new Date(task.dueDate).toLocaleString()
-                                      : "No date set"}
-                                  </span>
+                        ) : (
+                          <>
+                            <div className={styles["task-header"]}>
+                              <div>
+                                <h3 className={styles["task-title"]}>
+                                  {safeRenderText(task.title)}
+                                </h3>
+                                <div className={styles["task-meta"]}>
+                                  <div className={styles["task-meta-item"]}>
+                                    <Book size={16} />
+                                    <span>{safeRenderText(task.subject)}</span>
+                                  </div>
+                                  <div className={styles["task-meta-item"]}>
+                                    <Clock size={16} />
+                                    <span>
+                                      {task.dueDate
+                                        ? new Date(task.dueDate).toLocaleString()
+                                        : "No date set"}
+                                    </span>
+                                  </div>
                                 </div>
                               </div>
+                              <div className={styles["task-actions"]}>
+                                <motion.button
+                                  onClick={() => setEditingTask({ ...task })}
+                                  className={styles["edit-button"]}
+                                  whileHover={{ scale: 1.05 }}
+                                  whileTap={{ scale: 0.95 }}
+                                >
+                                  <Pencil size={16} />
+                                </motion.button>
+                                <motion.button
+                                  onClick={() =>
+                                    updateTaskStatus(
+                                      task.id,
+                                      task.status === "completed" ? "pending" : "completed"
+                                    )
+                                  }
+                                  className={`${styles["task-button"]} ${
+                                    task.status === "completed" ? styles.complete : ""
+                                  }`}
+                                  whileHover={{ scale: 1.05 }}
+                                  whileTap={{ scale: 0.95 }}
+                                >
+                                  <CheckSquare size={16} />
+                                </motion.button>
+                                <motion.button
+                                  onClick={() => deleteTask(task.id)}
+                                  className={`${styles["task-button"]} ${styles.delete}`}
+                                  whileHover={{ scale: 1.05 }}
+                                  whileTap={{ scale: 0.95 }}
+                                >
+                                  <Trash2 size={16} />
+                                </motion.button>
+                              </div>
                             </div>
-                            <div className={styles["task-actions"]}>
-                              <button
-                                onClick={() =>
-                                  setEditingTask({ ...task })
-                                }
-                                className={styles["edit-button"]}
+                            
+                            {task.notes && (
+                              <p className={styles["task-notes"]}>
+                                {safeRenderText(task.notes)}
+                              </p>
+                            )}
+                            
+                            <div className={styles["priority-badge"]}>
+                              <span
+                                className={`${styles[`priority-${task.priority || "medium"}`]}`}
                               >
-                                <Pencil size={20} />
-                              </button>
-                              <button
-                                onClick={() =>
-                                  updateTaskStatus(
-                                    task.id,
-                                    task.status === "completed"
-                                      ? "pending"
-                                      : "completed"
-                                  )
-                                }
-                                className={`${styles["task-button"]} ${
-                                  task.status === "completed"
-                                    ? styles.complete
-                                    : ""
-                                }`}
-                              >
-                                <CheckSquare size={20} />
-                              </button>
-                              <button
-                                onClick={() => deleteTask(task.id)}
-                                className={`${styles["task-button"]} ${styles.delete}`}
-                              >
-                                <Trash2 size={20} />
-                              </button>
+                                {task.priority
+                                  ? `${task.priority.charAt(0).toUpperCase()}${task.priority.slice(1)} Priority`
+                                  : "Medium Priority"}
+                              </span>
                             </div>
-                          </div>
-                          {task.notes && (
-                            <p className={styles["task-notes"]}>
-                              {safeRenderText(task.notes)}
-                            </p>
-                          )}
-                          <div className={styles["priority-badge"]}>
-                            <span
-                              className={`${
-                                styles[
-                                  `priority-${task.priority || "medium"}`
-                                ]
-                              }`}
-                            >
-                              {task.priority
-                                ? `${task.priority
-                                    .charAt(0)
-                                    .toUpperCase()}${task.priority.slice(
-                                    1
-                                  )} Priority`
-                                : "Medium Priority"}
-                            </span>
-                          </div>
-                        </>
-                      )}
+                          </>
+                        )}
+                      </motion.div>
+                    ))
+                  ) : (
+                    <div className={styles.loading}>
+                      No tasks available. Create your first task to get started!
                     </div>
-                  ))
-                ) : (
-                  <div className={styles.loading}>No tasks available</div>
-                )}
-              </div>
-            )}
+                  )}
+                </div>
+              )}
+            </motion.section>
           </div>
 
-          <div className={styles["ai-sidebar"]}>
+          {/* AI Sidebar */}
+          <motion.aside 
+            className={styles["ai-sidebar"]}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+          >
             <div className={styles["ai-overview-card"]}>
               <h2>AI Homework Overview</h2>
-              <button
+              <motion.button
                 onClick={generateOverview}
                 className={styles["generate-overview-button"]}
-                disabled={
-                  isGeneratingOverview ||
-                  !Array.isArray(tasks) ||
-                  tasks.length === 0
-                }
+                disabled={isGeneratingOverview || !Array.isArray(tasks) || tasks.length === 0}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
                 {isGeneratingOverview ? "Analyzing..." : "Generate Overview"}
-              </button>
+              </motion.button>
 
               {aiOverview && typeof aiOverview === "object" && (
-                <div className={styles["overview-content"]}>
+                <motion.div 
+                  className={styles["overview-content"]}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
                   <div className={styles["overview-section"]}>
                     <h3>Summary</h3>
                     <p>{safeRenderText(aiOverview.summary)}</p>
@@ -499,10 +575,10 @@ const HomeworkManager = () => {
                     <h3>Study Tips</h3>
                     <p>{safeRenderText(aiOverview.studyTips)}</p>
                   </div>
-                </div>
+                </motion.div>
               )}
             </div>
-          </div>
+          </motion.aside>
         </div>
       </div>
     </div>

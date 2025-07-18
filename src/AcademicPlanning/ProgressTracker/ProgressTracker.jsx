@@ -257,17 +257,27 @@ const ProgressTracker = () => {
     <div className={styles["progress-tracker"]}>
       <div className={styles.container}>
         <header className={styles.header}>
-          <h1 className={styles.title}>Progress Tracker</h1>
-          <Link to="/academic-planning" className={styles.backButton}>
-            Back to Academic Planning
-          </Link>
-          <button
-            onClick={() => setShowForm(!showForm)}
-            className={styles["add-subject-button"]}
-          >
-            <Plus size={20} />
-            Add Subject
-          </button>
+          <div className={styles["header-content"]}>
+            <div className={styles["title-section"]}>
+              <div className={styles["title-badge"]}>
+                <TrendingUp size={16} />
+                Academic Progress
+              </div>
+              <h1 className={styles.title}>Progress Tracker</h1>
+            </div>
+            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+              <button
+                onClick={() => setShowForm(!showForm)}
+                className={styles["add-subject-button"]}
+              >
+                <Plus size={20} />
+                Add Subject
+              </button>
+              <Link to="/academic-planning" className={styles.backButton}>
+                Back to Academic Planning
+              </Link>
+            </div>
+          </div>
         </header>
 
         {isLoading ? (

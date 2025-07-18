@@ -1,74 +1,155 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary-color: #6366f1;
+  --primary-light: #818cf8;
+  --primary-dark: #4f46e5;
+  --secondary-color: #1e293b;
+  --background-color: #0f172a;
+  --background-light: #1e293b;
+  --text-color: #f1f5f9;
+  --text-muted: #94a3b8;
+  --accent-color: #8b5cf6;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --error-color: #ef4444;
+  --border-color: #334155;
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
 .container {
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  font-family: "Inter", sans-serif;
-  position: relative;
   min-height: 100vh;
+  background: linear-gradient(135deg, var(--background-color) 0%, var(--background-light) 100%);
+  position: relative;
+  overflow-x: hidden;
 }
 
 .container::before {
-  content: "";
+  content: '';
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-image: radial-gradient(#ffffff 1px, transparent 1px),
-    radial-gradient(#ffffff 1px, transparent 1px);
-  background-size: 50px 50px;
-  background-position: 0 0, 25px 25px;
-  opacity: 0.08;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
   pointer-events: none;
+  z-index: 0;
 }
 
-.container h1 {
-  color: var(--text-color);
-  margin-bottom: 2rem;
-  text-align: center;
-  font-size: 2.5rem;
-  text-shadow: 0 0 12px rgba(138, 43, 226, 0.4);
-}
-
+/* Header */
 .header {
+  padding: 2rem;
   position: relative;
   z-index: 2;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 3rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid rgba(138, 43, 226, 0.2);
 }
 
-.header h1 {
-  margin-bottom: 0;
+.headerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.titleSection {
+  flex: 1;
+  min-width: 300px;
+}
+
+.titleBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 50px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--primary-light);
+  margin-bottom: 1.5rem;
+  backdrop-filter: blur(10px);
+}
+
+.title {
+  font-size: clamp(2rem, 6vw, 3rem);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, var(--text-color) 0%, var(--primary-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  font-size: 1.125rem;
+  color: var(--text-muted);
+  max-width: 600px;
+  line-height: 1.6;
 }
 
 .backButton {
-  background-color: var(--accent-color);
-  color: white;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  border-radius: 10px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  color: var(--text-color);
   text-decoration: none;
   font-weight: 600;
-  font-size: 1rem;
-  transition: all 0.4s ease;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.2), 0 0 25px rgba(138, 43, 226, 0.3);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
 }
 
 .backButton:hover {
+  background: var(--glass-border);
+  border-color: var(--primary-color);
   transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.3), 0 0 35px rgba(138, 43, 226, 0.4);
+}
+
+/* Calculator Form */
+.calculatorSection {
+  padding: 2rem;
+  position: relative;
+  z-index: 1;
 }
 
 .calculatorForm {
-  background: rgba(106, 90, 205, 0.1);
+  max-width: 800px;
+  margin: 0 auto;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 2.5rem;
   backdrop-filter: blur(10px);
-  padding: 2rem;
-  border-radius: 16px;
-  border: 1px solid rgba(138, 43, 226, 0.2);
   margin-bottom: 2rem;
+}
+
+.formTitle {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  text-align: center;
+  color: var(--text-color);
 }
 
 .courseRow {
@@ -82,20 +163,26 @@
 .courseInput,
 .gradeSelect,
 .creditsInput {
-  padding: 0.75rem;
-  border-radius: 8px;
-  border: 1px solid rgba(138, 43, 226, 0.3);
-  background: rgba(106, 90, 205, 0.1);
+  padding: 0.75rem 1rem;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
   color: var(--text-color);
   font-size: 1rem;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
 }
 
 .courseInput:focus,
 .gradeSelect:focus,
 .creditsInput:focus {
   outline: none;
-  border-color: var(--accent-color);
-  box-shadow: 0 0 15px rgba(138, 43, 226, 0.4);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.courseInput::placeholder {
+  color: var(--text-muted);
 }
 
 .buttonGroup {
@@ -105,142 +192,266 @@
 }
 
 .addButton,
-.calculateButton,
-.removeButton,
-.deleteButton {
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+.calculateButton {
+  padding: 1rem 2rem;
+  border-radius: 12px;
   border: none;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 56px;
 }
 
 .addButton {
-  background: rgba(138, 43, 226, 0.2);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
   color: var(--text-color);
+  backdrop-filter: blur(10px);
+}
+
+.addButton:hover {
+  background: var(--glass-border);
+  border-color: var(--primary-color);
+  transform: translateY(-2px);
 }
 
 .calculateButton {
-  background: var(--accent-color);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
   color: white;
   flex-grow: 1;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+}
+
+.calculateButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
 }
 
 .removeButton,
 .deleteButton {
-  background: #ff4444;
-  color: white;
+  padding: 0.5rem 1rem;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.addButton:hover,
-.calculateButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(138, 43, 226, 0.3);
+.removeButton:hover,
+.deleteButton:hover {
+  background: rgba(239, 68, 68, 0.2);
+  transform: translateY(-1px);
+}
+
+/* Current GPA Section */
+.currentGPASection {
+  padding: 2rem;
+  position: relative;
+  z-index: 1;
 }
 
 .currentGPA {
+  max-width: 600px;
+  margin: 0 auto;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 2.5rem;
+  backdrop-filter: blur(10px);
   text-align: center;
-  margin: 2rem 0;
-  padding: 2rem;
-  background: rgba(106, 90, 205, 0.15);
-  border-radius: 16px;
-  border: 1px solid rgba(138, 43, 226, 0.3);
 }
 
 .currentGPA h2 {
-  color: var(--accent-color);
   font-size: 2rem;
-  margin: 0;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, var(--text-color) 0%, var(--primary-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.chartContainer {
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+/* GPA History Section */
+.gpaHistorySection {
+  padding: 2rem;
+  position: relative;
+  z-index: 1;
 }
 
 .gpaHistory {
-  margin-top: 3rem;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
 .gpaHistory h2 {
-  color: var(--text-color);
-  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  text-align: center;
+  background: linear-gradient(135deg, var(--text-color) 0%, var(--primary-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .historyList {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .historyItem {
-  background: rgba(106, 90, 205, 0.1);
-  padding: 1.5rem;
-  border-radius: 12px;
-  border: 1px solid rgba(138, 43, 226, 0.2);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 2rem;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.historyItem:hover {
+  border-color: var(--primary-color);
+  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
 }
 
 .historyHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
 }
 
 .gpaValue {
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   font-weight: 600;
-  color: var(--accent-color);
+  color: var(--primary-light);
 }
 
 .gpaDate {
-  color: white;
-  opacity: 0.8;
+  color: var(--text-muted);
+  font-size: 0.875rem;
 }
 
 .courseList {
   display: grid;
-  gap: 0.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 0.75rem;
 }
 
 .historyCourse {
-  padding: 0.5rem;
-  background: rgba(138, 43, 226, 0.1);
-  border-radius: 6px;
-  color: white;
+  padding: 0.75rem 1rem;
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: 8px;
+  color: var(--text-color);
+  font-size: 0.875rem;
 }
 
 .noHistory {
   text-align: center;
-  color: var(--text-color);
-  opacity: 0.6;
+  color: var(--text-muted);
   font-style: italic;
+  padding: 3rem;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
 }
 
 .error {
-    background-color: #ffebee;
-    color: #c62828;
-    padding: 1rem;
-    border-radius: 8px;
-    margin-bottom: 1rem;
-    border: 1px solid #ef9a9a;
-  }
-  
-  .loading {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+  padding: 1rem;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.loading {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 2rem;
+  font-style: italic;
+}
+
+.gradeSelect {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f1f5f9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1em;
+  padding-right: 2.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .headerContent {
+    flex-direction: column;
+    align-items: center;
     text-align: center;
-    color: var(--text-color);
-    opacity: 0.6;
-    padding: 1rem;
   }
 
-@media (max-width: 768px) {
+  .titleSection {
+    min-width: auto;
+  }
+
+  .calculatorForm {
+    padding: 2rem;
+  }
+
   .courseRow {
     grid-template-columns: 1fr;
+    gap: 1rem;
   }
-  
+
   .buttonGroup {
     flex-direction: column;
   }
 
-  .header {
+  .courseList {
+    grid-template-columns: 1fr;
+  }
+
+  .historyHeader {
     flex-direction: column;
-    gap: 1rem;
     align-items: flex-start;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0;
+  }
+
+  .header,
+  .calculatorSection,
+  .currentGPASection,
+  .gpaHistorySection {
+    padding: 1rem;
+  }
+
+  .calculatorForm,
+  .currentGPA {
+    padding: 1.5rem;
+  }
+
+  .historyItem {
+    padding: 1.5rem;
   }
 }

@@ -335,12 +335,26 @@ const StudySchedule = () => {
 
   return (
     <div className={styles.container}>
-      <header className={styles.header}>
-        <h1>Study Schedule</h1>
-        <Link to="/academic-planning" className={styles.backButton}>
-          Back to Academic Planning
-        </Link>
-      </header>
+      <div className={styles.containerInner}>
+        <header className={styles.header}>
+          <div className={styles["header-content"]}>
+            <div className={styles["title-section"]}>
+              <div className={styles["title-badge"]}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M9 12l2 2 4-4"/>
+                  <path d="M21 12c-1 0-3-1-3-3s2-3 3-3 3 1 3 3-2 3-3 3"/>
+                  <path d="M3 12c1 0 3-1 3-3s-2-3-3-3-3 1-3 3 2 3 3 3"/>
+                  <path d="M3 12h6m6 0h6"/>
+                </svg>
+                Study Planning
+              </div>
+              <h1 className={styles.title}>Study Schedule</h1>
+            </div>
+            <Link to="/academic-planning" className={styles.backButton}>
+              Back to Academic Planning
+            </Link>
+          </div>
+        </header>
 
       {error && (
         <div className={styles.error}>
@@ -426,6 +440,7 @@ const StudySchedule = () => {
             ))}
           </div>
         )}
+      </div>
       </div>
     </div>
   );
