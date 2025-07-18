@@ -193,6 +193,32 @@ const Home = () => {
         </div>
       </motion.section>
 
+      {/* Meaning Section */}
+      <motion.section 
+        className={styles.meaningSection}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        variants={containerVariants}
+      >
+        <motion.div className={styles.meaningContent} variants={itemVariants}>
+          <div className={styles.meaningHeader}>
+            <h2 className={styles.sectionTitle}>The Meaning Behind Kalimu</h2>
+            <div className={styles.meaningStory}>
+              <p className={styles.storyText}>
+                Rooted in the rich Swahili language, Kalimu translates to &quot;teacher&quot; or &quot;learned one&quot; - 
+                a title of respect given to those who share knowledge and guide others on their learning journey.
+              </p>
+            </div>
+          </div>
+          <p className={styles.meaningDescription}>
+            Just as the ancient scholars were called Kalimu for their wisdom and dedication to learning, 
+            our platform transforms every user into both student and teacher. Here, knowledge flows freely, 
+            curiosity is celebrated, and every learner has the potential to become a guide for others.
+          </p>
+        </motion.div>
+      </motion.section>
+
       {/* CTA Section */}
       <motion.section 
         className={styles.ctaSection}
