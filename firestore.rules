@@ -4,6 +4,11 @@ service cloud.firestore {
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
 
+      // Profile subcollection for user profile data
+      match /profile/{profileDoc} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
       match /homework/{taskId} {
         allow read: if request.auth != null && request.auth.uid == userId;
         allow create: if request.auth != null 

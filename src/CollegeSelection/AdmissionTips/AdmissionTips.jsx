@@ -1,18 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { ArrowLeft, Sparkles, User, Award, BookOpen, Target, Lightbulb, TrendingUp } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import aiService from "../../services/AIService";
+import { useUserProfile } from "../../hooks/useUserProfile";
 import styles from './AdmissionTips.module.css';
 
 const AdmissionProfile = () => {
-  // Initialize Gemini AI client
-  const genAI = new GoogleGenerativeAI(
-    import.meta.env.VITE_REACT_APP_GEMINI_API_KEY
-  );
+  const { profile, updateProfile } = useUserProfile();
 
   // State for user profile
-  const [profile, setProfile] = useState({
+  const [profileData, setProfileData] = useState({
     gpa: '',
     testScores: '',
     extracurriculars: '',
@@ -25,9 +23,26 @@ const AdmissionProfile = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // Load data from user profile on mount
+  useEffect(() => {
+    if (profile.academic || profile.extracurriculars || profile.background) {
+      setProfileData(prev => ({
+        ...prev,
+        gpa: profile.academic?.currentGPA?.toString() || prev.gpa,
+        testScores: [
+          profile.academic?.testScores?.sat && `SAT ${profile.academic.testScores.sat}`,
+          profile.academic?.testScores?.act && `ACT ${profile.academic.testScores.act}`
+        ].filter(Boolean).join(', ') || prev.testScores,
+        extracurriculars: profile.extracurriculars?.activities?.slice(0, 3).join(', ') || prev.extracurriculars,
+        academicInterest: profile.academic?.major || profile.collegePreferences?.academicInterest || prev.academicInterest,
+        challengedBackground: profile.background?.challenges || prev.challengedBackground,
+      }));
+    }
+  }, [profile]);
+
   // Handle input changes
   const handleInputChange = (field, value) => {
-    setProfile((prev) => ({
+    setProfileData((prev) => ({
       ...prev,
       [field]: value,
     }));
@@ -39,51 +54,30 @@ const AdmissionProfile = () => {
     setError(null);
 
     try {
-      // Construct a detailed prompt for AI
-      const prompt = `
-        As an expert college admissions counselor, provide 5 highly personalized 
-        and strategic admission tips based on this student profile:
-        - GPA: ${profile.gpa}
-        - Test Scores: ${profile.testScores}
-        - Extracurricular Activities: ${profile.extracurriculars}
-        - Academic Interest: ${profile.academicInterest}
-        - Challenged Background: ${profile.challengedBackground}
+      // Save current profile data back to user profile
+      await updateProfile('academic', {
+        currentGPA: parseFloat(profileData.gpa) || 0,
+        major: profileData.academicInterest,
+        testScores: {
+          ...profile.academic?.testScores,
+          sat: profileData.testScores.match(/SAT (\d+)/)?.[1] || profile.academic?.testScores?.sat,
+          act: profileData.testScores.match(/ACT (\d+)/)?.[1] || profile.academic?.testScores?.act,
+        }
+      }, { merge: true });
 
-        For each tip, provide:
-        1. Specific, actionable advice
-        2. Rationale behind the recommendation
-        3. Potential impact on college applications
+      await updateProfile('extracurriculars', {
+        activities: profileData.extracurriculars ? profileData.extracurriculars.split(',').map(s => s.trim()) : []
+      }, { merge: true });
 
-        Respond in a strict JSON format with these exact keys:
-        [
-          {
-            "tipTitle": "",
-            "tipDescription": "",
-            "strategicRationale": "",
-            "potentialImpact": ""
-          }
-        ]
-        
-        Ensure tips are highly specific and tailored to the student's unique profile.
-      `;
+      await updateProfile('background', {
+        challenges: profileData.challengedBackground
+      }, { merge: true });
 
-      // Generate content using Gemini
-      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const text = response.text();
-
-      // Extract JSON from the response (Gemini sometimes wraps JSON in markdown)
-      const jsonMatch = text.match(/```json\n([\s\S]*)\n```/);
-      const tipsData = jsonMatch
-        ? JSON.parse(jsonMatch[1])
-        : JSON.parse(text);
-
-      // Set admission tips
+      const tipsData = await aiService.generateAdmissionTips(profileData, profile);
       setAdmissionTips(tipsData);
     } catch (err) {
       console.error("Failed to generate admission tips", err);
-      setError("Failed to generate tips. Please try again.");
+      setError(err.message || "Failed to generate tips. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -138,7 +132,7 @@ const AdmissionProfile = () => {
                 type="text"
                 className={styles.input}
                 placeholder="e.g., 3.7, 4.2"
-                value={profile.gpa}
+                value={profileData.gpa}
                 onChange={(e) => handleInputChange("gpa", e.target.value)}
               />
             </div>
@@ -153,7 +147,7 @@ const AdmissionProfile = () => {
                 type="text"
                 className={styles.input}
                 placeholder="e.g., SAT 1450, ACT 32"
-                value={profile.testScores}
+                value={profileData.testScores}
                 onChange={(e) => handleInputChange("testScores", e.target.value)}
               />
             </div>
@@ -168,7 +162,7 @@ const AdmissionProfile = () => {
                 type="text"
                 className={styles.input}
                 placeholder="e.g., Debate Club President, Robotics Team"
-                value={profile.extracurriculars}
+                value={profileData.extracurriculars}
                 onChange={(e) => handleInputChange("extracurriculars", e.target.value)}
               />
             </div>
@@ -183,7 +177,7 @@ const AdmissionProfile = () => {
                 type="text"
                 className={styles.input}
                 placeholder="e.g., Computer Science, Biomedical Engineering"
-                value={profile.academicInterest}
+                value={profileData.academicInterest}
                 onChange={(e) => handleInputChange("academicInterest", e.target.value)}
               />
             </div>
@@ -198,7 +192,7 @@ const AdmissionProfile = () => {
                 type="text"
                 className={styles.input}
                 placeholder="e.g., First-generation student, Economic constraints"
-                value={profile.challengedBackground}
+                value={profileData.challengedBackground}
                 onChange={(e) => handleInputChange("challengedBackground", e.target.value)}
               />
             </div>

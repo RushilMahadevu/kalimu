@@ -1,14 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { aiService } from "../../services/AIService";
+import { useUserProfile } from "../../hooks/useUserProfile";
 import { ArrowLeft, Sparkles, Search, BookOpen, GraduationCap, Target, Brain, Clock } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import "./CourseSelectionHelper.css";
 
 const CourseSelectionHelper = () => {
-  const genAI = new GoogleGenerativeAI(
-    import.meta.env.VITE_REACT_APP_GEMINI_API_KEY
-  );
+  const { profile, updateProfile } = useUserProfile();
 
   const [preferences, setPreferences] = useState({
     major: "",
@@ -23,6 +22,20 @@ const CourseSelectionHelper = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // Load preferences from user profile on mount
+  useEffect(() => {
+    if (profile.academic || profile.studyProfile) {
+      setPreferences(prev => ({
+        ...prev,
+        major: profile.academic?.major || prev.major,
+        interests: profile.academic?.interests?.join(', ') || prev.interests,
+        academicGoals: profile.academic?.academicGoals || prev.academicGoals,
+        currentGPA: profile.academic?.currentGPA || prev.currentGPA,
+        courseLoad: profile.academic?.courseLoad || prev.courseLoad,
+      }));
+    }
+  }, [profile]);
+
   const handleInputChange = (field, value) => {
     setPreferences((prev) => ({
       ...prev,
@@ -35,49 +48,20 @@ const CourseSelectionHelper = () => {
     setError(null);
 
     try {
-      const prompt = `
-        As an academic advisor, recommend 6 courses based on these student preferences:
-        - Major/Field: ${preferences.major}
-        - Academic Year: ${preferences.year}
-        - Areas of Interest: ${preferences.interests}
-        - Academic Goals: ${preferences.academicGoals}
-        - Current GPA: ${preferences.currentGPA}
-        - Preferred Course Load: ${preferences.courseLoad}
+      // Save current preferences to user profile
+      await updateProfile('academic', {
+        major: preferences.major,
+        interests: preferences.interests ? preferences.interests.split(',').map(s => s.trim()) : [],
+        academicGoals: preferences.academicGoals,
+        currentGPA: preferences.currentGPA,
+        courseLoad: preferences.courseLoad
+      }, { merge: true });
 
-        For each course, provide:
-        1. Course Name and Code
-        2. Brief Description
-        3. Key Learning Outcomes
-        4. Prerequisites (if any)
-        5. Relevance to Career Goals
-
-        Respond in JSON format:
-        [
-          {
-            "courseCode": "",
-            "courseName": "",
-            "description": "",
-            "outcomes": "",
-            "prerequisites": "",
-            "careerRelevance": ""
-          }
-        ]
-      `;
-
-      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const text = response.text();
-
-      const jsonMatch = text.match(/```json\n([\s\S]*)\n```/);
-      const recommendationsData = jsonMatch
-        ? JSON.parse(jsonMatch[1])
-        : JSON.parse(text);
-
+      const recommendationsData = await aiService.generateCourseRecommendations(preferences, profile);
       setRecommendations(recommendationsData);
     } catch (err) {
       console.error("Failed to generate recommendations", err);
-      setError("Failed to generate recommendations. Please try again.");
+      setError(err.message || "Failed to generate recommendations. Please try again.");
     } finally {
       setIsLoading(false);
     }

@@ -1,17 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import { ArrowLeft, Sparkles, Search, MapPin, DollarSign, Users, BookOpen, Star } from "lucide-react";
+import { ArrowLeft, Sparkles, Search, MapPin, DollarSign, Users, BookOpen, Star, Heart } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import aiService from "../../services/AIService";
+import { useUserProfile } from "../../hooks/useUserProfile";
 import styles from "./CollegeMatcher.module.css";
 
 const CollegeMatcher = () => {
-  // Initialize Gemini AI client
-  const genAI = new GoogleGenerativeAI(
-    import.meta.env.VITE_REACT_APP_GEMINI_API_KEY
-  );
+  const { profile, updateProfile, saveItem } = useUserProfile();
 
-  // State for user preferences
+  // Initialize preferences from user profile
   const [preferences, setPreferences] = useState({
     academicInterest: "",
     location: "",
@@ -24,6 +22,26 @@ const CollegeMatcher = () => {
   const [recommendations, setRecommendations] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [savedColleges, setSavedColleges] = useState(new Set());
+
+  // Load preferences from user profile on mount
+  useEffect(() => {
+    if (profile.collegePreferences) {
+      setPreferences(prev => ({
+        ...prev,
+        academicInterest: profile.collegePreferences.academicInterest || prev.academicInterest,
+        location: profile.collegePreferences.preferredLocations?.[0] || prev.location,
+        budget: profile.collegePreferences.budgetRange?.max || prev.budget,
+        campusSize: profile.collegePreferences.campusSize || prev.campusSize,
+        specialNeeds: profile.collegePreferences.importantFactors?.join(', ') || prev.specialNeeds,
+      }));
+    }
+
+    // Initialize saved colleges
+    if (profile.collegePreferences?.savedColleges) {
+      setSavedColleges(new Set(profile.collegePreferences.savedColleges.map(c => c.collegeName)));
+    }
+  }, [profile]);
 
   // Handle input changes
   const handleInputChange = (field, value) => {
@@ -33,61 +51,59 @@ const CollegeMatcher = () => {
     }));
   };
 
-  // Generate AI recommendations
+  // Generate AI recommendations with profile integration
   const generateRecommendations = async () => {
     setIsLoading(true);
     setError(null);
 
     try {
-      // Construct a detailed prompt for AI
-      const prompt = `
-        As an expert college counselor, generate a list of 6 college recommendations based on these student preferences:
-        - Academic Interest: ${preferences.academicInterest}
-        - Preferred Location: ${preferences.location}
-        - Budget: $${preferences.budget}
-        - Campus Size: ${preferences.campusSize}
-        - Special Wants/Considerations: ${preferences.specialNeeds}
+      // Save current preferences to user profile
+      await updateProfile('collegePreferences', {
+        academicInterest: preferences.academicInterest,
+        preferredLocations: preferences.location ? [preferences.location] : [],
+        budgetRange: { ...profile.collegePreferences?.budgetRange, max: preferences.budget },
+        campusSize: preferences.campusSize,
+        importantFactors: preferences.specialNeeds ? preferences.specialNeeds.split(',').map(s => s.trim()) : []
+      }, { merge: true });
 
-        For each college, provide:
-        1. College Name
-        2. Precise match to student's preferences
-        3. Estimated annual cost
-        4. Top 3 academic strengths
-        5. Unique opportunities that align with the student's goals
-
-        Respond in a strict JSON format with these exact keys:
-        [
-          {
-            "collegeName": "",
-            "matchReason": "",
-            "estimatedCost": 0,
-            "keyStrengths": "",
-            "uniqueOpportunities": ""
-          }
-        ]
-        
-        Ensure all financial estimates are realistic and the recommendations are highly specific.
-      `;
-
-      // Generate content using Gemini
-      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const text = response.text();
-
-      // Extract JSON from the response (Gemini sometimes wraps JSON in markdown)
-      const jsonMatch = text.match(/```json\n([\s\S]*)\n```/);
-      const recommendationsData = jsonMatch
-        ? JSON.parse(jsonMatch[1])
-        : JSON.parse(text);
-
-      // Set recommendations
+      // Generate recommendations with user profile context
+      const recommendationsData = await aiService.generateCollegeRecommendations(preferences, profile);
       setRecommendations(recommendationsData);
     } catch (err) {
       console.error("Failed to generate recommendations", err);
-      setError("Failed to generate recommendations. Please try again.");
+      setError(err.message || "Failed to generate recommendations. Please try again.");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Save/unsave college
+  const toggleSaveCollege = async (college) => {
+    const isCurrentlySaved = savedColleges.has(college.collegeName);
+    
+    try {
+      if (isCurrentlySaved) {
+        // Remove from saved
+        const updatedSaved = profile.collegePreferences?.savedColleges?.filter(
+          c => c.collegeName !== college.collegeName
+        ) || [];
+        await updateProfile('collegePreferences', { savedColleges: updatedSaved }, { merge: true });
+        setSavedColleges(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(college.collegeName);
+          return newSet;
+        });
+      } else {
+        // Add to saved
+        await saveItem('college', {
+          ...college,
+          id: college.collegeName.replace(/\s+/g, '-').toLowerCase(),
+          collegeName: college.collegeName
+        });
+        setSavedColleges(prev => new Set([...prev, college.collegeName]));
+      }
+    } catch (err) {
+      console.error('Error saving/unsaving college:', err);
     }
   };
 
@@ -278,14 +294,28 @@ const CollegeMatcher = () => {
                 >
                   <div className={styles.cardHeader}>
                     <h3 className={styles.collegeName}>{college.collegeName}</h3>
-                    <div className={styles.costBadge}>
-                      ${college.estimatedCost.toLocaleString()}
+                    <div className={styles.headerActions}>
+                      <div className={styles.costBadge}>
+                        ${college.estimatedCost.toLocaleString()}
+                      </div>
+                      <motion.button
+                        className={`${styles.saveButton} ${savedColleges.has(college.collegeName) ? styles.saved : ''}`}
+                        onClick={() => toggleSaveCollege(college)}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        title={savedColleges.has(college.collegeName) ? 'Remove from saved' : 'Save college'}
+                      >
+                        <Heart 
+                          size={20} 
+                          fill={savedColleges.has(college.collegeName) ? 'currentColor' : 'none'} 
+                        />
+                      </motion.button>
                     </div>
                   </div>
                   
                   <div className={styles.cardContent}>
                     <div className={styles.matchSection}>
-                      <h4>Why It's a Great Match</h4>
+                      <h4>Why It&apos;s a Great Match</h4>
                       <p>{college.matchReason}</p>
                     </div>
                     

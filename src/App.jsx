@@ -22,10 +22,14 @@ import HomeworkManager from './AcademicPlanning/HomeworkManager/HomeworkManager'
 import TestPrep from './AcademicPlanning/TestPrep/TestPrep';
 import ProgressTracker from './AcademicPlanning/ProgressTracker/ProgressTracker';
 
+// Profile Management
+import ProfileManager from './ProfileManager';
+
 // Alt imports
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AuthProvider } from './auth/AuthContext';
+import { UserProfileProvider } from './contexts/UserProfileContext';
 import { useState } from 'react';
 import Notes from './Notes';
 
@@ -94,6 +98,11 @@ function AnimatedRoutes() {
             <LearningDashboard />
           </PageWrapper>
         } />
+        <Route path="/profile" element={
+          <PageWrapper>
+            <ProfileManager />
+          </PageWrapper>
+        } />
         <Route path="/college-selection/*" element={
           <PageWrapper>
             <Routes>
@@ -130,17 +139,19 @@ function App() {
   return (
     <Router>
       <AuthProvider>
-        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-          <AnimatedRoutes />
-          <Notes isOpen={showNotes} onClose={() => setShowNotes(false)} />
-          <button 
-            className={styles.notesButton}
-            onClick={() => setShowNotes(true)}
-            title="Open Notes"
-          >
-            📝
-          </button>
-        </div>
+        <UserProfileProvider>
+          <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+            <AnimatedRoutes />
+            <Notes isOpen={showNotes} onClose={() => setShowNotes(false)} />
+            <button 
+              className={styles.notesButton}
+              onClick={() => setShowNotes(true)}
+              title="Open Notes"
+            >
+              📝
+            </button>
+          </div>
+        </UserProfileProvider>
       </AuthProvider>
     </Router>
   );

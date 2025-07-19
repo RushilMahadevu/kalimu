@@ -1,16 +1,11 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { aiService } from "../../services/AIService";
 import { ArrowLeft, Sparkles, FileText, Edit3, MessageCircle, CheckCircle, Lightbulb, User } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import styles from "./CommonAppHelper.module.css";
 
 const CommonAppHelper = () => {
-  // Initialize Gemini AI client
-  const genAI = new GoogleGenerativeAI(
-    import.meta.env.VITE_REACT_APP_GEMINI_API_KEY
-  );
-
   // State for essay details
   const [essayDetails, setEssayDetails] = useState({
     prompt: "",
@@ -47,67 +42,11 @@ const CommonAppHelper = () => {
     setError(null);
 
     try {
-      const prompt = `
-        As an expert college admissions counselor, analyze this Common App essay draft and provide detailed feedback:
-        
-        Essay Prompt: ${essayDetails.prompt}
-        Draft Content: ${essayDetails.draftContent}
-        Desired Tone: ${essayDetails.tone}
-        Theme/Message: ${essayDetails.theme}
-        Word Count: ${wordCount}
-
-        Provide 5 pieces of detailed feedback covering:
-        1. Content strength and authenticity
-        2. Structure and flow
-        3. Language and tone
-        4. Impact and memorability
-        5. Specific improvement suggestions
-
-        Respond ONLY with a valid JSON array. Format:
-        [
-          {
-            "aspectTitle": "string",
-            "analysis": "string",
-            "strengthsIdentified": "string",
-            "improvementSuggestions": "string",
-            "examples": "string"
-          }
-        ]
-      `;
-
-      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const text = response.text();
-
-      // Clean and parse the JSON response
-      let cleanedText = text;
-      
-      // Remove markdown code blocks if present
-      if (text.includes('```')) {
-        const jsonMatch = text.match(/```(?:json)?\n?([\s\S]*?)\n?```/);
-        if (jsonMatch) {
-          cleanedText = jsonMatch[1];
-        }
-      }
-
-      // Remove any potential leading/trailing whitespace
-      cleanedText = cleanedText.trim();
-
-      try {
-        const feedbackData = JSON.parse(cleanedText);
-        if (!Array.isArray(feedbackData)) {
-          throw new Error('Response is not an array');
-        }
-        setFeedback(feedbackData);
-      } catch (parseError) {
-        console.error("JSON Parse Error:", parseError);
-        console.log("Attempted to parse:", cleanedText);
-        setError("Failed to parse AI response. Please try again.");
-      }
+      const feedbackData = await aiService.generateEssayFeedback(essayDetails);
+      setFeedback(feedbackData);
     } catch (err) {
       console.error("Failed to generate feedback:", err);
-      setError("Failed to generate feedback. Please try again.");
+      setError(err.message || "Failed to generate feedback. Please try again.");
     } finally {
       setIsLoading(false);
     }

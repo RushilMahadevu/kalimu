@@ -1,13 +1,27 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { GraduationCap, Brain, ArrowLeft, Target, BookOpen, Zap } from "lucide-react";
+import { GraduationCap, Brain, ArrowLeft, Target, BookOpen, Zap, User } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import styles from "./LearningDashboard.module.css";
 import { useAuth } from "../auth/AuthContext";
+import { useUserProfile } from "../hooks/useUserProfile";
+import { useCourseAccess } from "../hooks/useCourseAccess";
+import ProfileCompletionWarning from "../components/ProfileCompletionWarning";
 
 const LearningDashboard = () => {
   const { user } = useAuth();
+  const { profileCompletion, getRecommendations } = useUserProfile();
   const [activeCard, setActiveCard] = useState(null);
+  
+  // Course access validation
+  const {
+    navigateWithValidation,
+    warningModal,
+    closeWarningModal,
+    continueAnyway
+  } = useCourseAccess();
+
+  const recommendations = getRecommendations();
 
   const courses = [
     {
@@ -32,10 +46,14 @@ const LearningDashboard = () => {
     }
   ];
 
+  const handleCourseClick = (course) => {
+    navigateWithValidation(course.link, course.title);
+  };
+
   const stats = [
-    { icon: <Target />, label: "Courses", value: "2" },
-    { icon: <BookOpen />, label: "Progress", value: "0%" },
-    { icon: <Zap />, label: "Streak", value: "0 days" }
+    { icon: <Target />, label: "Profile", value: `${profileCompletion}%` },
+    { icon: <BookOpen />, label: "Courses", value: "2" },
+    { icon: <Zap />, label: "Recommendations", value: recommendations.length.toString() }
   ];
 
   // Animation variants
@@ -97,10 +115,17 @@ const LearningDashboard = () => {
             </p>
           </div>
           
-          <Link to="/" className={styles.homeLink}>
-            <ArrowLeft size={20} />
-            Back to Home
-          </Link>
+          <div className={styles.headerActions}>
+            <Link to="/profile" className={styles.profileLink}>
+              <User size={20} />
+              Profile ({profileCompletion}%)
+            </Link>
+            
+            <Link to="/" className={styles.homeLink}>
+              <ArrowLeft size={20} />
+              Back to Home
+            </Link>
+          </div>
         </motion.div>
 
         {/* Stats */}
@@ -153,7 +178,10 @@ const LearningDashboard = () => {
                   onMouseLeave={() => setActiveCard(null)}
                   style={{ '--course-gradient': course.color }}
                 >
-                  <Link to={course.link} className={styles.courseLink}>
+                  <button 
+                    onClick={() => handleCourseClick(course)}
+                    className={styles.courseLink}
+                  >
                     <div className={styles.courseIconWrapper}>
                       {course.icon}
                     </div>
@@ -175,7 +203,7 @@ const LearningDashboard = () => {
                         {course.status === 'available' ? 'Start Now' : course.status}
                       </span>
                     </div>
-                  </Link>
+                  </button>
                 </motion.div>
               ))}
             </AnimatePresence>
@@ -224,6 +252,16 @@ const LearningDashboard = () => {
           </div>
         </motion.div>
       </motion.section>
+
+      {/* Profile Completion Warning Modal */}
+      <ProfileCompletionWarning
+        isOpen={warningModal.isOpen}
+        onClose={closeWarningModal}
+        missingFields={warningModal.missingFields}
+        suggestions={warningModal.suggestions}
+        courseName={warningModal.courseName}
+        onContinueAnyway={continueAnyway}
+      />
     </div>
   );
 };

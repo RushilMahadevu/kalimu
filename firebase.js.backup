@@ -12,8 +12,62 @@ import {
   orderBy,
   setDoc,
   getDoc,
-  CACHE_SIZE_UNLIMITED,
 } from "firebase/firestore"; // Ensure addDoc is imported here
+
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  aconst deleteSubject = async (userId, subjectId) => {
+  if (!userId || !subjectId) {
+    throw new Error("User ID and subject ID are required");
+  }
+
+  try {
+    const subjectRef = doc(db, "users", userId, "subjects", subjectId);
+    await deleteDoc(subjectRef);
+    return subjectId;
+  } catch (error) {
+    console.error("Error deleting subject:", error);
+    throw new Error("Failed to delete subject");
+  }
+};
+
+// College Progress Functions
+const loadCollegeProgress = async (userId) => {
+  if (!userId) {
+    throw new Error("User ID is required");
+  }
+
+  try {
+    const progressRef = doc(db, "users", userId, "college", "progress");
+    const progressDoc = await getDoc(progressRef);
+    
+    if (progressDoc.exists()) {
+      return progressDoc.data();
+    }
+    return null;
+  } catch (error) {
+    console.error("Error loading college progress:", error);
+    throw new Error("Failed to load college progress");
+  }
+};
+
+const saveCollegeProgress = async (userId, progressData) => {
+  if (!userId) {
+    throw new Error("User ID is required");
+  }
+
+  try {
+    const progressRef = doc(db, "users", userId, "college", "progress");
+    await setDoc(progressRef, {
+      ...progressData,
+      lastUpdated: new Date().toISOString()
+    });
+    return progressData;
+  } catch (error) {
+    console.error("Error saving college progress:", error);
+    throw new Error("Failed to save college progress");
+  }
+};
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -30,11 +84,6 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = initializeFirestore(app, {
   experimentalForceLongPolling: true,
-  localCache: {
-    // Enable offline persistence
-    kind: 'persistent',
-    sizeBytes: CACHE_SIZE_UNLIMITED
-  }
 });
 
 const handleAuthError = (error) => {
@@ -409,4 +458,6 @@ export {
   addSubject,
   updateSubject,
   deleteSubject,
+  loadCollegeProgress,
+  saveCollegeProgress,
 };

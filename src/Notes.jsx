@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { auth, saveNotes, loadNotes } from '../firebase';
+import { useUserProfile } from './hooks/useUserProfile';
 import PropTypes from 'prop-types';
 import styles from './Notes.module.css';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 function Notes({ isOpen, onClose }) {
+  const { updateProfile } = useUserProfile();
   const [notes, setNotes] = useState({});
   const [activeNoteId, setActiveNoteId] = useState(null);
   const [formattedNotes, setFormattedNotes] = useState('');
@@ -88,7 +90,9 @@ function Notes({ isOpen, onClose }) {
     if (auth.currentUser) {
       setIsSaving(true);
       try {
+        // Save to both Firebase and user profile
         await saveNotes(auth.currentUser.uid, updatedNotes);
+        await updateProfile('notes', updatedNotes);
       } catch (error) {
         console.error("Error saving notes:", error);
       } finally {

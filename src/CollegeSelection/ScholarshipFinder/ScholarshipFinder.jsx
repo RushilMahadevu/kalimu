@@ -1,15 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import { ArrowLeft, Sparkles, Search, GraduationCap, MapPin, DollarSign, Users, Calendar, Award } from "lucide-react";
+import { aiService } from "../../services/AIService";
+import { useUserProfile } from "../../hooks/useUserProfile";
+import { ArrowLeft, Sparkles, Search, GraduationCap, MapPin, DollarSign, Users, Calendar, Award, Heart } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import styles from "./ScholarshipFinder.module.css";
 
 const ScholarshipFinder = () => {
-  // Initialize Gemini AI client
-  const genAI = new GoogleGenerativeAI(
-    import.meta.env.VITE_REACT_APP_GEMINI_API_KEY
-  );
+  const { profile, updateProfile, saveItem } = useUserProfile();
 
   // State for user preferences
   const [preferences, setPreferences] = useState({
@@ -25,6 +23,27 @@ const ScholarshipFinder = () => {
   const [recommendations, setRecommendations] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [savedScholarships, setSavedScholarships] = useState(new Set());
+
+  // Load preferences from user profile on mount
+  useEffect(() => {
+    if (profile.scholarshipPreferences) {
+      setPreferences(prev => ({
+        ...prev,
+        academicField: profile.scholarshipPreferences.academicField || prev.academicField,
+        location: profile.scholarshipPreferences.location || prev.location,
+        financialNeed: profile.scholarshipPreferences.financialNeed ?? prev.financialNeed,
+        meritBased: profile.scholarshipPreferences.meritBased ?? prev.meritBased,
+        minorityGroups: profile.scholarshipPreferences.minorityGroups || prev.minorityGroups,
+        deadlineRange: profile.scholarshipPreferences.applicationDeadlines || prev.deadlineRange,
+      }));
+    }
+
+    // Initialize saved scholarships
+    if (profile.scholarshipPreferences?.savedScholarships) {
+      setSavedScholarships(new Set(profile.scholarshipPreferences.savedScholarships.map(s => s.scholarshipName)));
+    }
+  }, [profile]);
 
   // Handle input changes
   const handleInputChange = (field, value) => {
@@ -40,54 +59,53 @@ const ScholarshipFinder = () => {
     setError(null);
 
     try {
-      // Construct a detailed prompt for AI
-      const prompt = `
-        As a scholarship advisor, generate a list of 6 scholarship opportunities tailored to these preferences:
-        - Academic Field: ${preferences.academicField}
-        - Location: ${preferences.location}
-        - Financial Need: ${preferences.financialNeed}
-        - Merit-Based: ${preferences.meritBased}
-        - Minority Group Considerations: ${preferences.minorityGroups}
-        - Application Deadline Range: ${preferences.deadlineRange}
+      // Save current preferences to user profile
+      await updateProfile('scholarshipPreferences', {
+        academicField: preferences.academicField,
+        location: preferences.location,
+        financialNeed: preferences.financialNeed,
+        meritBased: preferences.meritBased,
+        minorityGroups: preferences.minorityGroups,
+        applicationDeadlines: preferences.deadlineRange
+      }, { merge: true });
 
-        For each scholarship, provide:
-        1. Scholarship Name
-        2. Eligibility Criteria
-        3. Award Amount
-        4. Application Deadline
-        5. Application Link
-
-        Respond in a strict JSON format with these exact keys:
-        [
-          {
-            "scholarshipName": "",
-            "eligibilityCriteria": "",
-            "awardAmount": 0,
-            "applicationDeadline": "",
-            "applicationLink": ""
-          }
-        ]
-      `;
-
-      // Generate content using Gemini
-      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const text = response.text();
-
-      // Extract JSON from the response (Gemini sometimes wraps JSON in markdown)
-      const jsonMatch = text.match(/```json\n([\s\S]*)\n```/);
-      const recommendationsData = jsonMatch
-        ? JSON.parse(jsonMatch[1])
-        : JSON.parse(text);
-
-      // Set recommendations
+      const recommendationsData = await aiService.generateScholarshipRecommendations(preferences, profile);
       setRecommendations(recommendationsData);
     } catch (err) {
       console.error("Failed to generate recommendations", err);
-      setError("Failed to generate recommendations. Please try again.");
+      setError(err.message || "Failed to generate recommendations. Please try again.");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Save/unsave scholarship
+  const toggleSaveScholarship = async (scholarship) => {
+    const isCurrentlySaved = savedScholarships.has(scholarship.scholarshipName);
+    
+    try {
+      if (isCurrentlySaved) {
+        // Remove from saved
+        const updatedSaved = profile.scholarshipPreferences?.savedScholarships?.filter(
+          s => s.scholarshipName !== scholarship.scholarshipName
+        ) || [];
+        await updateProfile('scholarshipPreferences', { savedScholarships: updatedSaved }, { merge: true });
+        setSavedScholarships(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(scholarship.scholarshipName);
+          return newSet;
+        });
+      } else {
+        // Add to saved
+        await saveItem('scholarship', {
+          ...scholarship,
+          id: scholarship.scholarshipName.replace(/\s+/g, '-').toLowerCase(),
+          scholarshipName: scholarship.scholarshipName
+        });
+        setSavedScholarships(prev => new Set([...prev, scholarship.scholarshipName]));
+      }
+    } catch (err) {
+      console.error('Error saving/unsaving scholarship:', err);
     }
   };
 
