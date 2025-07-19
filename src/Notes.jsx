@@ -15,6 +15,7 @@ function Notes({ isOpen, onClose }) {
   const [draggedNote, setDraggedNote] = useState(null);
   const [isVisible, setIsVisible] = useState(false);
   const titleInputRef = useRef(null);
+  const [copySuccess, setCopySuccess] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -270,6 +271,31 @@ function Notes({ isOpen, onClose }) {
     }
   };
 
+  const copyToClipboard = async () => {
+    const textToCopy = showFormatted && formattedNotes ? formattedNotes : (activeNoteId ? notes[activeNoteId].content : '');
+    
+    try {
+      await navigator.clipboard.writeText(textToCopy);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000); // Reset after 2 seconds
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
+  };
+
+  const pasteFromClipboard = async () => {
+    if (!activeNoteId) return;
+    
+    try {
+      const text = await navigator.clipboard.readText();
+      const currentContent = notes[activeNoteId].content;
+      const newContent = currentContent + (currentContent ? '\n\n' : '') + text;
+      handleNotesChange(newContent);
+    } catch (err) {
+      console.error('Failed to paste text: ', err);
+    }
+  };
+
   const handleTitleKeyDown = (e, noteId) => {
     if (e.key === 'Enter') {
       handleTitleChange(noteId, e.target.value);
@@ -283,92 +309,177 @@ function Notes({ isOpen, onClose }) {
   return (
     <div className={`${styles.modal} ${isVisible ? styles.visible : ''}`}>
       <div className={`${styles.notesContainer} ${isVisible ? styles.visible : ''}`}>
+        {/* Sidebar */}
         <div className={styles.sidebar}>
-          <button className={styles.newNoteButton} onClick={createNewNote}>
-            + New Note
-          </button>
-          <ul className={styles.notesList}>
+          <div className={styles.sidebarHeader}>
+            <h3 className={styles.sidebarTitle}>
+              <span className={styles.titleIcon}>📝</span>
+              My Notes
+            </h3>
+            <button className={styles.newNoteButton} onClick={createNewNote}>
+              <span className={styles.buttonIcon}>+</span>
+              New Note
+            </button>
+          </div>
+          
+          <div className={styles.notesListContainer}>
             {Object.entries(notes).map(([id, note]) => (
-              <li
+              <div
                 key={`note-${id}`}
-                className={`${styles.noteItem} ${id === activeNoteId ? styles.active : ''}`}
+                className={`${styles.noteCard} ${id === activeNoteId ? styles.active : ''}`}
                 draggable="true"
                 onDragStart={(e) => handleDragStart(e, id)}
                 onDragEnd={handleDragEnd}
                 onDragOver={handleDragOver}
                 onDrop={(e) => handleDrop(e, id)}
+                onClick={() => setActiveNoteId(id)}
               >
-                <span className={styles.dragHandle}>::</span>
-                {editingTitleId === id ? (
-                  <input
-                    ref={titleInputRef}
-                    className={styles.noteTitleEdit}
-                    defaultValue={note.title}
-                    onBlur={(e) => handleTitleChange(id, e.target.value)}
-                    onKeyDown={(e) => handleTitleKeyDown(e, id)}
-                    autoFocus
-                  />
-                ) : (
-                  <span
-                    className={styles.noteTitle}
-                    onClick={() => setActiveNoteId(id)}
-                    onDoubleClick={() => startTitleEdit(id)}
+                <div className={styles.noteCardHeader}>
+                  <span className={styles.dragHandle}>⋮⋮</span>
+                  {editingTitleId === id ? (
+                    <input
+                      ref={titleInputRef}
+                      className={styles.noteTitleEdit}
+                      defaultValue={note.title}
+                      onBlur={(e) => handleTitleChange(id, e.target.value)}
+                      onKeyDown={(e) => handleTitleKeyDown(e, id)}
+                      autoFocus
+                    />
+                  ) : (
+                    <h4
+                      className={styles.noteTitle}
+                      onDoubleClick={() => startTitleEdit(id)}
+                    >
+                      {note.title}
+                    </h4>
+                  )}
+                  <button
+                    className={styles.deleteNoteButton}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteNote(id);
+                    }}
+                    title="Delete note"
                   >
-                    {note.title}
+                    ×
+                  </button>
+                </div>
+                
+                <div className={styles.notePreview}>
+                  {note.content.slice(0, 80)}{note.content.length > 80 ? '...' : ''}
+                </div>
+                
+                <div className={styles.noteMetadata}>
+                  <span className={styles.lastModified}>
+                    {new Date(note.lastModified).toLocaleDateString()}
                   </span>
-                )}
-                <button
-                  className={styles.deleteNoteButton}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    deleteNote(id);
-                  }}
-                >
-                  ×
-                </button>
-              </li>
+                </div>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
+
+        {/* Main Content */}
         <div className={styles.mainContent}>
           <div className={styles.header}>
-            <h2>Notes {isSaving && <span className={styles.savingIndicator}>Saving...</span>}</h2>
-            <div className={styles.headerButtons}>
+            <div className={styles.headerLeft}>
+              <div className={styles.titleSection}>
+                <h2 className={styles.mainTitle}>
+                  {activeNoteId ? notes[activeNoteId].title : 'Select a Note'}
+                </h2>
+                {isSaving && (
+                  <div className={styles.savingIndicator}>
+                    <div className={styles.savingSpinner}></div>
+                    <span>Saving...</span>
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            <div className={styles.headerActions}>
               <button 
-                className={styles.tidyButton} 
+                className={`${styles.actionButton} ${styles.tidyButton}`}
                 onClick={tidyUpNotes}
                 disabled={isTidying || !activeNoteId || !notes[activeNoteId]?.content?.trim()}
+                title="AI-powered note organization"
               >
-                {isTidying ? "Tidying..." : "Tidy Up"}
+                <span className={styles.buttonIcon}>✨</span>
+                {isTidying ? "Organizing..." : "Tidy Up"}
               </button>
+              
               <button
-                className={styles.toggleButton}
+                className={`${styles.actionButton} ${styles.toggleButton}`}
                 onClick={() => setShowFormatted(!showFormatted)}
                 disabled={!formattedNotes}
+                title={showFormatted ? "Show original notes" : "Show formatted notes"}
               >
-                {showFormatted ? "Show Original" : "Show Formatted"}
+                <span className={styles.buttonIcon}>
+                  {showFormatted ? "📝" : "📖"}
+                </span>
+                {showFormatted ? "Original" : "Formatted"}
               </button>
-              <button className={styles.closeButton} onClick={handleClose}>×</button>
+              
+              <button
+                className={`${styles.actionButton} ${styles.copyButton}`}
+                onClick={copyToClipboard}
+                disabled={!activeNoteId || (!notes[activeNoteId]?.content?.trim() && !formattedNotes)}
+                title="Copy current notes to clipboard"
+              >
+                <span className={styles.buttonIcon}>
+                  {copySuccess ? "✓" : "📋"}
+                </span>
+                {copySuccess ? "Copied!" : "Copy"}
+              </button>
+              
+              <button
+                className={`${styles.actionButton} ${styles.pasteButton}`}
+                onClick={pasteFromClipboard}
+                disabled={!activeNoteId}
+                title="Paste from clipboard"
+              >
+                <span className={styles.buttonIcon}>📥</span>
+                Paste
+              </button>
+              
+              <button 
+                className={styles.closeButton} 
+                onClick={handleClose}
+                title="Close notes"
+              >
+                ×
+              </button>
             </div>
           </div>
-          <div className={styles.notesContent}>
+
+          <div className={styles.contentArea}>
             {isTidying ? (
-              <div className={styles.loadingIndicator}>Tidying up your notes...</div>
+              <div className={styles.loadingState}>
+                <div className={styles.loadingSpinner}></div>
+                <p>AI is organizing your notes...</p>
+                <span className={styles.loadingSubtext}>This may take a few moments</span>
+              </div>
             ) : (
               <>
                 {showFormatted && formattedNotes ? (
-                  <div 
-                    className={styles.formattedNotes}
-                    dangerouslySetInnerHTML={renderFormattedNotes()}
-                  />
+                  <div className={styles.formattedView}>
+                    <div className={styles.formattedHeader}>
+                      <span className={styles.formatBadge}>✨ AI Organized</span>
+                    </div>
+                    <div 
+                      className={styles.formattedContent}
+                      dangerouslySetInnerHTML={renderFormattedNotes()}
+                    />
+                  </div>
                 ) : (
-                  <textarea
-                    className={styles.notesArea}
-                    value={activeNoteId ? notes[activeNoteId].content : ''}
-                    onChange={(e) => handleNotesChange(e.target.value)}
-                    placeholder="Type your notes here..."
-                    style={{ height: '100%' }}
-                  />
+                  <div className={styles.editorContainer}>
+                    <textarea
+                      className={styles.noteEditor}
+                      value={activeNoteId ? notes[activeNoteId].content : ''}
+                      onChange={(e) => handleNotesChange(e.target.value)}
+                      placeholder={activeNoteId ? "Start writing your thoughts..." : "Select a note to begin editing"}
+                      disabled={!activeNoteId}
+                    />
+                  </div>
                 )}
               </>
             )}
